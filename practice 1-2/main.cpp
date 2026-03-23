@@ -82,8 +82,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg) {
 	case WM_CREATE:
-		width = HIWORD(lParam);
-		height = LOWORD(lParam);
+		width = LOWORD(lParam);
+		height = HIWORD(lParam);
 		createRandomPos();
 		break;
 	case WM_PAINT:
@@ -94,8 +94,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_SIZE:
-		width = HIWORD(lParam);
-		height = LOWORD(lParam);
+		width = LOWORD(lParam);
+		height = HIWORD(lParam);
 		createRandomPos();
 		break;
 	case WM_DESTROY:
@@ -126,8 +126,8 @@ void drawRect(HDC hDC, LPARAM lParam)
 		}
 	}
 
-	int x = (rectX > LOWORD(lParam)) ? 0 : rectX;
-	int y = (rectY > HIWORD(lParam)) ? 0 : rectY;
+	int x = rectX;
+	int y = rectY;
 	int width = (rectWidth > LOWORD(lParam)) ? rectWidth : 30;
 	int height = (rectHeight > HIWORD(lParam)) ? rectHeight : 30;
 
