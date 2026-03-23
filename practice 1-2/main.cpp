@@ -13,9 +13,9 @@ std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(seed);
 std::uniform_int_distribution<int> uid(2, 20);
-std::uniform_int_distribution<char> uidChar('A', 'Z');
+std::uniform_int_distribution<int> uidChar('A', 'Z');
 std::uniform_int_distribution<int> uidColor(0, 255);
-std::uniform_int_distribution<int> uidRect(0, 9999);
+std::uniform_int_distribution<int> uidRect(0, 999);
 
 int height;
 int width;
@@ -108,10 +108,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void createRandomPos()
 {
-	rectWidth = uidRect(gen) % width;
-	rectHeight = uidRect(gen) % height;
 	rectX = uidRect(gen) % width;
-	rectY = uidRect(gen) % height;
+	rectY = uidRect(gen) % (height / 2);
+	rectWidth = uidRect(gen) % (width / 2);
+	rectHeight = uidRect(gen) % (height / 2);
 }
 
 void drawRect(HDC hDC)
@@ -126,25 +126,31 @@ void drawRect(HDC hDC)
 			color[i][j] = uidColor(gen);
 		}
 	}
-	for (int j{ rectX }; j < rectX + rectWidth; j += 10)
+
+	int x = (rectX > width) ? uid(gen) % 10 : rectX;
+	int y = (rectY > height) ? uid(gen) % 10 : rectY;
+	int width = (rectWidth > 30) ? rectWidth : 30;
+	int height = (rectHeight > 30) ? rectHeight : 30;
+
+	for (int j{ x }; j < x + width; j += 10)
 	{
 		SetTextColor(hDC, RGB(color[0][0], color[0][1], color[0][2]));
-		wsprintf(str, L"%c", uidChar(gen));
-		TextOut(hDC, j, rectY, str, lstrlen(str));
+		wsprintf(str, L"%c", (char)(uidChar(gen)));
+		TextOut(hDC, j, y, str, lstrlen(str));
 
 		SetTextColor(hDC, RGB(color[1][0], color[1][1], color[1][2]));
-		wsprintf(str, L"%c", uidChar(gen));
-		TextOut(hDC, j, rectY + rectHeight, str, lstrlen(str));
+		wsprintf(str, L"%c", (char)(uidChar(gen)));
+		TextOut(hDC, j, y + height, str, lstrlen(str));
 	}
 
-	for (int j{ rectY }; j < rectY + rectHeight; j += 14)
+	for (int j{ y }; j < y + height; j += 14)
 	{
 		SetTextColor(hDC, RGB(color[2][0], color[2][1], color[2][2]));
-		wsprintf(str, L"%c", uidChar(gen));
-		TextOut(hDC, rectX, j, str, lstrlen(str));
+		wsprintf(str, L"%c", (char)(uidChar(gen)));
+		TextOut(hDC, x, j, str, lstrlen(str));
 
 		SetTextColor(hDC, RGB(color[3][0], color[3][1], color[3][2]));
-		wsprintf(str, L"%c", uidChar(gen));
-		TextOut(hDC, rectX + rectWidth, j, str, lstrlen(str));
+		wsprintf(str, L"%c", (char)(uidChar(gen)));
+		TextOut(hDC, x + width, j, str, lstrlen(str));
 	}
 }
