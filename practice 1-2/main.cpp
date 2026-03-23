@@ -4,6 +4,7 @@
 #include <random>
 #include <string>
 #include <chrono>
+#include <vector>
 
 #define WIDTH  1200
 #define HEIGHT 600
@@ -11,12 +12,14 @@
 std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(seed);
-std::uniform_int_distribution<int> uid(2, 16);
+std::uniform_int_distribution<int> uid(2, 20);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int randWidth = uid(gen);
-int height = HEIGHT / 2;
-int width = WIDTH / randWidth;
+int height;
+int width;
+int uidX;
+int googoodan;
+int* getRandPos = new int[20];
 
 int randNum = uidColor(gen) % 2;
 
@@ -29,7 +32,7 @@ Pos arr[100]{};
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
-LPCTSTR lpszWindowName = L"windows program 2";
+LPCTSTR lpszWindowName = L"windows program 4";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 void createRandomPos();
@@ -84,6 +87,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg) {
 	case WM_CREATE:
+		width = HIWORD(lParam);
+		height = LOWORD(lParam);
 		createRandomPos();
 		break;
 	case WM_PAINT:
@@ -92,6 +97,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		drawPos(hDC);
 
 		EndPaint(hWnd, &ps);
+		break;
+	case WM_SIZE:
+		width = HIWORD(lParam);
+		height = LOWORD(lParam);
+		createRandomPos();
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -103,42 +113,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void createRandomPos()
 {
-	int idx{};
-	for (int i{}; i < 2; ++i)
+	for (int i{}; i < googoodan; ++i)
 	{
-		for (int j{}; j < randWidth; ++j)
-		{
-			arr[idx].x = j * width;
-			arr[idx].y = i * height;
-			++idx;
-		}
+		getRandPos[i] = width / googoodan * i;
 	}
+	uidX = getRandPos[uid(gen) % 10];
 }
 
 void drawPos(HDC hDC)
 {
-	int googoodan{ 2 };
-	for (int i{}; i < randWidth; ++i)
+	googoodan = uid(gen);
+	WCHAR str[100];
+	
+	
+
+	if (randNum)
 	{
-		WCHAR str[100];
+		SetTextColor(hDC, RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
+	}
 		
-		if (randNum)
+	for (int j{ 1 }; j <= 9; ++j)
+	{
+		wsprintf(str, L"%dx%d=%d", googoodan, j, googoodan * j);
+			
+		if (!randNum)
 		{
 			SetTextColor(hDC, RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
 		}
-		
-		for (int j{ 1 }; j <= 9; ++j)
-		{
-			wsprintf(str, L"%dx%d=%d", googoodan, j, googoodan * j);
-			
-			if (!randNum)
-			{
-				SetTextColor(hDC, RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
-			}
-			TextOut(hDC, arr[i].x, arr[i].y + j*15, str, lstrlen(str));
-			TextOut(hDC, arr[randWidth - i - 1].x, height + arr[i].y + j * 15, str, lstrlen(str));
-		}
-
-		++googoodan;
+		TextOut(hDC, (uidX + j * 10) % width, (height / googoodan + j*14) % height, str, lstrlen(str));
 	}
 }
