@@ -31,7 +31,7 @@ LPCTSTR lpszWindowName = L"windows program 4";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 void createRandomPos();
-void drawRect(HDC hDC);
+void drawRect(HDC hDC, LPARAM lParam);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -89,7 +89,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
 
-		drawRect(hDC);
+		drawRect(hDC, lParam);
 
 		EndPaint(hWnd, &ps);
 		break;
@@ -114,10 +114,9 @@ void createRandomPos()
 	rectHeight = uidRect(gen) % (height / 2);
 }
 
-void drawRect(HDC hDC)
+void drawRect(HDC hDC, LPARAM lParam)
 {
 	WCHAR str[100];
-
 	int color[4][3];
 	for (int i{}; i < 4; ++i)
 	{
@@ -127,10 +126,12 @@ void drawRect(HDC hDC)
 		}
 	}
 
-	int x = (rectX > width) ? uid(gen) % 10 : rectX;
-	int y = (rectY > height) ? uid(gen) % 10 : rectY;
-	int width = (rectWidth > 30) ? rectWidth : 30;
-	int height = (rectHeight > 30) ? rectHeight : 30;
+	int x = (rectX > LOWORD(lParam)) ? 0 : rectX;
+	int y = (rectY > HIWORD(lParam)) ? 0 : rectY;
+	int width = (rectWidth > LOWORD(lParam)) ? rectWidth : 30;
+	int height = (rectHeight > HIWORD(lParam)) ? rectHeight : 30;
+
+	printf("hi\n");
 
 	for (int j{ x }; j < x + width; j += 10)
 	{
