@@ -26,7 +26,7 @@ LPCTSTR lpszWindowName = L"windows program 2";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 void createRandomPos();
-void drawPos(HDC hDC);
+void drawRect(HDC hDC);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -82,7 +82,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
 
-		drawPos(hDC);
+		drawRect(hDC);
 		// hi
 
 		EndPaint(hWnd, &ps);
@@ -110,7 +110,7 @@ void createRandomPos()
 	std::shuffle(arr, arr + 20, gen);
 }
 
-void drawPos(HDC hDC)
+void drawRect(HDC hDC)
 {
 	for (int i{}; i < 15; ++i)
 	{
