@@ -9,11 +9,13 @@
 #define WIDTH  800
 #define HEIGHT 600
 
+#define MAX_LINE 5
+
 std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(seed);
 std::uniform_int_distribution<int> uid(2, 20);
-std::uniform_int_distribution<int> uidPos(0, 500);
+std::uniform_int_distribution<int> uidPos(0, HEIGHT);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
 int startPos[2]{};
@@ -76,7 +78,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 
 	static SIZE size{};
-	static TCHAR str[5][20];
+	static TCHAR str[MAX_LINE][21];
 	static int line{};
 	static int count{};
 
@@ -89,41 +91,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ShowCaret(hWnd);
 		break;
 	case WM_CHAR:
-		if (wParam == VK_BACK && count > 0)
+		if (wParam == VK_BACK)
 		{
-			count--;
+			if (count > 0)
+			{
+				--count;
+				str[line][count] = '\0';
+			}
+			else if (line > 0)
+			{
+				--line;
+				count = lstrlen(str[line]);
+			}
+
 		}
 		else if (wParam == VK_RETURN)
 		{
-			startPos[1] += 20;
+			if (line < MAX_LINE)
+			{
+				startPos[1] += 20;
+			}		
+		}
+		else if (wParam == 'r')
+		{
+			startPos[0] = uidPos(gen); startPos[1] = uidPos(gen);
+			textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
 		}
 		else
 		{
-			str[line][count] = wParam;
-			++count;
-
-			if (count >= 20)
+			if (count < 20)
+			{
+				str[line][count] = wParam;
+				++count;
+				str[line][count] = '\0';
+			}
+			else if (line < MAX_LINE - 1)
 			{
 				++line;
 				count = 0;
+				str[line][count] = '\0';
 			}
-
-			str[line][count] = '\0';
 		}
 		
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
-		GetTextExtentPoint32(hDC, str[line], lstrlen(str[line]), &size);
+		
 		SetTextColor(hDC, RGB(textColor[0], textColor[1], textColor[2]));
 
 		for (int i{}; i < line + 1; ++i)
 		{
-			TextOut(hDC, startPos[0], startPos[1] + (line * 20), str[i], lstrlen(str[i]));
+			int x{ startPos[0] % WIDTH };
+			int y{ (startPos[1] + (i * 15)) % HEIGHT };
+
+			TextOut(hDC, x, y, str[i], lstrlen(str[i]));
 		}
 		
-		SetCaretPos(startPos[0] + size.cx, startPos[1] + (line * size.cy));
+		GetTextExtentPoint32(hDC, str[line], count, &size);
+		SetCaretPos(startPos[0] + size.cx, startPos[1] + (line * 15));
 		
 		EndPaint(hWnd, &ps);
 		break;
