@@ -5,6 +5,7 @@
 #include <string>
 #include <chrono>
 #include <vector>
+#include <sstream>
 
 #define WIDTH  800
 #define HEIGHT 600
@@ -18,22 +19,31 @@ std::uniform_int_distribution<int> uid(2, 20);
 std::uniform_int_distribution<int> uidPos(0, HEIGHT);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int startPos[2]{};
+int printControl = 0;
 int textColor[3]{};
 
 SIZE size{};
-TCHAR str[21][21];
-int line{};
-int count{};
-RECT rect;
+
+typedef struct
+{
+	int x; int y; int number; int count;
+}Text;
+std::vector<Text> text;
+
+std::wstring str;
+std::wstring buffer;
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
 LPCTSTR lpszWindowName = L"windows program 2-6";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
 void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
+void initialize(HWND& hWnd);
+void translateBuffer();
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -84,8 +94,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) 
 	{
 	case WM_CREATE:
-		CreateCaret(hWnd, NULL, 5, 15);
-		ShowCaret(hWnd);
+		initialize(hWnd);
 		break;
 	case WM_CHAR:
 		inputManager(wParam);
@@ -109,21 +118,89 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void drawPaint(HDC& hDC)
 {
-	// 조정 필요
-	rect.left = 50;
-	rect.top = 40;
-	rect.right = 200;
-	rect.bottom = 120;
-
 	SetBkColor(hDC, RGB(255 - textColor[0], 255 - textColor[1], 255 - textColor[2]));
 	SetTextColor(hDC, RGB(textColor[0], textColor[1], textColor[2]));
-	DrawText(hDC, L"HelloWorld", 10, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
-	// 캐럿 조정 필요
-	GetTextExtentPoint32(hDC, str[line], count, &size);
-	SetCaretPos(startPos[0] + size.cx, startPos[1] + (line * 15));
+	TextOut(hDC, 0, 0, buffer.c_str(), (int)buffer.size());
+	GetTextExtentPoint32W(hDC, buffer.c_str(), (int)buffer.size(), &size);
+	SetCaretPos(size.cx, 0);
+
+	if (text.empty()) return;
+
+	int startIdx = printControl ? 0 : (int)text.size() - 1;
+
+	for (int i = startIdx; i < (int)text.size(); ++i)
+	{
+		str.clear();
+		for (int k = 0; k < text[i].count; ++k)
+		{
+			str += std::to_wstring(text[i].number);
+		}
+
+		SIZE sz;
+		GetTextExtentPoint32W(hDC, str.c_str(), (int)str.size(), &sz);
+
+		for (int k = 0; k < text[i].count; ++k)
+		{
+			RECT r;
+			r.left = text[i].x;                 
+			r.top = text[i].y + (k * sz.cy);    
+			r.right = r.left + sz.cx;
+			r.bottom = r.top + sz.cy;
+
+			DrawText(hDC, str.c_str(), -1, &r, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		}
+	}
+}
+
+void initialize(HWND& hWnd)
+{
+	textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
+	CreateCaret(hWnd, NULL, 5, 15);
+	ShowCaret(hWnd);
+}
+
+void translateBuffer()
+{
+	std::wstringstream wss(buffer);
+	int x{}, y{}, n{}, c{};
+
+	if (wss >> x >> y >> n >> c)
+	{
+		text.push_back(Text{ x,y,n,c });
+	}
+	buffer.clear();
 }
 
 void inputManager(WPARAM& wParam)
 {
+	switch (wParam)
+	{
+	case '0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':case'8':case'9':
+		buffer += wParam;
+		break;
+	case VK_BACK:
+		if (buffer.size() > 0)
+		{
+			buffer.erase(buffer.end() - 1);
+		}
+		break;
+	case VK_SPACE:
+		buffer += ' ';
+		break;
+	case VK_RETURN:
+		translateBuffer();
+		break;
+	case 'a':
+		printControl = (printControl + 1) % 2;
+		break;
+	case 'r':
+		text.clear();
+		buffer.clear();
+		textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
+		break;
+	case 'q':
+		exit(0);
+		break;
+	}
 }
