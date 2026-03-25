@@ -10,7 +10,7 @@
 #define WIDTH  800
 #define HEIGHT 600
 
-#define MAX_LINE 20
+#define MAX_LINE 10
 
 std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -19,30 +19,23 @@ std::uniform_int_distribution<int> uid(2, 20);
 std::uniform_int_distribution<int> uidPos(0, HEIGHT);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int printControl = 0;
 int textColor[3]{};
 
 SIZE size{};
 
-typedef struct
-{
-	int x; int y; int number; int count;
-}Text;
-std::vector<Text> text;
-
 std::wstring str;
-std::wstring buffer;
+std::wstring buffer[10]{};
+int bufferIdx{};
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
-LPCTSTR lpszWindowName = L"windows program 2-6";
+LPCTSTR lpszWindowName = L"windows program 2-7";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
-void translateBuffer();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -118,89 +111,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void drawPaint(HDC& hDC)
 {
-	SetBkColor(hDC, RGB(255 - textColor[0], 255 - textColor[1], 255 - textColor[2]));
 	SetTextColor(hDC, RGB(textColor[0], textColor[1], textColor[2]));
 
-	TextOut(hDC, 0, 0, buffer.c_str(), (int)buffer.size());
-	GetTextExtentPoint32W(hDC, buffer.c_str(), (int)buffer.size(), &size);
-	SetCaretPos(size.cx, 0);
-
-	if (text.empty()) return;
-
-	int startIdx = printControl ? 0 : (int)text.size() - 1;
-
-	for (int i = startIdx; i < (int)text.size(); ++i)
+	int y{};
+	GetTextExtentPoint32W(hDC, L"L", 1, &size);
+	for (int i{}; i < MAX_LINE; ++i, y += size.cy)
 	{
-		str.clear();
-		for (int k = 0; k < text[i].count; ++k)
-		{
-			str += std::to_wstring(text[i].number);
-		}
-
-		SIZE sz;
-		GetTextExtentPoint32W(hDC, str.c_str(), (int)str.size(), &sz);
-
-		for (int k = 0; k < text[i].count; ++k)
-		{
-			RECT r;
-			r.left = text[i].x;                 
-			r.top = text[i].y + (k * sz.cy);    
-			r.right = r.left + sz.cx;
-			r.bottom = r.top + sz.cy;
-
-			DrawText(hDC, str.c_str(), -1, &r, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-		}
+		TextOut(hDC, 0, y, buffer[i].data(), buffer[i].size());
 	}
+
+	SetCaretPos(size.cx, size.cy * bufferIdx);
 }
 
 void initialize(HWND& hWnd)
 {
-	textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
 	CreateCaret(hWnd, NULL, 5, 15);
 	ShowCaret(hWnd);
-}
-
-void translateBuffer()
-{
-	std::wstringstream wss(buffer);
-	int x{}, y{}, n{}, c{};
-
-	if (wss >> x >> y >> n >> c)
-	{
-		text.push_back(Text{ x,y,n,c });
-	}
-	buffer.clear();
 }
 
 void inputManager(WPARAM& wParam)
 {
 	switch (wParam)
-	{
-	case '0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':case'8':case'9':
-		buffer += wParam;
+	{	
+	case VK_ESCAPE:
+		for (int i{}; i < 10; ++i)
+		{
+			buffer[i].clear();
+		}
+		bufferIdx = 0;
 		break;
 	case VK_BACK:
-		if (buffer.size() > 0)
+		if (!buffer[bufferIdx].empty())
 		{
-			buffer.erase(buffer.end() - 1);
+			buffer[bufferIdx].pop_back();
+		}
+		else if (bufferIdx > 0)
+		{
+			--bufferIdx;
 		}
 		break;
-	case VK_SPACE:
-		buffer += ' ';
-		break;
 	case VK_RETURN:
-		translateBuffer();
-		break;
-	case 'a':
-		printControl = (printControl + 1) % 2;
-		break;
-	case 'r':
-		text.clear();
-		buffer.clear();
-		textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
+		bufferIdx = (bufferIdx + 1) % MAX_LINE;
 		break;
 	case 'q':
 		exit(0);
+		break;
+	default:
+		if (buffer[bufferIdx].size() < 30)
+		{
+			buffer[bufferIdx] += wParam;
+		}
+		else
+		{
+			++bufferIdx;
+			if (bufferIdx == MAX_LINE)
+			{
+				bufferIdx = 0;
+			}
+			buffer[bufferIdx] += wParam;
+		}
 		break;
 	}
 }
