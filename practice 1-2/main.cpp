@@ -6,32 +6,27 @@
 #include <chrono>
 #include <vector>
 
-#define WIDTH  1200
+#define WIDTH  800
 #define HEIGHT 600
 
 std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(seed);
 std::uniform_int_distribution<int> uid(2, 20);
-std::uniform_int_distribution<int> uidChar('A', 'Z');
+std::uniform_int_distribution<int> uidPos(0, 500);
 std::uniform_int_distribution<int> uidColor(0, 255);
-std::uniform_int_distribution<int> uidRect(0, 999);
 
-int height;
-int width;
-
-int rectWidth;
-int rectHeight;
-int rectX;
-int rectY;
+int startPos[2]{};
+int textColor[3]{};
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
-LPCTSTR lpszWindowName = L"windows program 4";
+LPCTSTR lpszWindowName = L"windows program 2-5";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-void createRandomPos();
-void drawRect(HDC hDC, LPARAM lParam);
+
+// void createRandomPos();
+// void drawRect(HDC hDC, LPARAM lParam);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -77,79 +72,114 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
 	HDC hDC;
+	PAINTSTRUCT ps;
 
-	switch (uMsg) {
+	static SIZE size{};
+	static TCHAR str[5][20];
+	static int line{};
+	static int count{};
+
+	switch (uMsg) 
+	{
 	case WM_CREATE:
-		width = LOWORD(lParam);
-		height = HIWORD(lParam);
-		createRandomPos();
+		startPos[0] = uidPos(gen); startPos[1] = uidPos(gen);
+		textColor[0] = uidColor(gen); textColor[1] = uidColor(gen); textColor[2] = uidColor(gen);
+		CreateCaret(hWnd, NULL, 5, 15);
+		ShowCaret(hWnd);
+		break;
+	case WM_CHAR:
+		if (wParam == VK_BACK && count > 0)
+		{
+			count--;
+		}
+		else if (wParam == VK_RETURN)
+		{
+			startPos[1] += 20;
+		}
+		else
+		{
+			str[line][count] = wParam;
+			++count;
+
+			if (count >= 20)
+			{
+				++line;
+				count = 0;
+			}
+
+			str[line][count] = '\0';
+		}
+		
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
+		GetTextExtentPoint32(hDC, str[line], lstrlen(str[line]), &size);
+		SetTextColor(hDC, RGB(textColor[0], textColor[1], textColor[2]));
 
-		drawRect(hDC, lParam);
-
+		for (int i{}; i < line + 1; ++i)
+		{
+			TextOut(hDC, startPos[0], startPos[1] + (line * 20), str[i], lstrlen(str[i]));
+		}
+		
+		SetCaretPos(startPos[0] + size.cx, startPos[1] + (line * size.cy));
+		
 		EndPaint(hWnd, &ps);
 		break;
-	case WM_SIZE:
-		width = LOWORD(lParam);
-		height = HIWORD(lParam);
-		createRandomPos();
-		break;
 	case WM_DESTROY:
+		HideCaret(hWnd);
+		DestroyCaret();
 		PostQuitMessage(0);
 		break;
 	}
-
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void createRandomPos()
-{
-	rectX = uidRect(gen) % width;
-	rectY = uidRect(gen) % (height / 2);
-	rectWidth = uidRect(gen) % (width / 2);
-	rectHeight = uidRect(gen) % (height / 2);
-}
-
-void drawRect(HDC hDC, LPARAM lParam)
-{
-	WCHAR str[100];
-	int color[4][3];
-	for (int i{}; i < 4; ++i)
-	{
-		for (int j{}; j < 3; ++j)
-		{
-			color[i][j] = uidColor(gen);
-		}
-	}
-
-	int x = rectX;
-	int y = rectY;
-	int width = (rectWidth > LOWORD(lParam)) ? rectWidth : 30;
-	int height = (rectHeight > HIWORD(lParam)) ? rectHeight : 30;
-
-	for (int j{ x }; j < x + width; j += 10)
-	{
-		SetTextColor(hDC, RGB(color[0][0], color[0][1], color[0][2]));
-		wsprintf(str, L"%c", (char)(uidChar(gen)));
-		TextOut(hDC, j, y, str, lstrlen(str));
-
-		SetTextColor(hDC, RGB(color[1][0], color[1][1], color[1][2]));
-		wsprintf(str, L"%c", (char)(uidChar(gen)));
-		TextOut(hDC, j, y + height, str, lstrlen(str));
-	}
-
-	for (int j{ y }; j < y + height; j += 14)
-	{
-		SetTextColor(hDC, RGB(color[2][0], color[2][1], color[2][2]));
-		wsprintf(str, L"%c", (char)(uidChar(gen)));
-		TextOut(hDC, x, j, str, lstrlen(str));
-
-		SetTextColor(hDC, RGB(color[3][0], color[3][1], color[3][2]));
-		wsprintf(str, L"%c", (char)(uidChar(gen)));
-		TextOut(hDC, x + width, j, str, lstrlen(str));
-	}
-}
+// void createRandomPos()
+// {
+// 	rectX = uidRect(gen) % width;
+// 	rectY = uidRect(gen) % (height / 2);
+// 	rectWidth = uidRect(gen) % (width / 2);
+// 	rectHeight = uidRect(gen) % (height / 2);
+// }
+// 
+// void drawRect(HDC hDC, LPARAM lParam)
+// {
+// 	WCHAR str[100];
+// 	int color[4][3];
+// 	for (int i{}; i < 4; ++i)
+// 	{
+// 		for (int j{}; j < 3; ++j)
+// 		{
+// 			color[i][j] = uidColor(gen);
+// 		}
+// 	}
+// 
+// 	int x = rectX;
+// 	int y = rectY;
+// 	int width = (rectWidth > LOWORD(lParam)) ? rectWidth : 30;
+// 	int height = (rectHeight > HIWORD(lParam)) ? rectHeight : 30;
+// 
+// 	for (int j{ x }; j < x + width; j += 10)
+// 	{
+// 		SetTextColor(hDC, RGB(color[0][0], color[0][1], color[0][2]));
+// 		wsprintf(str, L"%c", (char)(uidChar(gen)));
+// 		TextOut(hDC, j, y, str, lstrlen(str));
+// 
+// 		SetTextColor(hDC, RGB(color[1][0], color[1][1], color[1][2]));
+// 		wsprintf(str, L"%c", (char)(uidChar(gen)));
+// 		TextOut(hDC, j, y + height, str, lstrlen(str));
+// 	}
+// 
+// 	for (int j{ y }; j < y + height; j += 14)
+// 	{
+// 		SetTextColor(hDC, RGB(color[2][0], color[2][1], color[2][2]));
+// 		wsprintf(str, L"%c", (char)(uidChar(gen)));
+// 		TextOut(hDC, x, j, str, lstrlen(str));
+// 
+// 		SetTextColor(hDC, RGB(color[3][0], color[3][1], color[3][2]));
+// 		wsprintf(str, L"%c", (char)(uidChar(gen)));
+// 		TextOut(hDC, x + width, j, str, lstrlen(str));
+// 	}
+// }
