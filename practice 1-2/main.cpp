@@ -131,8 +131,6 @@ void drawRect(HDC hDC, LPARAM lParam)
 	int width = (rectWidth > LOWORD(lParam)) ? rectWidth : 30;
 	int height = (rectHeight > HIWORD(lParam)) ? rectHeight : 30;
 
-	printf("hi\n");
-
 	for (int j{ x }; j < x + width; j += 10)
 	{
 		SetTextColor(hDC, RGB(color[0][0], color[0][1], color[0][2]));
