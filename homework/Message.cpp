@@ -28,7 +28,7 @@ void Message::OnPaint(HWND hWnd)
 
     for (int i{}; i < MAX_LINE; ++i)
     {
-        int letterCnt = checkLetterCnt(i);
+        int letterCnt = getLetterLength(i);
 
         if (letterCnt != 0)
         {

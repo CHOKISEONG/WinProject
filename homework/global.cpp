@@ -10,7 +10,7 @@ std::uniform_int_distribution<int> uid(2, 20);
 std::uniform_int_distribution<int> uidPos(0, HEIGHT);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int checkLetterCnt(int line)
+int getLetterLength(int line)
 {
     int letterCnt = MAX_LETTER;
 

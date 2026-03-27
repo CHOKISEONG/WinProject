@@ -43,7 +43,7 @@ void KeyHandler::KeyDown(WPARAM wParam)
 
 void KeyHandler::Default(WPARAM wParam)
 {
-	if (!isalnum(wParam)) return;
+	if (!isalnum(wParam) && wParam != ' ') return;
 
 	if (pos.x < MAX_LETTER)
 	{
@@ -75,7 +75,7 @@ void KeyHandler::BackSpace()
 	if (pos.x == 0)
 	{
 		--pos.y;
-		pos.x = checkLetterCnt(pos.y);
+		pos.x = getLetterLength(pos.y);
 	}
 	else
 	{
@@ -99,18 +99,49 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM wParam)
 {
+	if (wParam == VK_DOWN)
+	{
+		pos.y = (pos.y + 1) % MAX_LINE;
+		if (textBuffer[pos.y][pos.x] == NULL)
+		{
+			pos.x = getLetterLength(pos.y);
+		}
+	}
+	else if (wParam == VK_UP)
+	{
+		pos.y = (pos.y + MAX_LINE - 1) % MAX_LINE;
+		if (textBuffer[pos.y][pos.x] == NULL)
+		{
+			pos.x = getLetterLength(pos.y);
+		}
+	}
+	else if (wParam == VK_LEFT)
+	{
+		if (pos.x > 0) --pos.x;
+	}
+	else if (wParam == VK_RIGHT)
+	{
+		if (pos.x < getLetterLength(pos.y)) ++pos.x;
+	}
 }
 
 void KeyHandler::Tab()
 {
+	for (int i{}; i < 4; ++i)
+	{
+		if (getLetterLength(pos.y) < MAX_LETTER)
+			KeyHandler::Default(' ');
+	}
 }
 
 void KeyHandler::Home()
 {
+	pos.x = 0;
 }
 
 void KeyHandler::End()
 {
+	pos.x = getLetterLength(pos.y);
 }
 
 void KeyHandler::Insert()
@@ -123,8 +154,20 @@ void KeyHandler::Del()
 
 void KeyHandler::PgUp()
 {
+	pos.y = (pos.y + MAX_LINE - 3) % MAX_LINE;
+
+	if (textBuffer[pos.y][pos.x] == NULL)
+	{
+		pos.x = getLetterLength(pos.y);
+	}
 }
 
 void KeyHandler::PgDown()
 {
+	pos.y = (pos.y + MAX_LINE + 3) % MAX_LINE;
+
+	if (textBuffer[pos.y][pos.x] == NULL)
+	{
+		pos.x = getLetterLength(pos.y);
+	}
 }

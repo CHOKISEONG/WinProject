@@ -28,5 +28,5 @@ extern std::uniform_int_distribution<int> uidColor;
 void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
-int checkLetterCnt(int line);
+int getLetterLength(int line);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
