@@ -11,6 +11,7 @@
 #define HEIGHT 600
 
 #define MAX_LINE 10
+#define MAX_LETTER 30
 
 std::random_device rd;
 unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -24,8 +25,13 @@ int textColor[3]{};
 SIZE size{};
 
 std::wstring str;
-std::wstring buffer[10]{};
-int bufferIdx{};
+TCHAR buffer[MAX_LINE][MAX_LETTER+1]{};
+
+struct Pos
+{
+	int x; int y;
+};
+Pos pos{};
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
@@ -36,6 +42,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
+
+int checkLetterCnt(int line);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -113,20 +121,48 @@ void drawPaint(HDC& hDC)
 {
 	SetTextColor(hDC, RGB(textColor[0], textColor[1], textColor[2]));
 
-	int y{};
-	GetTextExtentPoint32W(hDC, L"L", 1, &size);
-	for (int i{}; i < MAX_LINE; ++i, y += size.cy)
+	for (int i{}; i < MAX_LINE; ++i)
 	{
-		TextOut(hDC, 0, y, buffer[i].data(), buffer[i].size());
+		int letterCnt = checkLetterCnt(i);
+
+		if (letterCnt != 0)
+		{
+			GetTextExtentPoint32W(hDC, buffer[i], letterCnt, &size);
+			TextOutW(hDC, 0, size.cy * i, buffer[i], letterCnt);
+		}
 	}
 
-	SetCaretPos(size.cx, size.cy * bufferIdx);
+	GetTextExtentPoint32W(hDC, buffer[pos.y], pos.x + 1, &size);
+	SetCaretPos(size.cx - 8, size.cy * pos.y);
 }
 
 void initialize(HWND& hWnd)
 {
-	CreateCaret(hWnd, NULL, 5, 15);
+	for (int i{}; i < MAX_LINE; ++i)
+	{
+		for (int j{}; j < MAX_LETTER; ++j)
+		{
+			buffer[i][j] = NULL;
+		}
+	}
+	pos.x = 0;
+	pos.y = 0;
+	CreateCaret(hWnd, NULL, 3, 15);
 	ShowCaret(hWnd);
+}
+
+int checkLetterCnt(int line)
+{
+	int letterCnt = MAX_LETTER;
+
+	for (int j{ MAX_LETTER - 1 }; j >= 0; --j)
+	{
+		if (buffer[line][j] != NULL)
+			break;
+		--letterCnt;
+	}
+
+	return letterCnt;
 }
 
 void inputManager(WPARAM& wParam)
@@ -134,41 +170,50 @@ void inputManager(WPARAM& wParam)
 	switch (wParam)
 	{	
 	case VK_ESCAPE:
-		for (int i{}; i < 10; ++i)
+		for (int i{}; i < MAX_LINE; ++i)
 		{
-			buffer[i].clear();
+			for (int j{}; j < MAX_LETTER; ++j)
+			{
+				buffer[i][j] = NULL;
+			}
 		}
-		bufferIdx = 0;
+		pos.x = 0;
+		pos.y = 0;
 		break;
 	case VK_BACK:
-		if (!buffer[bufferIdx].empty())
+		if (pos.y > 0 && pos.x == 0)
 		{
-			buffer[bufferIdx].pop_back();
+			--pos.y;
+			pos.x = checkLetterCnt(pos.y);
 		}
-		else if (bufferIdx > 0)
+		else if (pos.x != 0)
 		{
-			--bufferIdx;
+			--pos.x;
 		}
+		buffer[pos.y][pos.x] = NULL;
 		break;
 	case VK_RETURN:
-		bufferIdx = (bufferIdx + 1) % MAX_LINE;
+		pos.y = (pos.y + 1) % MAX_LINE;
+		pos.x = 0;
 		break;
 	case 'q':
 		exit(0);
 		break;
 	default:
-		if (buffer[bufferIdx].size() < 30)
+		if (pos.x < MAX_LETTER)
 		{
-			buffer[bufferIdx] += wParam;
+			buffer[pos.y][pos.x] = wParam;
+			++pos.x;
 		}
 		else
 		{
-			++bufferIdx;
-			if (bufferIdx == MAX_LINE)
+			++pos.y;
+			pos.x = 0;
+			if (pos.y == MAX_LINE)
 			{
-				bufferIdx = 0;
+				pos.y = 0;
 			}
-			buffer[bufferIdx] += wParam;
+			buffer[pos.y][pos.x] = wParam;
 		}
 		break;
 	}
