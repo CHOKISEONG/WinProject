@@ -46,37 +46,23 @@ void KeyHandler::Default(WPARAM wParam)
 	if (!isalnum(wParam) && wParam != ' ') return;
 
 
-	if (pos.x < MAX_LETTER)
+	if (pos.x >= MAX_LETTER)
 	{
-		if (type == LetterType::PUSH)
-		{
-			for (int i{ getLetterLength(pos.y) }; i > pos.x; --i)
-			{
-				textBuffer[pos.y][i] = textBuffer[pos.y][i - 1];
-			}
-		}
-
-		textBuffer[pos.y][pos.x] = wParam;
-		++pos.x;
-	}
-	else
-	{
-		++pos.y;
+		pos.y = (pos.y + 1) % MAX_LINE;
 		pos.x = 0;
-		if (pos.y == MAX_LINE)
-		{
-			pos.y = 0;
-		}
-
-		if (type == LetterType::PUSH)
-		{
-			for (int i{ getLetterLength(pos.y) }; i > pos.x; --i)
-			{
-				textBuffer[pos.y][i] = textBuffer[pos.y][i - 1];
-			}
-		}
-		textBuffer[pos.y][pos.x] = wParam;
 	}
+
+	if (type == LetterType::PUSH)
+	{
+		for (int i{ getLetterLength(pos.y) }; i > pos.x; --i)
+		{
+			textBuffer[pos.y][i] = textBuffer[pos.y][i - 1];
+		}
+	}
+
+	textBuffer[pos.y][pos.x] = wParam;
+	++pos.x;
+	textBuffer[pos.y][MAX_LETTER] = '\0';
 }
 
 void KeyHandler::Enter()
@@ -93,6 +79,7 @@ void KeyHandler::BackSpace()
 	{
 		--pos.y;
 		pos.x = getLetterLength(pos.y);
+		return;
 	}
 
 	if (pos.x == 0) return;
