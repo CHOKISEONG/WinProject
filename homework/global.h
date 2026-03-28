@@ -13,10 +13,19 @@ constexpr int MAX_LETTER = 30;
 // 글자를 입력할 위치
 struct Pos { int x, y; };
 
+// 글자 입력의 타입 ( 덮어쓰기, 밀어내기 )
+enum LetterType
+{
+	OVERWRITE,
+	PUSH
+};
+
 extern TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1];
 extern Pos pos;
+extern LetterType type;
 
-// 랜덤값을 구하기 위해 (선언만)
+
+// 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;
 extern std::mt19937 gen;

@@ -2,6 +2,7 @@
 
 TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1]{};
 Pos pos{};
+LetterType type{ LetterType::OVERWRITE };
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();
