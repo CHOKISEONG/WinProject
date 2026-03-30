@@ -1,6 +1,8 @@
 #include "global.h"
 
 TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1]{};
+PrintType printType{};
+bool isUpper = false;
 Pos pos{};
 LetterType type{ LetterType::OVERWRITE };
 
@@ -23,4 +25,37 @@ int getLetterLength(int line)
     }
 
     return letterCnt;
+}
+
+void addNumberToText(int addNum)
+{
+    TCHAR tmp;
+    for (int i{}; i < MAX_LINE; ++i)
+    {
+        for (int j{}; j < MAX_LETTER; ++j)
+        {
+            tmp = textBuffer[i][j];
+            if (tmp >= L'0' && tmp <= '9')
+            {
+                
+                int num{ (_wtoi(&tmp) + addNum + 10) % 10};
+                std::wstring ws = std::to_wstring(num);
+                textBuffer[i][j] = *ws.c_str();
+            }
+        }
+    }
+}
+
+void shiftLine()
+{
+    TCHAR start[MAX_LETTER + 1];
+    memcpy(start, textBuffer[0], sizeof(TCHAR) * (MAX_LETTER + 1));
+    for (int i{1}; i < MAX_LINE; ++i)
+    {
+        for (int j{}; j < MAX_LETTER; ++j)
+        {
+            textBuffer[i - 1][j] = textBuffer[i][j];
+        }
+    }
+    memcpy(textBuffer[MAX_LINE - 1], start, sizeof(TCHAR) * (MAX_LETTER + 1));
 }

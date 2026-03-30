@@ -29,11 +29,69 @@ void Message::OnPaint(HWND hWnd)
     for (int i{}; i < MAX_LINE; ++i)
     {
         int letterCnt = getLetterLength(i);
-
+        TCHAR buff[99];
         if (letterCnt != 0)
         {
-            GetTextExtentPoint32W(hDC, textBuffer[i], letterCnt, &size);
-            TextOutW(hDC, 0, size.cy * i, textBuffer[i], letterCnt);
+            if (printType.addTapToNum || printType.changeToC || printType.deleteSpace || printType.putInParentheses)
+            {
+                int idx{};
+                if (printType.addTapToNum)
+                {
+                    for (int j{}; j < MAX_LETTER; ++j)
+                    {
+                        if (textBuffer[i][j] >= '0' && textBuffer[i][j] <= '9')
+                        {
+                            buff[idx++] = '*';
+                            buff[idx++] = '*';
+                            buff[idx++] = '*';
+                            buff[idx++] = '*';
+                        }
+                        buff[idx++] = textBuffer[i][j];
+                    }
+                }
+                if (printType.changeToC)
+                {
+                    std::map<TCHAR, int> myMap;
+                    for (int i{}; i < idx; ++i)
+                    {
+                        ++myMap[buff[i]];
+                    }
+                    TCHAR maxChar;
+                    int maxNum{ -1 };
+                    for (const auto& m : myMap)
+                    {
+                        if (m.second > maxNum)
+                        {
+                            maxChar = m.first;
+                            maxNum = m.second;
+                        }
+                    }
+
+                    for (int i{}; i < idx; ++i)
+                    {
+                        if (buff[i] == maxChar)
+                        {
+                            buff[i] = '@';
+                        }
+                    }
+                }
+                if (printType.putInParentheses)
+                {
+
+                }
+                if (printType.deleteSpace)
+                {
+
+                }
+                buff[idx] = '\0';
+                GetTextExtentPoint32W(hDC, buff, idx - 1, &size);
+                TextOutW(hDC, 0, size.cy * i, buff, idx - 1);
+            }
+            else
+            {
+                GetTextExtentPoint32W(hDC, textBuffer[i], letterCnt, &size);
+                TextOutW(hDC, 0, size.cy * i, textBuffer[i], letterCnt);
+            }
         }
     }
 

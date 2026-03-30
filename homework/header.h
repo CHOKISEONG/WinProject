@@ -9,6 +9,7 @@
 #include <chrono>
 #include <vector>
 #include <sstream>
+#include <map>
 
 #include "Message.h"
 #include "KeyHandler.h"

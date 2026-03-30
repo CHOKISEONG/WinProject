@@ -17,10 +17,20 @@ struct Pos { int x, y; };
 enum LetterType
 {
 	OVERWRITE,
-	PUSH,
+	PUSH
 };
 
+struct PrintType
+{
+	bool addTapToNum;
+	bool putInParentheses;
+	bool deleteSpace;
+	bool changeToC;
+};
+extern PrintType printType;
+
 extern TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1];
+extern bool isUpper;
 extern Pos pos;
 extern LetterType type;
 
@@ -38,4 +48,6 @@ void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
 int getLetterLength(int line);
+void addNumberToText(int addNum);
+void shiftLine();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
