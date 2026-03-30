@@ -17,7 +17,7 @@ struct Pos { int x, y; };
 enum LetterType
 {
 	OVERWRITE,
-	PUSH
+	PUSH,
 };
 
 extern TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1];
