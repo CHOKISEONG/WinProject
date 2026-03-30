@@ -138,17 +138,19 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM wParam)
 {
-	if (wParam == VK_DOWN)
+	int maxLine{ getMaxLine() };
+
+	if (wParam == VK_DOWN && pos.y < maxLine-1)
 	{
-		pos.y = (pos.y + 1) % MAX_LINE;
+		++pos.y;
 		if (textBuffer[pos.y][pos.x] == NULL)
 		{
 			pos.x = getLetterLength(pos.y);
 		}
 	}
-	else if (wParam == VK_UP)
+	else if (wParam == VK_UP && pos.y > 0)
 	{
-		pos.y = (pos.y + MAX_LINE - 1) % MAX_LINE;
+		--pos.y;
 		if (textBuffer[pos.y][pos.x] == NULL)
 		{
 			pos.x = getLetterLength(pos.y);
@@ -156,11 +158,13 @@ void KeyHandler::Arrow(WPARAM wParam)
 	}
 	else if (wParam == VK_LEFT)
 	{
-		if (pos.x > 0) --pos.x;
+		if (pos.x > 0)
+			--pos.x;
 	}
 	else if (wParam == VK_RIGHT)
 	{
-		if (pos.x < getLetterLength(pos.y)) ++pos.x;
+		if (textBuffer[pos.y][pos.x+1] != NULL)
+			pos.x = (pos.x + 1 + MAX_LETTER) % MAX_LETTER;
 	}
 }
 

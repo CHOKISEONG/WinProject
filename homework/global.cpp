@@ -1,6 +1,7 @@
 #include "global.h"
 
 TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1]{};
+int curMaxLine{ 1 };
 PrintType printType{};
 bool isUpper = false;
 Pos pos{};
@@ -25,6 +26,19 @@ int getLetterLength(int line, TCHAR* textBuff, int num)
     }
 
     return letterCnt;
+}
+
+int getMaxLine()
+{
+    for (int i{}; i < MAX_LINE; ++i)
+    {
+        if (getLetterLength(0, textBuffer[i], MAX_LETTER) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 void addNumberToText(int addNum)

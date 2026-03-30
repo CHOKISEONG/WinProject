@@ -29,26 +29,36 @@ void Message::OnPaint(HWND hWnd)
     for (int i{}; i < MAX_LINE; ++i)
     {
         int letterCnt = getLetterLength(i, textBuffer[i]);
-        TCHAR buff[99];
+
+        TCHAR buff[256]{};
+
         if (letterCnt != 0)
         {
             if (printType.addTapToNum || printType.changeToC || printType.deleteSpace || printType.putInParentheses)
             {
                 int idx{};
+                for (int j{}; j < MAX_LETTER && textBuffer[i][j] != NULL && idx < 98; ++j)
+                {
+                    buff[idx++] = textBuffer[i][j];
+                }
+                buff[idx] = NULL;
+
                 if (printType.addTapToNum)
                 {
+                    int out{};
                     for (int j{}; j < MAX_LETTER; ++j)
                     {
                         if (textBuffer[i][j] >= '0' && textBuffer[i][j] <= '9')
                         {
-                            buff[idx++] = '*';
-                            buff[idx++] = '*';
-                            buff[idx++] = '*';
-                            buff[idx++] = '*';
+                            buff[out++] = '*';
+                            buff[out++] = '*';
+                            buff[out++] = '*';
+                            buff[out++] = '*';
                         }
-                        buff[idx++] = textBuffer[i][j];
+                        buff[out++] = textBuffer[i][j];
                     }
                 }
+                idx = getLetterLength(0, buff, 256);
                 if (printType.changeToC)
                 {
                     std::map<TCHAR, int> myMap;
@@ -56,36 +66,82 @@ void Message::OnPaint(HWND hWnd)
                     {
                         ++myMap[buff[i]];
                     }
-                    TCHAR maxChar;
-                    int maxNum{ -1 };
-                    for (const auto& m : myMap)
-                    {
-                        if (m.second > maxNum)
-                        {
-                            maxChar = m.first;
-                            maxNum = m.second;
-                        }
-                    }
 
-                    for (int i{}; i < idx; ++i)
+                    auto it = std::max_element(myMap.begin(), myMap.end(),
+                        [](const auto& a, const auto& b) {
+                            return a.second < b.second;
+                        });
+
+                    for (int k{}; k < idx; ++k)
                     {
-                        if (buff[i] == maxChar)
+                        if (buff[k] == it->first)
                         {
-                            buff[i] = '@';
+                            buff[k] = L'@';
                         }
                     }
                 }
+                idx = getLetterLength(0, buff, 256);
                 if (printType.putInParentheses)
                 {
+                    int out{};
+                    bool bracketOn{ false };
 
+                    for (int i{}; i < idx; ++i, ++out)
+                    {
+                        if (buff[out] != ' ')
+                        {
+                            if (!bracketOn)
+                            {
+                                bracketOn = true;
+                                for (int j{ 255 }; j > out; --j)
+                                {
+                                    buff[j] = buff[j - 1];
+                                }
+                                buff[out++] = '(';
+                            }
+
+                            buff[out] = toupper(buff[out]);
+                        }
+                        else if (buff[out] == ' ')
+                        {
+                            if (bracketOn)
+                            {
+                                bracketOn = false;
+                                for (int j{ 255 }; j > out; --j)
+                                {
+                                    buff[j] = buff[j - 1];
+                                }
+                                buff[out++] = ')';
+                            }
+                        }
+                    }
+
+                    idx = getLetterLength(0, buff, 256);
+                    if (bracketOn)
+                        buff[idx] = ')';
                 }
+
+                idx = getLetterLength(0, buff, 256);
                 if (printType.deleteSpace)
                 {
-
+                    for (int i{}; i < idx; ++i)
+                    {
+                        if (buff[i] == ' ')
+                        {
+                            for (int j{ i }; j < 255; ++j)
+                            {
+                                buff[j] = buff[j + 1];
+                            }
+                            --i;
+                        }
+                        else
+                        {
+                            buff[i] = tolower(buff[i]);
+                        }
+                    }
                 }
-                
-                // 뒤에 불필요한 문자도 보이는 문제 발생
-                idx = getLetterLength(0, buff, 99);
+
+                idx = getLetterLength(0, buff, 256);
                 GetTextExtentPoint32W(hDC, buff, idx, &size);
                 TextOutW(hDC, 0, size.cy * i, buff, idx);
             }
@@ -97,8 +153,10 @@ void Message::OnPaint(HWND hWnd)
         }
     }
 
-    GetTextExtentPoint32W(hDC, textBuffer[pos.y], pos.x + 1, &size);
-    SetCaretPos(size.cx - 8, size.cy * pos.y);
+    GetTextExtentPoint32W(hDC, textBuffer[pos.y], pos.x, &size);
+    int x{ size.cx };
+    if (x < 0) x = 0;
+    SetCaretPos(x, 16 * pos.y);
 
     EndPaint(hWnd, &ps);
 }

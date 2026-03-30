@@ -30,6 +30,7 @@ struct PrintType
 extern PrintType printType;
 
 extern TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1];
+extern int curMaxLine;
 extern bool isUpper;
 extern Pos pos;
 extern LetterType type;
@@ -48,6 +49,7 @@ void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
 int getLetterLength(int line, TCHAR* textBuff = textBuffer[pos.y], int num = MAX_LETTER);
+int getMaxLine();
 void addNumberToText(int addNum);
 void shiftLine();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
