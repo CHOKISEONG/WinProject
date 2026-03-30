@@ -28,7 +28,7 @@ void Message::OnPaint(HWND hWnd)
 
     for (int i{}; i < MAX_LINE; ++i)
     {
-        int letterCnt = getLetterLength(i);
+        int letterCnt = getLetterLength(i, textBuffer[i]);
         TCHAR buff[99];
         if (letterCnt != 0)
         {
@@ -83,9 +83,11 @@ void Message::OnPaint(HWND hWnd)
                 {
 
                 }
-                buff[idx] = '\0';
-                GetTextExtentPoint32W(hDC, buff, idx - 1, &size);
-                TextOutW(hDC, 0, size.cy * i, buff, idx - 1);
+                
+                // 뒤에 불필요한 문자도 보이는 문제 발생
+                idx = getLetterLength(0, buff, 99);
+                GetTextExtentPoint32W(hDC, buff, idx, &size);
+                TextOutW(hDC, 0, size.cy * i, buff, idx);
             }
             else
             {

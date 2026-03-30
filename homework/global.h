@@ -47,7 +47,7 @@ extern std::uniform_int_distribution<int> uidColor;
 void inputManager(WPARAM& wParam);
 void drawPaint(HDC& hDC);
 void initialize(HWND& hWnd);
-int getLetterLength(int line);
+int getLetterLength(int line, TCHAR* textBuff = textBuffer[pos.y], int num = MAX_LETTER);
 void addNumberToText(int addNum);
 void shiftLine();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);

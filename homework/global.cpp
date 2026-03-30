@@ -13,13 +13,13 @@ std::uniform_int_distribution<int> uid(2, 20);
 std::uniform_int_distribution<int> uidPos(0, HEIGHT);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int getLetterLength(int line)
+int getLetterLength(int line, TCHAR* textBuff, int num)
 {
-    int letterCnt = MAX_LETTER;
+    int letterCnt = num;
 
-    for (int j{ MAX_LETTER - 1 }; j >= 0; --j)
+    for (int j{ num - 1 }; j >= 0; --j)
     {
-        if (textBuffer[line][j] != NULL)
+        if (textBuff[j] != NULL)
             break;
         --letterCnt;
     }

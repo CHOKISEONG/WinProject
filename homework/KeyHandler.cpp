@@ -79,7 +79,7 @@ void KeyHandler::Default(WPARAM wParam)
 
 	if (type == LetterType::PUSH)
 	{
-		for (int i{ getLetterLength(pos.y) }; i > pos.x; --i)
+		for (int i{ getLetterLength(pos.y, textBuffer[pos.y])}; i > pos.x; --i)
 		{
 			textBuffer[pos.y][i] = textBuffer[pos.y][i - 1];
 		}
