@@ -30,15 +30,12 @@ int getLetterLength(int line, TCHAR* textBuff, int num)
 
 int getMaxLine()
 {
-    for (int i{}; i < MAX_LINE; ++i)
+    int lineNum{ MAX_LINE - 1 };
+    for (; lineNum > 0; --lineNum)
     {
-        if (getLetterLength(0, textBuffer[i], MAX_LETTER) == 0)
-        {
-            return i;
-        }
+        if (getLetterLength(0, textBuffer[lineNum], MAX_LETTER) != 0) break;
     }
-
-    return -1;
+    return lineNum;
 }
 
 void addNumberToText(int addNum)

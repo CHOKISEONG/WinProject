@@ -155,7 +155,7 @@ void Message::OnPaint(HWND hWnd)
 
     GetTextExtentPoint32W(hDC, textBuffer[pos.y], pos.x, &size);
     int x{ size.cx };
-    if (x < 0) x = 0;
+    // if (x < 0) x = 0;
     SetCaretPos(x, 16 * pos.y);
 
     EndPaint(hWnd, &ps);

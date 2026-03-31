@@ -140,7 +140,7 @@ void KeyHandler::Arrow(WPARAM wParam)
 {
 	int maxLine{ getMaxLine() };
 
-	if (wParam == VK_DOWN && pos.y < maxLine-1)
+	if (wParam == VK_DOWN && pos.y < maxLine+1)
 	{
 		++pos.y;
 		if (textBuffer[pos.y][pos.x] == NULL)
