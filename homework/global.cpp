@@ -73,4 +73,16 @@ void drawRectangle(HDC hDC, HBRUSH& brush)
 
 void drawCircle(HDC hDC)
 {
+    RECT tmp;
+    for (int i{}; i < 5; ++i)
+    {
+        while (true)
+        {
+            point.x = uid(gen) % (rect2.right - rect2.left) + rect2.left;
+            point.y = uid(gen) % (rect2.bottom - rect2.top) + rect2.top;
+
+            if (!PtInRect(&rect1, point)) break;
+        }
+        Ellipse(hDC, point.x - LENGTH, point.y - LENGTH, point.x + LENGTH, point.y + LENGTH);
+    }
 }
