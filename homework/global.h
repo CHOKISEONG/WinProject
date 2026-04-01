@@ -6,50 +6,28 @@
 constexpr int WIDTH = 800;
 constexpr int HEIGHT = 600;
 
-// 메모장의 줄, 글자의 최대
-constexpr int MAX_LINE = 10;
-constexpr int MAX_LETTER = 30;
+constexpr int LENGTH = 5;
 
-// 글자를 입력할 위치
-struct Pos { int x, y; };
+// 색깔
+struct Color { unsigned int r, g,  b; };
 
-// 글자 입력의 타입 ( 덮어쓰기, 밀어내기 )
-enum LetterType
-{
-	OVERWRITE,
-	PUSH
-};
-
-struct PrintType
-{
-	bool addTapToNum;
-	bool putInParentheses;
-	bool deleteSpace;
-	bool changeToC;
-};
-extern PrintType printType;
-
-extern TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1];
-extern int curMaxLine;
-extern bool isUpper;
-extern Pos pos;
-extern LetterType type;
-
+extern RECT rect1, rect2;
+extern LPRECT rect3;
+extern POINT point;
+extern unsigned int rect1Color, rect2Color;
+extern Color triColor, rectColor, circleColor;
 
 // 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;
 extern std::mt19937 gen;
 extern std::uniform_int_distribution<int> uid;
-extern std::uniform_int_distribution<int> uidPos;
 extern std::uniform_int_distribution<int> uidColor;
 
 // 함수 선언부
-void inputManager(WPARAM& wParam);
-void drawPaint(HDC& hDC);
-void initialize(HWND& hWnd);
-int getLetterLength(int line, TCHAR* textBuff = textBuffer[pos.y], int num = MAX_LETTER);
-int getMaxLine();
-void addNumberToText(int addNum);
-void shiftLine();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
+void createRect();
+void drawTriangle(HDC hDC);
+void drawRectangle(HDC hDC, HBRUSH& brush);
+void drawCircle(HDC hDC);

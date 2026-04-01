@@ -1,11 +1,22 @@
-#include "Message.h"
+﻿#include "Message.h"
 
 void Message::OnCreate(HWND hWnd) 
 {
-    pos.x = 0;
-    pos.y = 0;
-    CreateCaret(hWnd, NULL, 3, 15);
-    ShowCaret(hWnd);
+    createRect();
+    rect1Color = uidColor(gen);
+    rect2Color = uidColor(gen);
+
+    triColor.r = uidColor(gen);
+    triColor.g = uidColor(gen);
+    triColor.b = uidColor(gen);
+
+    rectColor.r = uidColor(gen);
+    rectColor.g = uidColor(gen);
+    rectColor.b = uidColor(gen);
+
+    circleColor.r = uidColor(gen);
+    circleColor.g = uidColor(gen);
+    circleColor.b = uidColor(gen);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -23,147 +34,52 @@ void Message::OnPaint(HWND hWnd)
 {
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(hWnd, &ps);
+    HPEN bkPen, oldPen;
+    HBRUSH hBrush, oldBrush;
 
-    SIZE size{};
+    bkPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+    oldPen = (HPEN)SelectObject(hDC, bkPen);
 
-    for (int i{}; i < MAX_LINE; ++i)
-    {
-        int letterCnt = getLetterLength(i, textBuffer[i]);
+    hBrush = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
+    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
+    FillRect(hDC, &rect1, hBrush);
 
-        TCHAR buff[256]{};
+    hBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
+    FillRect(hDC, &rect2, hBrush);
 
-        if (letterCnt != 0)
-        {
-            if (printType.addTapToNum || printType.changeToC || printType.deleteSpace || printType.putInParentheses)
-            {
-                int idx{};
-                for (int j{}; j < MAX_LETTER && textBuffer[i][j] != NULL && idx < 98; ++j)
-                {
-                    buff[idx++] = textBuffer[i][j];
-                }
-                buff[idx] = NULL;
+    // BOOL PtInRect(CONST RECT * lprc, POINT pt); –특정좌표pt가lprc영역안에있는지검사한다
+    hBrush = CreateSolidBrush(RGB(triColor.r, triColor.g, triColor.b));
+    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
-                if (printType.addTapToNum)
-                {
-                    int out{};
-                    for (int j{}; j < MAX_LETTER; ++j)
-                    {
-                        if (textBuffer[i][j] >= '0' && textBuffer[i][j] <= '9')
-                        {
-                            buff[out++] = '*';
-                            buff[out++] = '*';
-                            buff[out++] = '*';
-                            buff[out++] = '*';
-                        }
-                        buff[out++] = textBuffer[i][j];
-                    }
-                }
-                idx = getLetterLength(0, buff, 256);
-                if (printType.changeToC)
-                {
-                    std::map<TCHAR, int> myMap;
-                    for (int i{}; i < idx; ++i)
-                    {
-                        ++myMap[buff[i]];
-                    }
+    drawTriangle(hDC);
 
-                    auto it = std::max_element(myMap.begin(), myMap.end(),
-                        [](const auto& a, const auto& b) {
-                            return a.second < b.second;
-                        });
+    SelectObject(hDC, oldBrush);
+    DeleteObject(hBrush);
 
-                    for (int k{}; k < idx; ++k)
-                    {
-                        if (buff[k] == it->first)
-                        {
-                            buff[k] = L'@';
-                        }
-                    }
-                }
-                idx = getLetterLength(0, buff, 256);
-                if (printType.putInParentheses)
-                {
-                    int out{};
-                    bool bracketOn{ false };
+    hBrush = CreateSolidBrush(RGB(rectColor.r, rectColor.g, rectColor.b));
+    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
-                    for (int i{}; i < idx; ++i, ++out)
-                    {
-                        if (buff[out] != ' ')
-                        {
-                            if (!bracketOn)
-                            {
-                                bracketOn = true;
-                                for (int j{ 255 }; j > out; --j)
-                                {
-                                    buff[j] = buff[j - 1];
-                                }
-                                buff[out++] = '(';
-                            }
+    drawRectangle(hDC, hBrush);
 
-                            buff[out] = toupper(buff[out]);
-                        }
-                        else if (buff[out] == ' ')
-                        {
-                            if (bracketOn)
-                            {
-                                bracketOn = false;
-                                for (int j{ 255 }; j > out; --j)
-                                {
-                                    buff[j] = buff[j - 1];
-                                }
-                                buff[out++] = ')';
-                            }
-                        }
-                    }
+    SelectObject(hDC, oldBrush);
+    DeleteObject(hBrush);
 
-                    idx = getLetterLength(0, buff, 256);
-                    if (bracketOn)
-                        buff[idx] = ')';
-                }
+    hBrush = CreateSolidBrush(RGB(circleColor.r, circleColor.g, circleColor.b));
+    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
-                idx = getLetterLength(0, buff, 256);
-                if (printType.deleteSpace)
-                {
-                    for (int i{}; i < idx; ++i)
-                    {
-                        if (buff[i] == ' ')
-                        {
-                            for (int j{ i }; j < 255; ++j)
-                            {
-                                buff[j] = buff[j + 1];
-                            }
-                            --i;
-                        }
-                        else
-                        {
-                            buff[i] = tolower(buff[i]);
-                        }
-                    }
-                }
+    drawCircle(hDC);
 
-                idx = getLetterLength(0, buff, 256);
-                GetTextExtentPoint32W(hDC, buff, idx, &size);
-                TextOutW(hDC, 0, size.cy * i, buff, idx);
-            }
-            else
-            {
-                GetTextExtentPoint32W(hDC, textBuffer[i], letterCnt, &size);
-                TextOutW(hDC, 0, size.cy * i, textBuffer[i], letterCnt);
-            }
-        }
-    }
+    SelectObject(hDC, oldBrush);
+    DeleteObject(hBrush);
 
-    GetTextExtentPoint32W(hDC, textBuffer[pos.y], pos.x, &size);
-    int x{ size.cx };
-    // if (x < 0) x = 0;
-    SetCaretPos(x, 16 * pos.y);
+    SelectObject(hDC, oldPen);
+    DeleteObject(bkPen);
 
     EndPaint(hWnd, &ps);
 }
 
 void Message::OnDestroy(HWND hWnd)
 {
-    HideCaret(hWnd);
-    DestroyCaret();
     PostQuitMessage(0);
 }

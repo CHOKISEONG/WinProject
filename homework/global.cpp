@@ -1,72 +1,76 @@
 #include "global.h"
 
-TCHAR textBuffer[MAX_LINE][MAX_LETTER + 1]{};
-int curMaxLine{ 1 };
-PrintType printType{};
-bool isUpper = false;
-Pos pos{};
-LetterType type{ LetterType::OVERWRITE };
+RECT rect1, rect2;
+LPRECT rect3;
+POINT point;
+unsigned int rect1Color, rect2Color;
+Color triColor, rectColor, circleColor;
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(static_cast<std::mt19937::result_type>(seed));
-std::uniform_int_distribution<int> uid(2, 20);
-std::uniform_int_distribution<int> uidPos(0, HEIGHT);
+std::uniform_int_distribution<int> uid(0, 9999);
 std::uniform_int_distribution<int> uidColor(0, 255);
 
-int getLetterLength(int line, TCHAR* textBuff, int num)
+void createRect()
 {
-    int letterCnt = num;
+    rect1.left = 0;
+    rect1.top = 0;
+    rect1.right = uid(gen) % WIDTH;
+    rect1.bottom = uid(gen) % HEIGHT;
 
-    for (int j{ num - 1 }; j >= 0; --j)
-    {
-        if (textBuff[j] != NULL)
-            break;
-        --letterCnt;
-    }
-
-    return letterCnt;
+    rect2.left = uid(gen) % WIDTH;
+    rect2.top = uid(gen) % HEIGHT;
+    rect2.right = WIDTH;
+    rect2.bottom = HEIGHT;
 }
 
-int getMaxLine()
+void drawTriangle(HDC hDC)
 {
-    int lineNum{ MAX_LINE - 1 };
-    for (; lineNum > 0; --lineNum)
+    POINT tmp[3]{};
+    for (int i{}; i < 5; ++i)
     {
-        if (getLetterLength(0, textBuffer[lineNum], MAX_LETTER) != 0) break;
-    }
-    return lineNum;
-}
-
-void addNumberToText(int addNum)
-{
-    TCHAR tmp;
-    for (int i{}; i < MAX_LINE; ++i)
-    {
-        for (int j{}; j < MAX_LETTER; ++j)
+        while (true)
         {
-            tmp = textBuffer[i][j];
-            if (tmp >= L'0' && tmp <= '9')
-            {
-                
-                int num{ (_wtoi(&tmp) + addNum + 10) % 10};
-                std::wstring ws = std::to_wstring(num);
-                textBuffer[i][j] = *ws.c_str();
-            }
+            point.x = uid(gen) % (rect1.right - rect1.left) + rect1.left;
+            point.y = uid(gen) % (rect1.bottom - rect1.top) + rect1.top;
+
+            if (!PtInRect(&rect2, point)) break;
         }
+
+        tmp[0].x = point.x;
+        tmp[0].y = point.y - LENGTH;
+
+        tmp[1].x = point.x - LENGTH;
+        tmp[1].y = point.y + LENGTH;
+
+        tmp[2].x = point.x + LENGTH;
+        tmp[2].y = point.y + LENGTH;
+
+        Polygon(hDC, tmp, 3);
     }
 }
 
-void shiftLine()
+void drawRectangle(HDC hDC, HBRUSH& brush)
 {
-    TCHAR start[MAX_LETTER + 1];
-    memcpy(start, textBuffer[0], sizeof(TCHAR) * (MAX_LETTER + 1));
-    for (int i{1}; i < MAX_LINE; ++i)
+    RECT tmp;
+    for (int i{}; i < 5; ++i)
     {
-        for (int j{}; j < MAX_LETTER; ++j)
+        while (true)
         {
-            textBuffer[i - 1][j] = textBuffer[i][j];
+            point.x = uid(gen) % (rect2.right - rect2.left) + rect2.left;
+            point.y = uid(gen) % (rect2.bottom - rect2.top) + rect2.top;
+
+            if (!PtInRect(&rect1, point)) break;
         }
+        tmp.left = point.x - LENGTH;
+        tmp.top = point.y - LENGTH;
+        tmp.right = point.x + LENGTH;
+        tmp.bottom = point.y + LENGTH;
+        FillRect(hDC, &tmp, brush);
     }
-    memcpy(textBuffer[MAX_LINE - 1], start, sizeof(TCHAR) * (MAX_LETTER + 1));
+}
+
+void drawCircle(HDC hDC)
+{
 }
