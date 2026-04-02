@@ -48,10 +48,43 @@ void addNumberToText(int addNum)
             tmp = textBuffer[i][j];
             if (tmp >= L'0' && tmp <= '9')
             {
+                if (textBuffer[i][j + 1] >= L'0' && textBuffer[i][j + 1] <= L'9') break;
+
+                if (addNum > 0)
+                {
+                    int num{ _wtoi(&tmp) + addNum };
+
+                    if (num == 10)
+                    {
+                        if (j == 0)break;
+                        else
+                        {
+                            std::wstring ws = std::to_wstring(0);
+                            textBuffer[i][j] = *ws.c_str();
+                            ws = std::to_wstring(1);
+                            textBuffer[i][j - 1] = *ws.c_str();
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    int num{ (_wtoi(&tmp) + addNum + 10) % 10};
+
+                    if (num == 9)
+                    {
+                        if (j == 0)break;
+                        else
+                        {
+                            if (textBuffer[i][j - 1] < L'0' && textBuffer[i][j - 1] > L'9') break;
+                            std::wstring ws = std::to_wstring(9);
+                            textBuffer[i][j] = *ws.c_str();
+                            ws = std::to_wstring(textBuffer[i][j - 1] - 1);
+                            textBuffer[i][j - 1] = *ws.c_str();
+                        }
+                    }
+                }
                 
-                int num{ (_wtoi(&tmp) + addNum + 10) % 10};
-                std::wstring ws = std::to_wstring(num);
-                textBuffer[i][j] = *ws.c_str();
             }
         }
     }
