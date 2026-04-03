@@ -164,11 +164,29 @@ void drawMidShape(HDC hDC)
 	else if (shapes[target].type == Shape::Pentagon)
 	{
 		p.resize(5);
+
+		const int length = ws.GetLength();
+
+		for (int i{}; i < 5; ++i)
+		{
+			p[i].x = cos(getRadian(i * 72.0f + 180.f)) * length + ws.WIDTH  / 2;
+			p[i].y = sin(getRadian(i * 72.0f + 180.f)) * length + ws.HEIGHT / 2;
+		}
+
 		Polygon(hDC, p.data(), 5);
 	}
 	else if (shapes[target].type == Shape::Pie)
 	{
 		p.resize(4);
+		p[0].x = shapes[target].point[0].x + ws.WIDTH / 2;
+		p[0].y = shapes[target].point[0].y + ws.HEIGHT / 2;
+		p[1].x = shapes[target].point[1].x + ws.WIDTH / 2;
+		p[1].y = shapes[target].point[1].y + ws.HEIGHT / 2;
+		p[2].x = shapes[target].point[3].x + ws.WIDTH / 2;
+		p[2].y = shapes[target].point[3].y + ws.HEIGHT / 2;
+		p[3].x = shapes[target].point[2].x + ws.WIDTH / 2;
+		p[3].y = shapes[target].point[2].y + ws.HEIGHT / 2;
+
 		Pie(hDC, p[0].x, p[0].y, p[1].x, p[1].y, p[3].x, p[3].y, p[2].x, p[2].y);
 	}
 
