@@ -14,6 +14,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		Message::OnKeyDown(hWnd, wParam);
 		break;
+	case WM_KEYUP:
+		Message::OnKeyUp(hWnd, wParam);
+		break;
 	case WM_CHAR:
 		Message::OnChar(hWnd, wParam);
 		break;

@@ -9,6 +9,8 @@ public:
     // 특수키 처리용
     static void OnKeyDown(HWND hWnd, WPARAM wParam);
 
+    static void OnKeyUp(HWND hWnd, WPARAM wParam);
+
     // 문자를 눌렀을 때
     static void OnChar(HWND hWnd, WPARAM wParam);
 

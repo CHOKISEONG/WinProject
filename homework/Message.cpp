@@ -8,13 +8,26 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 {
-    KeyHandler::KeyDown(wParam);
+    const char key = (char)tolower(wParam);
+
+    if (!isKeyDown[key])
+    {
+        isKeyDown[key] = true;
+        KeyHandler::KeyDown(wParam);
+        InvalidateRect(hWnd, NULL, TRUE);
+    }
+}
+
+void Message::OnKeyUp(HWND hWnd, WPARAM wParam)
+{
+    const char key = (char)tolower((int)wParam);
+    isKeyDown[key] = false;
     InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void Message::OnChar(HWND hWnd, WPARAM wParam) 
 {
-    KeyHandler::Default(wParam);
+    InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void Message::OnPaint(HWND hWnd) 
@@ -23,6 +36,7 @@ void Message::OnPaint(HWND hWnd)
     HDC hDC = BeginPaint(hWnd, &ps);
     
     drawPolygons(hDC);
+    drawMidShape(hDC);
 
     EndPaint(hWnd, &ps);
 }

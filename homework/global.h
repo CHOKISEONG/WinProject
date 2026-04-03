@@ -26,10 +26,9 @@ struct Shape
 {
 	POINT position;
 	POINT* point;
-	Color color;
+	Color color, tmpColor;
 	int pointNum;
 	
-
 	enum
 	{
 		Cirle,
@@ -44,6 +43,8 @@ extern POINT positions[4];
 extern Shape rect;
 extern int midShapeIdx;
 
+extern std::map<char, bool> isKeyDown;
+
 // 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;
@@ -56,5 +57,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 void setPosition();
 void drawPolygons(HDC hDC);
+void drawMidShape(HDC hDC);
 void makePolygons();
 void shapeSwap(Shape& a, Shape& b);

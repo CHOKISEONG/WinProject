@@ -1,8 +1,8 @@
 #include "KeyHandler.h"
 
-void KeyHandler::KeyDown(WPARAM wParam)
+void KeyHandler::KeyDown(WPARAM key)
 {
-	switch (wParam)
+	switch (key)
 	{
 	case VK_ESCAPE:
 		KeyHandler::Esc();
@@ -14,7 +14,7 @@ void KeyHandler::KeyDown(WPARAM wParam)
 		KeyHandler::Enter();
 		break;
 	case VK_UP:case VK_DOWN: case VK_LEFT: case VK_RIGHT:
-		KeyHandler::Arrow(wParam);
+		KeyHandler::Arrow(key);
 		break;
 	case VK_TAB:
 		KeyHandler::Tab();
@@ -62,28 +62,62 @@ void KeyHandler::KeyDown(WPARAM wParam)
 		KeyHandler::F8();
 		break;
 	default:
+		KeyHandler::Default(key);
 		break;
 	}
 }
 
-void KeyHandler::Default(WPARAM wParam)
+void KeyHandler::Default(WPARAM key)
 {
-	if (wParam == 'c')
+	const char _key = (char)tolower(key);
+	if (_key == 'c')
 	{
-		
+		for (int i{}; i < 4; ++i)
+		{
+			if (shapes[i].type == Shape::Cirle)
+			{
+				midShapeIdx = i;
+				break;
+			}
+		}
 	}
-	else if (wParam == 's')
+	else if (_key == 's')
 	{
-		
+		for (int i{}; i < 4; ++i)
+		{
+			if (shapes[i].type == Shape::SandClock)
+			{
+				midShapeIdx = i;
+				break;
+			}
+		}
 	}
-	else if (wParam == 'p')
+	else if (_key == 'p')
 	{
-		
+		for (int i{}; i < 4; ++i)
+		{
+			if (shapes[i].type == Shape::Pentagon)
+			{
+				midShapeIdx = i;
+				break;
+			}
+		}
 	}
-	else if (wParam == 'e')
+	else if (_key == 'e')
 	{
+		for (int i{}; i < 4; ++i)
+		{
+			if (shapes[i].type == Shape::Pie)
+			{
+				midShapeIdx = i;
+				break;
+			}
+		}
+	}
 
-	}
+	shapes[midShapeIdx].tmpColor.r = uidColor(gen);
+	shapes[midShapeIdx].tmpColor.g = uidColor(gen);
+	shapes[midShapeIdx].tmpColor.b = uidColor(gen);
 }
 
 void KeyHandler::Enter()
@@ -100,26 +134,26 @@ void KeyHandler::Esc()
 	
 }
 
-void KeyHandler::Arrow(WPARAM wParam)
+void KeyHandler::Arrow(WPARAM key)
 {
-	if (wParam == VK_UP)
+	if (key == VK_UP)
 	{
 		// 상/하 도형 스왑
 		shapeSwap(shapes[0], shapes[2]);
 	}
-	else if (wParam == VK_DOWN)
+	else if (key == VK_DOWN)
 	{
 		// 좌/우 도형 스왑
 		shapeSwap(shapes[1], shapes[3]);
 	}
-	else if (wParam == VK_LEFT)
+	else if (key == VK_LEFT)
 	{
 		// 반시계방향 회전
 		shapeSwap(shapes[0], shapes[1]);
 		shapeSwap(shapes[1], shapes[2]);
 		shapeSwap(shapes[2], shapes[3]);
 	}
-	else if (wParam == VK_RIGHT)
+	else if (key == VK_RIGHT)
 	{
 		// 시계방향 회전
 		shapeSwap(shapes[0], shapes[3]);

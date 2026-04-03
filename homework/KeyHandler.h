@@ -6,7 +6,7 @@ class KeyHandler
 {
 public:
 	// 입력한 키를 해당하는 함수로 연결
-	static void KeyDown(WPARAM wParam);
+	static void KeyDown(WPARAM key);
 
 	// 일반적인 키들은 여기로
 	static void Default(WPARAM key);
@@ -15,7 +15,7 @@ public:
 	static void Enter();
 	static void BackSpace();
 	static void Esc();
-	static void Arrow(WPARAM wParam);
+	static void Arrow(WPARAM key);
 	static void Tab();
 	static void Home();
 	static void End();
