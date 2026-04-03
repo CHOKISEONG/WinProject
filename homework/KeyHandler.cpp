@@ -68,26 +68,26 @@ void KeyHandler::KeyDown(WPARAM wParam)
 
 void KeyHandler::Default(WPARAM wParam)
 {
-	if (wParam == '1')
+	if (wParam == 'c')
 	{
-		makeTriangle();
+		
 	}
-	else if (wParam == '2')
+	else if (wParam == 's')
 	{
-		makeRectangle();
+		
 	}
-	else if (wParam == '3')
+	else if (wParam == 'p')
 	{
-		makeCircle();
+		
+	}
+	else if (wParam == 'e')
+	{
+
 	}
 }
 
 void KeyHandler::Enter()
 {
-	createRect();
-	makeTriangle();
-	makeRectangle();
-	makeCircle();
 }
 
 void KeyHandler::BackSpace()
@@ -102,7 +102,22 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM wParam)
 {
-	
+	if (wParam == VK_UP)
+	{
+		// 상/하 도형 스왑
+	}
+	else if (wParam == VK_DOWN)
+	{
+		// 좌/우 도형 스왑
+	}
+	else if (wParam == VK_LEFT)
+	{
+		// 반시계방향 회전
+	}
+	else if (wParam == VK_RIGHT)
+	{
+		// 시계방향 회전
+	}
 }
 
 void KeyHandler::Tab()
