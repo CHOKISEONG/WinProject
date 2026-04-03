@@ -105,19 +105,29 @@ void KeyHandler::Arrow(WPARAM wParam)
 	if (wParam == VK_UP)
 	{
 		// 상/하 도형 스왑
+		shapeSwap(shapes[0], shapes[2]);
 	}
 	else if (wParam == VK_DOWN)
 	{
 		// 좌/우 도형 스왑
+		shapeSwap(shapes[1], shapes[3]);
 	}
 	else if (wParam == VK_LEFT)
 	{
 		// 반시계방향 회전
+		shapeSwap(shapes[0], shapes[1]);
+		shapeSwap(shapes[1], shapes[2]);
+		shapeSwap(shapes[2], shapes[3]);
 	}
 	else if (wParam == VK_RIGHT)
 	{
 		// 시계방향 회전
+		shapeSwap(shapes[0], shapes[3]);
+		shapeSwap(shapes[3], shapes[2]);
+		shapeSwap(shapes[2], shapes[1]);
 	}
+
+	midShapeIdx = 0;
 }
 
 void KeyHandler::Tab()

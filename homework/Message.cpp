@@ -2,7 +2,8 @@
 
 void Message::OnCreate(HWND hWnd) 
 {
-    
+    setPosition();
+    makePolygons();
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -20,15 +21,8 @@ void Message::OnPaint(HWND hWnd)
 {
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(hWnd, &ps);
-    HPEN hPen, oldPen;
-    HBRUSH hBrush, oldBrush;
-
-    hPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-    oldPen = (HPEN)SelectObject(hDC, hPen);
-
-
-    SelectObject(hDC, oldPen);
-    DeleteObject(hPen);
+    
+    drawPolygons(hDC);
 
     EndPaint(hWnd, &ps);
 }
