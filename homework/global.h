@@ -2,6 +2,9 @@
 
 #include "header.h"
 
+constexpr int boardRow = 40;
+constexpr int boardCol = 40;
+
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
 
@@ -14,7 +17,7 @@ public:
 
 	int GetLength() const
 	{
-		return (WIDTH > HEIGHT) ? WIDTH / 12 : HEIGHT / 12;
+		return (WIDTH > HEIGHT) ? WIDTH / 40 : HEIGHT / 40;
 	}
 };
 extern SZ ws;
@@ -34,14 +37,15 @@ struct Shape
 		Cirle,
 		SandClock,
 		Pentagon,
-		Pie
+		Pie,
+		Rect
 	} type;
 };
 
 extern std::vector<Shape> shapes;
 extern POINT positions[4];
-extern Shape rect;
-extern int midShapeIdx;
+
+extern std::vector<Shape> board;
 
 extern std::map<char, bool> isKeyDown;
 
@@ -56,7 +60,10 @@ extern std::uniform_int_distribution<int> uidColor;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 void setPosition();
-void drawPolygons(HDC hDC);
-void drawMidShape(HDC hDC);
+void makeBoard();
 void makePolygons();
+
+void drawPolygons(HDC hDC);
+void drawBoard(HDC hDC);
+
 void shapeSwap(Shape& a, Shape& b);

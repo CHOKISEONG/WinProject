@@ -2,6 +2,7 @@
 
 void Message::OnCreate(HWND hWnd) 
 {
+    makeBoard();
     setPosition();
     makePolygons();
 }
@@ -35,8 +36,8 @@ void Message::OnPaint(HWND hWnd)
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(hWnd, &ps);
     
+    drawBoard(hDC);
     drawPolygons(hDC);
-    drawMidShape(hDC);
 
     EndPaint(hWnd, &ps);
 }
