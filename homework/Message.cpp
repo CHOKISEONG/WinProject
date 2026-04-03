@@ -3,20 +3,9 @@
 void Message::OnCreate(HWND hWnd) 
 {
     createRect();
-    rect1Color = uidColor(gen);
-    rect2Color = uidColor(gen);
-
-    triColor.r = uidColor(gen);
-    triColor.g = uidColor(gen);
-    triColor.b = uidColor(gen);
-
-    rectColor.r = uidColor(gen);
-    rectColor.g = uidColor(gen);
-    rectColor.b = uidColor(gen);
-
-    circleColor.r = uidColor(gen);
-    circleColor.g = uidColor(gen);
-    circleColor.b = uidColor(gen);
+    makeTriangle();
+    makeRectangle();
+    makeCircle();
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -40,43 +29,32 @@ void Message::OnPaint(HWND hWnd)
     bkPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
     oldPen = (HPEN)SelectObject(hDC, bkPen);
 
+    // 사각형 1 생성
     hBrush = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
     oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
     FillRect(hDC, &rect1, hBrush);
 
+    // 사각형 2 생성
     hBrush = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
     oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
     FillRect(hDC, &rect2, hBrush);
 
-    // BOOL PtInRect(CONST RECT * lprc, POINT pt); –특정좌표pt가lprc영역안에있는지검사한다
-    hBrush = CreateSolidBrush(RGB(triColor.r, triColor.g, triColor.b));
-    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
-
+    // 도형 생성
     drawTriangle(hDC);
-
-    SelectObject(hDC, oldBrush);
-    DeleteObject(hBrush);
-
-    hBrush = CreateSolidBrush(RGB(rectColor.r, rectColor.g, rectColor.b));
-    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
-
     drawRectangle(hDC, hBrush);
-
-    SelectObject(hDC, oldBrush);
-    DeleteObject(hBrush);
-
-    hBrush = CreateSolidBrush(RGB(circleColor.r, circleColor.g, circleColor.b));
-    oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
-
     drawCircle(hDC);
-
-    SelectObject(hDC, oldBrush);
-    DeleteObject(hBrush);
 
     SelectObject(hDC, oldPen);
     DeleteObject(bkPen);
 
     EndPaint(hWnd, &ps);
+}
+
+void Message::OnSize(HWND hWnd, int width, int height)
+{
+    ws.WIDTH = width;
+    ws.HEIGHT = height;
+    InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void Message::OnDestroy(HWND hWnd)

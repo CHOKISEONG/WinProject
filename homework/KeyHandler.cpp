@@ -70,20 +70,24 @@ void KeyHandler::Default(WPARAM wParam)
 {
 	if (wParam == '1')
 	{
-
+		makeTriangle();
 	}
 	else if (wParam == '2')
 	{
-
+		makeRectangle();
 	}
 	else if (wParam == '3')
 	{
-
+		makeCircle();
 	}
 }
 
 void KeyHandler::Enter()
 {
+	createRect();
+	makeTriangle();
+	makeRectangle();
+	makeCircle();
 }
 
 void KeyHandler::BackSpace()

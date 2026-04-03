@@ -3,8 +3,13 @@
 #include "header.h"
 
 // 윈도우의 가로, 세로 크기
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+class SZ
+{
+public:
+	int WIDTH = 800;
+	int HEIGHT = 600;
+};
+extern SZ ws;
 
 constexpr int LENGTH = 5;
 
@@ -17,6 +22,8 @@ extern POINT point;
 extern unsigned int rect1Color, rect2Color;
 extern Color triColor, rectColor, circleColor;
 
+extern std::vector<POINT*> triangles, rects, circles;
+
 // 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;
@@ -28,6 +35,11 @@ extern std::uniform_int_distribution<int> uidColor;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 void createRect();
+
+void makeTriangle();
+void makeRectangle();
+void makeCircle();
+
 void drawTriangle(HDC hDC);
 void drawRectangle(HDC hDC, HBRUSH& brush);
 void drawCircle(HDC hDC);
