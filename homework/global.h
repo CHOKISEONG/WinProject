@@ -32,6 +32,8 @@ struct Shape
 	Color color, tmpColor;
 	int pointNum;
 	
+	int resizeNum;
+
 	// 그려지는 도형의 타입
 	enum Type
 	{
@@ -43,6 +45,7 @@ struct Shape
 		Pentagon,
 		Pie,
 		Rect,
+		Star
 	} type;
 
 	// 타일의 속성

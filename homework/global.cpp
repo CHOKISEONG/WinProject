@@ -51,16 +51,16 @@ void setPosition()
 	boards[boardCol / 2][boardRow - 1].tileType = Shape::Goal;
 	int rand = uid(gen) % 4;
 	if (rand == 0) boards[boardCol / 2][boardRow - 1].type = Shape::Triangle;
-	else if (rand == 1) boards[boardCol / 2][boardRow - 1].type = Shape::Rect;
+	else if (rand == 1) boards[boardCol / 2][boardRow - 1].type = Shape::Pie;
 	else if (rand == 2) boards[boardCol / 2][boardRow - 1].type = Shape::Cirle;
-	else if (rand == 3) boards[boardCol / 2][boardRow - 1].type = Shape::Ellipse;
+	else if (rand == 3) boards[boardCol / 2][boardRow - 1].type = Shape::Star;
 	boards[boardCol / 2][boardRow - 1].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 
 	// 특수칸 설정
-	makeTile(Shape::Obstacle	, uid(gen) % 5 + 4);
-	makeTile(Shape::Resize		, uid(gen) % 5 + 4);
-	makeTile(Shape::ReShape		, uid(gen) % 5 + 4);
-	makeTile(Shape::ChangeColor	, uid(gen) % 5 + 4);
+	makeTile(Shape::Obstacle	, uid(gen) % 5 + 30);
+	makeTile(Shape::Resize		, uid(gen) % 5 + 10);
+	makeTile(Shape::ReShape		, uid(gen) % 5 + 10);
+	makeTile(Shape::ChangeColor	, uid(gen) % 5 + 10);
 }
 
 void makeTile(Shape::TileType type, const int tileNum)
@@ -83,20 +83,31 @@ void makeTile(Shape::TileType type, const int tileNum)
 		{
 			boards[col][row].color = boards[boardCol / 2][boardRow - 1].color;
 		}
+		else if (type == Shape::Obstacle)
+		{
+			boards[col][row].setColor(255, 0, 0);
+		}
 		else
 		{
 			boards[col][row].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		}
 
-		if (type == Shape::Obstacle || type == Shape::ReShape || type == Shape::Resize)
+		// 도형 설정
+		if (type == Shape::Obstacle || type == Shape::Resize || type == Shape::TileType::ChangeColor)
 			boards[col][row].type = Shape::Rect;
-		else
+		else if (type == Shape::ReShape)
 		{
 			int rand = uid(gen) % 4;
 			if (rand == 0) boards[col][row].type = Shape::Triangle;
-			else if (rand == 1) boards[col][row].type = Shape::Rect;
+			else if (rand == 1) boards[col][row].type = Shape::Pie;
 			else if (rand == 2) boards[col][row].type = Shape::Cirle;
-			else if (rand == 3) boards[col][row].type = Shape::Ellipse;
+			else if (rand == 3) boards[col][row].type = Shape::Star;
+		}
+
+		// ReSize의 경우 숫자 설정
+		if (type == Shape::Resize)
+		{
+			boards[col][row].resizeNum = uid(gen) % 7 - 3;
 		}
 	}
 }
@@ -124,7 +135,7 @@ void makePolygons()
 
 				s.pointNum = 2;
 			}
-			if (type == Shape::Ellipse)
+			else if (type == Shape::Ellipse)
 			{
 				s.point = new POINT[2];
 				s.point[0].x = -length;
@@ -206,6 +217,26 @@ void makePolygons()
 
 				s.pointNum = 4;
 			}
+			else if (type == Shape::Star)
+			{
+				s.point = new POINT[10];
+
+				for (int i{}; i < 10; ++i)
+				{
+					if (i % 2)
+					{
+						s.point[i].x = cos(getRadian(i * 36.0f)) * length / 2;
+						s.point[i].y = sin(getRadian(i * 36.0f)) * length / 2;
+					}
+					else
+					{
+						s.point[i].x = cos(getRadian(i * 36.0f)) * length;
+						s.point[i].y = sin(getRadian(i * 36.0f)) * length;
+					}
+				}
+
+				s.pointNum = 10;
+			}
 		}
 	}
 }
@@ -252,8 +283,8 @@ void drawPolygons(HDC hDC)
 		{
 			if (s.type == Shape::Type::None) continue;
 
-			//hPen = CreatePen(PS_SOLID, 1, RGB(255 - s.color.r, 255 - s.color.g, 255 - s.color.b));
-			//oldPen = (HPEN)SelectObject(hDC, hPen);
+			hPen = CreatePen(PS_SOLID, 1, RGB(0,0,0));
+			oldPen = (HPEN)SelectObject(hDC, hPen);
 
 			hBrush = CreateSolidBrush(RGB(s.color.r, s.color.g, s.color.b));
 			oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
@@ -276,7 +307,8 @@ void drawPolygons(HDC hDC)
 			}
 			else if (s.type == Shape::Triangle 
 					|| s.type == Shape::Rect
-					|| s.type == Shape::Pentagon)
+					|| s.type == Shape::Pentagon
+					|| s.type == Shape::Star)
 			{
 				Polygon(hDC, p.data(), p.size());
 			}
@@ -285,8 +317,34 @@ void drawPolygons(HDC hDC)
 				Pie(hDC, p[0].x, p[0].y, p[1].x, p[1].y, p[3].x, p[3].y, p[2].x, p[2].y);
 			}
 
-			//SelectObject(hDC, oldPen);
-			//DeleteObject(hPen);
+			// 숫자 띄우기
+			if (s.tileType == Shape::Resize)
+			{
+				const std::wstring text = std::to_wstring(s.resizeNum);
+
+				RECT rc{};
+
+				rc.left = p[0].x;
+				rc.top = p[0].y;
+				rc.right = p[2].x;
+				rc.bottom = p[2].y;
+
+				const int oldBkMode = SetBkMode(hDC, TRANSPARENT);
+				const COLORREF oldTextColor = SetTextColor(hDC, RGB(0, 0, 0));
+
+				DrawTextW(
+					hDC,
+					text.c_str(),
+					-1,
+					&rc,
+					DT_CENTER | DT_VCENTER | DT_SINGLELINE
+				);
+
+				SetTextColor(hDC, oldTextColor);
+				SetBkMode(hDC, oldBkMode);
+			}
+			SelectObject(hDC, oldPen);
+			DeleteObject(hPen);
 
 			SelectObject(hDC, oldBrush);
 			DeleteObject(hBrush);
