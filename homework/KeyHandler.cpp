@@ -69,10 +69,22 @@ void KeyHandler::KeyDown(WPARAM key)
 
 void KeyHandler::Default(WPARAM key)
 {
+	const char _key = (char)tolower(key);
+	
+	if (_key == 'r')
+	{
+		setPosition();
+		return;
+	}
+	else if (_key == 'q')
+	{
+		exit(0);
+	}
+
 	if (whosTurn == 1)	return;
 	whosTurn = 1;
 
-	const char _key = (char)tolower(key);
+	
 	POINT pos, target;
 	target = pos = getTile(Shape::Player2);
 	if (_key == 'w')

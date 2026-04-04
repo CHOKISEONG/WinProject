@@ -16,6 +16,19 @@ std::uniform_int_distribution<int> uidColor(0, 255);
 
 void setPosition()
 {
+	for (auto& col : boards)
+	{
+		for (auto& cell : col)
+		{
+			if (cell.point != nullptr)
+			{
+				delete[] cell.point;
+				cell.point = nullptr;
+				cell.pointNum = 0;
+			}
+		}
+	}
+
 	boards.clear();
 	boards.resize(boardCol);
 	for (int i{}; i < boardCol; ++i)
@@ -41,6 +54,8 @@ void setPosition()
 
 			boards[i][j].point = nullptr;
 			boards[i][j].pointNum = 0;
+			boards[i][j].resizeNum = 0;
+			boards[i][j].reShapeCnt = 0;
 		}
 	}
 
@@ -64,10 +79,12 @@ void setPosition()
 	boards[boardCol / 2][boardRow - 1].resizeNum = uid(gen) % 7 - 3;
 
 	// Æ¯¼öÄ­ ¼³Á¤
-	makeTile(Shape::Obstacle	, uid(gen) % 5 + 30);
-	makeTile(Shape::Resize		, uid(gen) % 5 + 10);
-	makeTile(Shape::ReShape		, uid(gen) % 5 + 10);
-	makeTile(Shape::ChangeColor	, uid(gen) % 5 + 10);
+	makeTile(Shape::Obstacle, uid(gen) % 5 + 30);
+	makeTile(Shape::Resize, uid(gen) % 5 + 10);
+	makeTile(Shape::ReShape, uid(gen) % 5 + 10);
+	makeTile(Shape::ChangeColor, uid(gen) % 5 + 10);
+
+	makePolygons();
 }
 
 void makeTile(Shape::TileType type, const int tileNum)

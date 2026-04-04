@@ -4,7 +4,6 @@ void Message::OnCreate(HWND hWnd)
 {
     makeBoard();
     setPosition();
-    makePolygons();
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
