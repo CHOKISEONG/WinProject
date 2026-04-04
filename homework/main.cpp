@@ -84,6 +84,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
+	ws.hWnd = hWnd;
 
 	while (GetMessage(&Message, 0, 0, 0))
 	{

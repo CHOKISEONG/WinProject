@@ -69,6 +69,9 @@ void KeyHandler::KeyDown(WPARAM key)
 
 void KeyHandler::Default(WPARAM key)
 {
+	if (whosTurn == 1)	return;
+	whosTurn = 1;
+
 	const char _key = (char)tolower(key);
 	POINT pos, target;
 	target = pos = getTile(Shape::Player2);
@@ -89,7 +92,19 @@ void KeyHandler::Default(WPARAM key)
 		target.x = (target.x + 1 + boardCol) % boardCol;
 	}
 
+	if (boards[target.x][target.y].tileType == Shape::Obstacle) return;
+
 	moveTile(pos, target);
+
+	if (boards[target.x][target.y].reShapeCnt > 0)
+	{
+		--boards[target.x][target.y].reShapeCnt;
+	}
+	else
+	{
+		boards[target.x][target.y].type = Shape::Pentagon;
+		applyPolygon(target.x, target.y);
+	}
 }
 
 void KeyHandler::Enter()
@@ -108,6 +123,9 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM key)
 {
+	if (whosTurn == 2)	return;
+	whosTurn = 2;
+
 	POINT pos, target;
 	target = pos = getTile(Shape::Player1);
 	if (key == VK_UP)
@@ -127,7 +145,19 @@ void KeyHandler::Arrow(WPARAM key)
 		target.x = (target.x + 1 + boardCol) % boardCol;
 	}
 
+	if (boards[target.x][target.y].tileType == Shape::Obstacle) return;
+
 	moveTile(pos, target);
+
+	if (boards[target.x][target.y].reShapeCnt > 0)
+	{
+		--boards[target.x][target.y].reShapeCnt;
+	}
+	else
+	{
+		boards[target.x][target.y].type = Shape::SandClock;
+		applyPolygon(target.x, target.y);
+	}
 }
 
 void KeyHandler::Tab()

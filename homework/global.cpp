@@ -3,6 +3,7 @@
 SZ ws;
 std::vector<std::vector<Shape>> boards;
 std::vector<Shape> board;
+int whosTurn = 1;
 
 std::map<char, bool> isKeyDown{ {'c',false},{'s',false},{'p',false},{'e',false} };
 
@@ -37,6 +38,9 @@ void setPosition()
 
 			boards[i][j].position.x = i * cellW + halfW;
 			boards[i][j].position.y = j * cellH + halfH;
+
+			boards[i][j].point = nullptr;
+			boards[i][j].pointNum = 0;
 		}
 	}
 
@@ -68,16 +72,33 @@ void setPosition()
 
 void makeTile(Shape::TileType type, const int tileNum)
 {
-	int col{}, row{};
-	for (int i{}; i < tileNum; ++i)
-	{
-		while (true)
-		{
-			col = uid(gen) % boardCol;
-			row = uid(gen) % boardRow;
+	std::vector<POINT> emptyCells{};
+	emptyCells.reserve(boardCol * boardRow);
 
-			if (boards[col][row].tileType == Shape::TileType::Nothing) break;
+	for (int col{}; col < boardCol; ++col)
+	{
+		for (int row{}; row < boardRow; ++row)
+		{
+			if (boards[col][row].tileType == Shape::TileType::Nothing)
+			{
+				emptyCells.push_back(POINT{ col, row });
+			}
 		}
+	}
+
+	if (emptyCells.empty())
+	{
+		return;
+	}
+
+	std::shuffle(emptyCells.begin(), emptyCells.end(), gen);
+
+	const int placeCount = (tileNum < (int)emptyCells.size()) ? tileNum : (int)emptyCells.size();
+
+	for (int i{}; i < placeCount; ++i)
+	{
+		const int col = emptyCells[i].x;
+		const int row = emptyCells[i].y;
 
 		boards[col][row].tileType = type;
 
@@ -97,14 +118,18 @@ void makeTile(Shape::TileType type, const int tileNum)
 
 		// 도형 설정
 		if (type == Shape::Obstacle || type == Shape::Resize || type == Shape::TileType::ChangeColor)
+		{
 			boards[col][row].type = Shape::Rect;
+		}
 		else if (type == Shape::ReShape)
 		{
-			int rand = uid(gen) % 4;
+			const int rand = uid(gen) % 4;
 			if (rand == 0) boards[col][row].type = Shape::Triangle;
 			else if (rand == 1) boards[col][row].type = Shape::Pie;
 			else if (rand == 2) boards[col][row].type = Shape::Cirle;
 			else if (rand == 3) boards[col][row].type = Shape::Star;
+
+			boards[col][row].reShapeCnt = 30;
 		}
 
 		// ReSize의 경우 숫자 설정
@@ -130,131 +155,156 @@ POINT getTile(Shape::TileType type)
 	return POINT();
 }
 
-void makePolygons()
+void applyPolygon(int col, int row)
 {
+	if (col < 0 || col >= boardCol || row < 0 || row >= boardRow)
+	{
+		return;
+	}
+
+	Shape& s = boards[col][row];
+
+
+	if (s.point != nullptr)
+	{
+		delete[] s.point;
+		s.point = nullptr;
+		s.pointNum = 0;
+	}
+
 	const int cellW = ws.WIDTH / boardCol;
 	const int cellH = ws.HEIGHT / boardRow;
 	const int halfW = cellW / 2;
 	const int halfH = cellH / 2;
 	const int length = ws.GetLength();
 
-	for (auto& b : boards)
+	Shape::Type type = s.type;
+	if (type == Shape::Cirle)
 	{
-		for (auto& s : b)
+		s.point = new POINT[2];
+		s.point[0].x = -length;
+		s.point[0].y = -length;
+		s.point[1].x = length;
+		s.point[1].y = length;
+
+		s.pointNum = 2;
+	}
+	else if (type == Shape::Ellipse)
+	{
+		s.point = new POINT[2];
+		s.point[0].x = -length;
+		s.point[0].y = -length * 0.8f;
+		s.point[1].x = length;
+		s.point[1].y = length * 0.8f;
+
+		s.pointNum = 2;
+	}
+	else if (type == Shape::SandClock)
+	{
+		s.point = new POINT[5];
+		s.point[0].x = -length;
+		s.point[0].y = -length;
+
+		s.point[1].x = +length;
+		s.point[1].y = -length;
+
+		s.point[2].x = -length;
+		s.point[2].y = +length;
+
+		s.point[3].x = +length;
+		s.point[3].y = +length;
+
+		s.point[4].x = -length;
+		s.point[4].y = -length;
+
+		s.pointNum = 5;
+	}
+	else if (type == Shape::Triangle)
+	{
+		s.point = new POINT[3];
+
+		for (int i{}; i < 3; ++i)
 		{
-			Shape::Type type = s.type;
-			if (type == Shape::Cirle)
+			s.point[i].x = cos(getRadian(i * 120.0f)) * length;
+			s.point[i].y = sin(getRadian(i * 120.0f)) * length;
+		}
+
+		s.pointNum = 3;
+	}
+	else if (type == Shape::Rect)
+	{
+		s.point = new POINT[4];
+
+		s.point[0] = { -halfW, -halfH };
+		s.point[1] = { +halfW, -halfH };
+		s.point[2] = { +halfW, +halfH };
+		s.point[3] = { -halfW, +halfH };
+
+		s.pointNum = 4;
+	}
+	else if (type == Shape::Pentagon)
+	{
+		s.point = new POINT[5];
+
+		for (int i{}; i < 5; ++i)
+		{
+			s.point[i].x = cos(getRadian(i * 72.0f)) * length;
+			s.point[i].y = sin(getRadian(i * 72.0f)) * length;
+		}
+
+		s.pointNum = 5;
+	}
+	else if (type == Shape::Pie)
+	{
+		s.point = new POINT[4];
+		s.point[0].x = -length;
+		s.point[0].y = -length;
+
+		s.point[1].x = length;
+		s.point[1].y = length;
+
+		s.point[2].x = 0;
+		s.point[2].y = -length;
+
+		s.point[3].x = -length;
+		s.point[3].y = 0;
+
+		s.pointNum = 4;
+	}
+	else if (type == Shape::Star)
+	{
+		s.point = new POINT[10];
+
+		for (int i{}; i < 10; ++i)
+		{
+			if (i % 2)
 			{
-				s.point = new POINT[2];
-				s.point[0].x = -length;
-				s.point[0].y = -length;
-				s.point[1].x = length;
-				s.point[1].y = length;
-
-				s.pointNum = 2;
+				s.point[i].x = cos(getRadian(i * 36.0f)) * length / 2;
+				s.point[i].y = sin(getRadian(i * 36.0f)) * length / 2;
 			}
-			else if (type == Shape::Ellipse)
+			else
 			{
-				s.point = new POINT[2];
-				s.point[0].x = -length;
-				s.point[0].y = -length * 0.8f;
-				s.point[1].x = length;
-				s.point[1].y = length * 0.8f;
-
-				s.pointNum = 2;
+				s.point[i].x = cos(getRadian(i * 36.0f)) * length;
+				s.point[i].y = sin(getRadian(i * 36.0f)) * length;
 			}
-			else if (type == Shape::SandClock)
-			{
-				s.point = new POINT[5];
-				s.point[0].x = -length;
-				s.point[0].y = -length;
+		}
 
-				s.point[1].x = +length;
-				s.point[1].y = -length;
+		s.pointNum = 10;
+	}
+	else
+	{
+		s.point = nullptr;
+		s.pointNum = 0;
+	}
+}
 
-				s.point[2].x = -length;
-				s.point[2].y = +length;
-
-				s.point[3].x = +length;
-				s.point[3].y = +length;
-
-				s.point[4].x = -length;
-				s.point[4].y = -length;
-
-				s.pointNum = 5;
-			}
-			else if (type == Shape::Triangle)
-			{
-				s.point = new POINT[3];
-
-				for (int i{}; i < 3; ++i)
-				{
-					s.point[i].x = cos(getRadian(i * 120.0f)) * length;
-					s.point[i].y = sin(getRadian(i * 120.0f)) * length;
-				}
-
-				s.pointNum = 3;
-			}
-			else if (type == Shape::Rect)
-			{
-				s.point = new POINT[4];
-
-				s.point[0] = { -halfW, -halfH };
-				s.point[1] = { +halfW, -halfH };
-				s.point[2] = { +halfW, +halfH };
-				s.point[3] = { -halfW, +halfH };
-
-				s.pointNum = 4;
-			}
-			else if (type == Shape::Pentagon)
-			{
-				s.point = new POINT[5];
-
-				for (int i{}; i < 5; ++i)
-				{
-					s.point[i].x = cos(getRadian(i * 72.0f)) * length;
-					s.point[i].y = sin(getRadian(i * 72.0f)) * length;
-				}
-
-				s.pointNum = 5;
-			}
-			else if (type == Shape::Pie)
-			{
-				s.point = new POINT[4];
-				s.point[0].x = -length;
-				s.point[0].y = -length;
-
-				s.point[1].x = length;
-				s.point[1].y = length;
-
-				s.point[2].x = 0;
-				s.point[2].y = -length;
-
-				s.point[3].x = -length;
-				s.point[3].y = 0;
-
-				s.pointNum = 4;
-			}
-			else if (type == Shape::Star)
-			{
-				s.point = new POINT[10];
-
-				for (int i{}; i < 10; ++i)
-				{
-					if (i % 2)
-					{
-						s.point[i].x = cos(getRadian(i * 36.0f)) * length / 2;
-						s.point[i].y = sin(getRadian(i * 36.0f)) * length / 2;
-					}
-					else
-					{
-						s.point[i].x = cos(getRadian(i * 36.0f)) * length;
-						s.point[i].y = sin(getRadian(i * 36.0f)) * length;
-					}
-				}
-
-				s.pointNum = 10;
-			}
+void makePolygons()
+{
+	for (int col{}; col < boardCol; ++col)
+	{
+		for (int row{}; row < boardRow; ++row)
+		{
+			applyPolygon(col, row);
 		}
 	}
 }
@@ -367,21 +417,36 @@ void drawPolygons(HDC hDC)
 
 				RECT rc{};
 
-				rc.left = p[0].x;
-				rc.top = p[0].y;
-				rc.right = p[2].x;
-				rc.bottom = p[2].y;
+				if (s.type == Shape::Cirle || s.type == Shape::Ellipse)
+				{
+					rc.left = min(p[0].x, p[1].x);
+					rc.top = min(p[0].y, p[1].y);
+					rc.right = max(p[0].x, p[1].x);
+					rc.bottom = max(p[0].y, p[1].y);
+				}
+				else
+				{
+					int left = p[0].x, right = p[0].x;
+					int top = p[0].y, bottom = p[0].y;
+
+					for (int i{}; i < (int)p.size(); ++i)
+					{
+						left = min(left, p[i].x);
+						right = max(right, p[i].x);
+						top = min(top, p[i].y);
+						bottom = max(bottom, p[i].y);
+					}
+
+					rc.left = left;
+					rc.top = top;
+					rc.right = right;
+					rc.bottom = bottom;
+				}
 
 				const int oldBkMode = SetBkMode(hDC, TRANSPARENT);
 				const COLORREF oldTextColor = SetTextColor(hDC, RGB(0, 0, 0));
 
-				DrawTextW(
-					hDC,
-					text.c_str(),
-					-1,
-					&rc,
-					DT_CENTER | DT_VCENTER | DT_SINGLELINE
-				);
+				DrawTextW(hDC, text.c_str(), -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 				SetTextColor(hDC, oldTextColor);
 				SetBkMode(hDC, oldBkMode);
@@ -423,33 +488,77 @@ void shapeSwap(Shape& a, Shape& b)
 
 void moveTile(POINT pos, POINT target)
 {
-	Shape::TileType type = boards[target.x][target.y].tileType;
+	Shape& targetCell = boards[target.x][target.y];
+	const Shape::TileType tileType = targetCell.tileType;
 
-	switch (type)
+	if (tileType == Shape::Obstacle || tileType == Shape::Player1 || tileType == Shape::Player2)
+	{
+		return;
+	}
+
+	if (tileType == Shape::Goal)
+	{
+		checkWin(pos, target);
+		return;
+	}
+
+	const Shape::Type savedType = targetCell.type;
+	const Color savedColor = targetCell.color;
+	const int savedResizeNum = targetCell.resizeNum;
+	const int savedReShapeCnt = targetCell.reShapeCnt;
+
+	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
+
+	Shape& mover = boards[target.x][target.y];
+
+	switch (tileType)
 	{
 	case Shape::Resize:
-		boards[pos.x][pos.y].resizeNum = boards[target.x][target.y].resizeNum;
-		boards[target.x][target.y].type = Shape::None;
-		boards[target.x][target.y].tileType = Shape::Nothing;
+		mover.resizeNum = savedResizeNum;
 		break;
-	case Shape::ReShape:
-		boards[pos.x][pos.y].type = boards[target.x][target.y].type;
-		boards[pos.x][pos.y].point = boards[target.x][target.y].point;
-		boards[target.x][target.y].type = Shape::None;
-		boards[target.x][target.y].tileType = Shape::Nothing;
-		break;
-	case Shape::Obstacle:
-		return;
+
 	case Shape::ChangeColor:
-		boards[pos.x][pos.y].color = boards[target.x][target.y].color;
-		boards[target.x][target.y].type = Shape::None;
-		boards[target.x][target.y].tileType = Shape::Nothing;
+		mover.color = savedColor;
 		break;
-	case Shape::Goal:
+
+	case Shape::ReShape:
+		mover.type = savedType;
+		mover.reShapeCnt = savedReShapeCnt;
+		applyPolygon(target.x, target.y);
 		break;
+
 	default:
 		break;
 	}
 
-	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
+	Shape& steppedCell = boards[pos.x][pos.y];
+
+	if (steppedCell.point != nullptr)
+	{
+		delete[] steppedCell.point;
+		steppedCell.point = nullptr;
+		steppedCell.pointNum = 0;
+	}
+
+	steppedCell.type = Shape::None;
+	steppedCell.tileType = Shape::Nothing;
+	steppedCell.resizeNum = 0;
+	steppedCell.reShapeCnt = 0;
+}
+
+void checkWin(POINT pos, POINT target)
+{
+	if (boards[pos.x][pos.y].type == boards[target.x][target.y].type
+		&& boards[pos.x][pos.y].resizeNum == boards[target.x][target.y].resizeNum
+		&& boards[pos.x][pos.y].color.r == boards[target.x][target.y].color.r
+		&& boards[pos.x][pos.y].color.g == boards[target.x][target.y].color.g
+		&& boards[pos.x][pos.y].color.b == boards[target.x][target.y].color.b)
+	{
+		const wchar_t* text = (boards[pos.x][pos.y].tileType == Shape::Player1)
+			? L"Player1 Win!!! Congratulations!"
+			: L"Player2 Win!!! Congratulations!";
+
+		MessageBoxW(ws.hWnd, text, L"Game Over", MB_OK | MB_ICONINFORMATION);
+		PostQuitMessage(0);
+	}
 }

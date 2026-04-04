@@ -19,6 +19,8 @@ public:
 	{
 		return (WIDTH > HEIGHT) ? WIDTH / 80 : HEIGHT / 80;
 	}
+
+	HWND hWnd;
 };
 extern SZ ws;
 
@@ -74,9 +76,16 @@ struct Shape
 	void setColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
 };
 
+// 보드판
 extern std::vector<std::vector<Shape>> boards;
+
+// 보드 테두리
 extern std::vector<Shape> board;
 
+// 누구 차례인지
+extern int whosTurn;
+
+// 키 눌림 검사
 extern std::map<char, bool> isKeyDown;
 
 // 랜덤값을 구하기 위해
@@ -92,6 +101,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 void setPosition();
 void makeBoard();
 void makePolygons();
+void applyPolygon(int col, int row);
 void makeTile(Shape::TileType type, const int tileNum = 0);
 
 POINT getTile(Shape::TileType type);
@@ -102,3 +112,5 @@ void drawBoard(HDC hDC);
 void shapeSwap(Shape& a, Shape& b);
 
 void moveTile(POINT pos, POINT target);
+
+void checkWin(POINT pos, POINT target);
