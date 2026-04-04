@@ -22,6 +22,14 @@ public:
 };
 extern SZ ws;
 
+enum Direction
+{
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN
+};
+
 // 색깔
 struct Color { unsigned int r, g,  b; };
 
@@ -33,6 +41,8 @@ struct Shape
 	int pointNum;
 	
 	int resizeNum;
+
+	int reShapeCnt;
 
 	// 그려지는 도형의 타입
 	enum Type
@@ -84,7 +94,11 @@ void makeBoard();
 void makePolygons();
 void makeTile(Shape::TileType type, const int tileNum = 0);
 
+POINT getTile(Shape::TileType type);
+
 void drawPolygons(HDC hDC);
 void drawBoard(HDC hDC);
 
 void shapeSwap(Shape& a, Shape& b);
+
+void moveTile(POINT pos, POINT target);

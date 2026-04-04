@@ -70,10 +70,26 @@ void KeyHandler::KeyDown(WPARAM key)
 void KeyHandler::Default(WPARAM key)
 {
 	const char _key = (char)tolower(key);
-	if (_key == 'c')
+	POINT pos, target;
+	target = pos = getTile(Shape::Player2);
+	if (_key == 'w')
 	{
-		
+		target.y = (target.y - 1 + boardRow) % boardRow;
 	}
+	else if (_key == 's')
+	{
+		target.y = (target.y + 1 + boardRow) % boardRow;
+	}
+	else if (_key == 'a')
+	{
+		target.x = (target.x - 1 + boardCol) % boardCol;
+	}
+	else if (_key == 'd')
+	{
+		target.x = (target.x + 1 + boardCol) % boardCol;
+	}
+
+	moveTile(pos, target);
 }
 
 void KeyHandler::Enter()
@@ -92,22 +108,26 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM key)
 {
+	POINT pos, target;
+	target = pos = getTile(Shape::Player1);
 	if (key == VK_UP)
 	{
-		
+		target.y = (target.y - 1 + boardRow) % boardRow;
 	}
 	else if (key == VK_DOWN)
 	{
-		
+		target.y = (target.y + 1 + boardRow) % boardRow;
 	}
 	else if (key == VK_LEFT)
 	{
-		
+		target.x = (target.x - 1 + boardCol) % boardCol;
 	}
 	else if (key == VK_RIGHT)
 	{
-		
+		target.x = (target.x + 1 + boardCol) % boardCol;
 	}
+
+	moveTile(pos, target);
 }
 
 void KeyHandler::Tab()

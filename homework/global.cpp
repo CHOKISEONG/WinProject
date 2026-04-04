@@ -43,9 +43,11 @@ void setPosition()
 	// 플레이어 설정
 	boards[0][0].tileType = Shape::Player1;
 	boards[0][0].type = Shape::SandClock;
+	boards[0][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 
 	boards[boardCol - 1][0].tileType = Shape::Player2;
 	boards[boardCol - 1][0].type = Shape::Pentagon;
+	boards[boardCol - 1][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 
 	// 골 설정
 	boards[boardCol / 2][boardRow - 1].tileType = Shape::Goal;
@@ -55,6 +57,7 @@ void setPosition()
 	else if (rand == 2) boards[boardCol / 2][boardRow - 1].type = Shape::Cirle;
 	else if (rand == 3) boards[boardCol / 2][boardRow - 1].type = Shape::Star;
 	boards[boardCol / 2][boardRow - 1].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+	boards[boardCol / 2][boardRow - 1].resizeNum = uid(gen) % 7 - 3;
 
 	// 특수칸 설정
 	makeTile(Shape::Obstacle	, uid(gen) % 5 + 30);
@@ -110,6 +113,21 @@ void makeTile(Shape::TileType type, const int tileNum)
 			boards[col][row].resizeNum = uid(gen) % 7 - 3;
 		}
 	}
+}
+
+POINT getTile(Shape::TileType type)
+{
+	for (int i{}; i < boardCol; ++i)
+	{
+		for (int j{}; j < boardRow; ++j)
+		{
+			if (boards[i][j].tileType == type)
+			{
+				return POINT(i, j);
+			}
+		}
+	}
+	return POINT();
 }
 
 void makePolygons()
@@ -291,10 +309,35 @@ void drawPolygons(HDC hDC)
 
 			std::vector<POINT> p{};
 			p.resize(s.pointNum);
+			float resized{1.0f};
+			switch (s.resizeNum)
+			{
+			case -3:
+				resized = 0.5f;
+				break;
+			case -2:
+				resized = 0.7f;
+				break;
+			case -1:
+				resized = 0.9f;
+				break;
+			case 1:
+				resized = 1.1f;
+				break;
+			case 2:
+				resized = 1.3f;
+				break;
+			case 3:
+				resized = 1.5f;
+				break;
+			default:
+				break;
+			}
+
 			for (int i{}; i < s.pointNum; ++i)
 			{
-				p[i].x = s.point[i].x + s.position.x;
-				p[i].y = s.point[i].y + s.position.y;
+				p[i].x = s.point[i].x * resized + s.position.x;
+				p[i].y = s.point[i].y * resized + s.position.y;
 			}
 
 			if (s.type == Shape::Cirle || s.type == Shape::Ellipse)
@@ -318,7 +361,7 @@ void drawPolygons(HDC hDC)
 			}
 
 			// 숫자 띄우기
-			if (s.tileType == Shape::Resize)
+			if (s.resizeNum != 0)
 			{
 				const std::wstring text = std::to_wstring(s.resizeNum);
 
@@ -376,4 +419,37 @@ void shapeSwap(Shape& a, Shape& b)
 
 	a.position = aPos;
 	b.position = bPos;
+}
+
+void moveTile(POINT pos, POINT target)
+{
+	Shape::TileType type = boards[target.x][target.y].tileType;
+
+	switch (type)
+	{
+	case Shape::Resize:
+		boards[pos.x][pos.y].resizeNum = boards[target.x][target.y].resizeNum;
+		boards[target.x][target.y].type = Shape::None;
+		boards[target.x][target.y].tileType = Shape::Nothing;
+		break;
+	case Shape::ReShape:
+		boards[pos.x][pos.y].type = boards[target.x][target.y].type;
+		boards[pos.x][pos.y].point = boards[target.x][target.y].point;
+		boards[target.x][target.y].type = Shape::None;
+		boards[target.x][target.y].tileType = Shape::Nothing;
+		break;
+	case Shape::Obstacle:
+		return;
+	case Shape::ChangeColor:
+		boards[pos.x][pos.y].color = boards[target.x][target.y].color;
+		boards[target.x][target.y].type = Shape::None;
+		boards[target.x][target.y].tileType = Shape::Nothing;
+		break;
+	case Shape::Goal:
+		break;
+	default:
+		break;
+	}
+
+	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
 }
