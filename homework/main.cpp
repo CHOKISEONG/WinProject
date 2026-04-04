@@ -62,7 +62,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW | WS_BORDER, 0, 0, ws.WIDTH, ws.HEIGHT, NULL, (HMENU)NULL, hInstance, NULL);
+	int style = WS_OVERLAPPEDWINDOW;
+	int exStyle = 0;
+
+	RECT rc{ 0, 0, ws.WIDTH, ws.HEIGHT }; // ws를 "원하는 클라이언트 크기"로 취급
+	AdjustWindowRectEx(&rc, style, FALSE, exStyle);
+
+	hWnd = CreateWindow(
+		lpszClass,
+		lpszWindowName,
+		style,
+		0,
+		0,
+		rc.right - rc.left,
+		rc.bottom - rc.top,
+		NULL,
+		(HMENU)NULL,
+		hInstance,
+		NULL
+	);
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 

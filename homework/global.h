@@ -12,12 +12,12 @@ constexpr double getRadian(double len) { return len * (PI / 180.0); }
 class SZ
 {
 public:
-	int WIDTH = 800;
-	int HEIGHT = 600;
+	int WIDTH = 1200;
+	int HEIGHT = 800;
 
 	int GetLength() const
 	{
-		return (WIDTH > HEIGHT) ? WIDTH / 40 : HEIGHT / 40;
+		return (WIDTH > HEIGHT) ? WIDTH / 80 : HEIGHT / 80;
 	}
 };
 extern SZ ws;
@@ -32,19 +32,36 @@ struct Shape
 	Color color, tmpColor;
 	int pointNum;
 	
-	enum
+	// 그려지는 도형의 타입
+	enum Type
 	{
+		None,
+		Triangle,
+		Ellipse,
 		Cirle,
 		SandClock,
 		Pentagon,
 		Pie,
-		Rect
+		Rect,
 	} type;
+
+	// 타일의 속성
+	enum TileType
+	{
+		Nothing,
+		Player1,
+		Player2,
+		Obstacle,
+		ReShape,
+		Resize,
+		ChangeColor,
+		Goal
+	} tileType;
+
+	void setColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
 };
 
-extern std::vector<Shape> shapes;
-extern POINT positions[4];
-
+extern std::vector<std::vector<Shape>> boards;
 extern std::vector<Shape> board;
 
 extern std::map<char, bool> isKeyDown;
@@ -62,6 +79,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 void setPosition();
 void makeBoard();
 void makePolygons();
+void makeTile(Shape::TileType type, const int tileNum = 0);
 
 void drawPolygons(HDC hDC);
 void drawBoard(HDC hDC);
