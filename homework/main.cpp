@@ -10,34 +10,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		Message::OnCreate(hWnd);
-		break;
+		return 0;
+
 	case WM_KEYDOWN:
 		Message::OnKeyDown(hWnd, wParam);
-		break;
+		return 0;
+
 	case WM_KEYUP:
 		Message::OnKeyUp(hWnd, wParam);
-		break;
+		return 0;
+
 	case WM_CHAR:
 		Message::OnChar(hWnd, wParam);
-		break;
+		return 0;
+
 	case WM_PAINT:
 		Message::OnPaint(hWnd);
-		break;
+		return 0;
+
 	case WM_SIZE:
 		Message::OnSize(hWnd, (int)LOWORD(lParam), (int)HIWORD(lParam));
-		break;
+		return 0;
+
 	case WM_DESTROY:
 		Message::OnDestroy(hWnd);
-		break;
+		return 0;
 	}
+
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
-	MSG Message;
-	WNDCLASSEX WndClass;
+	MSG msg;
+	WNDCLASSEX WndClass{};
 	g_hInst = hInstance;
 
 	WndClass.cbSize = sizeof(WndClass);
@@ -48,24 +55,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hInstance = hInstance;
 
 	WndClass.hIcon = LoadIcon(NULL, IDI_QUESTION);
-	// IDI_APPLICATION / IDI_ASTERISK / IDI_EXCLAMATION / IDI_HAND / IDI_QUESTION
-	// IDI_ERROR / IDI_WARNING / IDI_INFORMATION
-
 	WndClass.hCursor = LoadCursor(NULL, IDC_CROSS);
-	// IDC_APPSTARTING / IDC_ARROW / IDC_CROSS / IDC_HAND / IDC_HELP
-	// IDD_IBEAM / IDC_SIZEALL / IDC_SIZENESW / IDC_SIZENS / IDC_SIZENWSE
-	// IDC_SIZEWE / IDC_UPARROW / IDC_WAIT
-
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	WndClass.lpszMenuName = NULL;
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-	RegisterClassEx(&WndClass);
+
+	if (!RegisterClassEx(&WndClass))
+	{
+		return 0;
+	}
 
 	int style = WS_OVERLAPPEDWINDOW;
 	int exStyle = 0;
 
-	RECT rc{ 0, 0, ws.WIDTH, ws.HEIGHT }; // ws를 "원하는 클라이언트 크기"로 취급
+	RECT rc{ 0, 0, ws.WIDTH, ws.HEIGHT };
 	AdjustWindowRectEx(&rc, style, FALSE, exStyle);
 
 	hWnd = CreateWindow(
@@ -82,16 +86,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		NULL
 	);
 
-	ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWnd);
-	ws.hWnd = hWnd;
-
-	while (GetMessage(&Message, 0, 0, 0))
+	if (hWnd == NULL)
 	{
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
+		return 0;
 	}
 
-	return Message.wParam;
+	ws.hWnd = hWnd;
+
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
+
+	while (GetMessage(&msg, 0, 0, 0) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return (int)msg.wParam;
 }
 

@@ -1,7 +1,8 @@
 #pragma once
 #include "global.h"
 
-class Message {
+class Message 
+{
 public:
     // 윈도우가 생성될 때
     static void OnCreate(HWND hWnd);
