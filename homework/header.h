@@ -15,5 +15,4 @@
 #include <cctype>
 #include <cstdlib>
 
-#include "Message.h"
-#include "KeyHandler.h"
+#include "global.h"

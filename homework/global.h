@@ -1,6 +1,6 @@
 #pragma once
 
-#include "header.h"
+#include "Shape.h"
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
@@ -20,11 +20,6 @@ public:
 	HWND hWnd = NULL;
 };
 extern SZ ws;
-
-// 색깔
-struct Color { unsigned int r, g, b; };
-
-extern std::string str;
 
 // 랜덤값을 구하기 위해
 extern std::random_device rd;

@@ -4,6 +4,11 @@
 
 void Message::OnCreate(HWND hWnd)
 {
+	shapes.push_back(Shape(POINT(ws.WIDTH / 2,ws.HEIGHT / 2), uid(gen),uid(gen),uid(gen)));
+	shapes[0].addPoint(POINT{ -10, -10 });
+	shapes[0].addPoint(POINT{ 10, -10 });
+	shapes[0].addPoint(POINT{ 10, 10 });
+	shapes[0].addPoint(POINT{ -10, 10 });
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -59,6 +64,10 @@ void Message::OnPaint(HWND hWnd)
 	}
 	printStr(hDC, point[2], point[0]);
 	
+	for (const auto& s : shapes)
+	{
+		s.draw(hDC);
+	}
 
 	EndPaint(hWnd, &ps);
 }
