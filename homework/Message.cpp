@@ -42,25 +42,22 @@ void Message::OnPaint(HWND hWnd)
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
 
-	POINT point[4];
+	POINT point[3];
 
-	point[0].x = 0;
+	point[0].x = ws.WIDTH * 0.5f;
 	point[0].y = 0;
 
 	point[1].x = ws.WIDTH * 0.9f;
-	point[1].y = 0;
+	point[1].y = ws.HEIGHT * 0.9f;
 
-	point[2].x = ws.WIDTH * 0.9f;
+	point[2].x = 0;
 	point[2].y = ws.HEIGHT * 0.9f;
 
-	point[3].x = 0;
-	point[3].y = ws.HEIGHT * 0.9f;
-
-	for (int i{}; i < 3; ++i)
+	for (int i{}; i < 2; ++i)
 	{
 		printStr(hDC, point[i], point[i + 1]);
 	}
-	printStr(hDC, point[3], point[0]);
+	printStr(hDC, point[2], point[0]);
 	
 
 	EndPaint(hWnd, &ps);
