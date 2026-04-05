@@ -1,10 +1,80 @@
 #include "Shape.h"
 
-void Shape::setShape(Type type)
+void Shape::setShape(Type _type, int length)
 {
+	clear();
+	type = _type;
+
 	switch (type)
 	{
-		
+	case CIRCLE:
+		addPoint(POINT{ -length,-length });
+		addPoint(POINT{ length,length });
+		break;
+	case PIE:case CHORD: case ARC:
+		addPoint(POINT{ -length,-length });
+		addPoint(POINT{ length,length });
+		addPoint(POINT{ 0,-length });
+		addPoint(POINT{ -length, 0 });
+		break;
+	case TRIANGLE:
+		for (int i{}; i < 3; ++i)
+		{
+			int x = length * cos(getRadian(i * 120.0f));
+			int y = length * sin(getRadian(i * 120.0f));
+
+			addPoint(POINT{ x,y });
+		}
+		break;
+	case RECTANGLE:
+		for (int i{}; i < 4; ++i)
+		{
+			int x = length * cos(getRadian(i * 90.0f));
+			int y = length * sin(getRadian(i * 90.0f));
+
+			addPoint(POINT{ x,y });
+		}
+		break;
+	case PENTAGON:
+		for (int i{}; i < 5; ++i)
+		{
+			int x = length * cos(getRadian(i * 72.0f));
+			int y = length * sin(getRadian(i * 72.0f));
+
+			addPoint(POINT{ x,y });
+		}
+		break;
+	case HEXAGON:
+		for (int i{}; i < 6; ++i)
+		{
+			int x = length * cos(getRadian(i * 60.0f));
+			int y = length * sin(getRadian(i * 60.0f));
+
+			addPoint(POINT{ x,y });
+		}
+		break;
+	case STAR:
+		for (int i{}; i < 10; ++i)
+		{
+			int x{};
+			int y{};
+
+			if (i % 2)
+			{
+				x = length/2 * cos(getRadian(i * 36.0f));
+				y = length/2 * sin(getRadian(i * 36.0f));
+			}
+			else
+			{
+				x = length * cos(getRadian(i * 36.0f));
+				y = length * sin(getRadian(i * 36.0f));
+			}
+
+			addPoint(POINT{ x,y });
+		}
+		break;
+	default:
+		break;
 	}
 }
 

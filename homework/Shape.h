@@ -36,7 +36,7 @@ public:
 	}
 
 	void setColor(int r, int g, int b) { color.r = r; color.g = g; color.b = b; }
-	void setShape(Type type);
+	void setShape(Type type, int length = 30);
 
 	void addPoint(POINT point){ points.push_back(point); }
 	void clear() { points.clear(); }

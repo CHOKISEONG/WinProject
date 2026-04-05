@@ -4,11 +4,11 @@
 
 void Message::OnCreate(HWND hWnd)
 {
-	shapes.push_back(Shape(POINT(ws.WIDTH / 2,ws.HEIGHT / 2), uid(gen),uid(gen),uid(gen)));
-	shapes[0].addPoint(POINT{ -10, -10 });
-	shapes[0].addPoint(POINT{ 10, -10 });
-	shapes[0].addPoint(POINT{ 10, 10 });
-	shapes[0].addPoint(POINT{ -10, 10 });
+	for (int i{}; i < 10; ++i)
+	{
+		shapes.push_back(Shape(POINT(i * 100 + 100, ws.HEIGHT / 2), uid(gen), uid(gen), uid(gen)));
+		shapes[i].setShape((Type)i);
+	}
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
