@@ -61,11 +61,11 @@ void setPosition()
 
 	// 플레이어 설정
 	boards[0][0].tileType = Shape::Player1;
-	boards[0][0].type = Shape::SandClock;
+	boards[0][0].type = (uid(gen) % 2) ?  Shape::Pentagon : Shape::SandClock;
 	boards[0][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 
 	boards[boardCol - 1][0].tileType = Shape::Player2;
-	boards[boardCol - 1][0].type = Shape::Pentagon;
+	boards[boardCol - 1][0].type = (uid(gen) % 2 == 1) ? Shape::Pentagon : Shape::SandClock;
 	boards[boardCol - 1][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 
 	// 골 설정
