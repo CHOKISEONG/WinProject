@@ -24,6 +24,8 @@ extern SZ ws;
 // 색깔
 struct Color { unsigned int r, g, b; };
 
+extern std::string str;
+
 // 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;

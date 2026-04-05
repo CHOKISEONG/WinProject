@@ -1,5 +1,6 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
+#include "MyString.h"
 
 void Message::OnCreate(HWND hWnd)
 {
@@ -40,6 +41,27 @@ void Message::OnPaint(HWND hWnd)
 {
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
+
+	POINT point[4];
+
+	point[0].x = 0;
+	point[0].y = 0;
+
+	point[1].x = ws.WIDTH * 0.9f;
+	point[1].y = 0;
+
+	point[2].x = ws.WIDTH * 0.9f;
+	point[2].y = ws.HEIGHT * 0.9f;
+
+	point[3].x = 0;
+	point[3].y = ws.HEIGHT * 0.9f;
+
+	for (int i{}; i < 3; ++i)
+	{
+		printStr(hDC, point[i], point[i + 1]);
+	}
+	printStr(hDC, point[3], point[0]);
+	
 
 	EndPaint(hWnd, &ps);
 }
