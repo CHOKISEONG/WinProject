@@ -59,102 +59,7 @@ void setPosition()
 		}
 	}
 
-	// 플레이어 설정
-	boards[0][0].tileType = Shape::Player1;
-	boards[0][0].type = (uid(gen) % 2) ?  Shape::Pentagon : Shape::SandClock;
-	boards[0][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
-
-	boards[boardCol - 1][0].tileType = Shape::Player2;
-	boards[boardCol - 1][0].type = (uid(gen) % 2 == 1) ? Shape::Pentagon : Shape::SandClock;
-	boards[boardCol - 1][0].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
-
-	// 골 설정
-	boards[boardCol / 2][boardRow - 1].tileType = Shape::Goal;
-	int rand = uid(gen) % 4;
-	if (rand == 0) boards[boardCol / 2][boardRow - 1].type = Shape::Triangle;
-	else if (rand == 1) boards[boardCol / 2][boardRow - 1].type = Shape::Pie;
-	else if (rand == 2) boards[boardCol / 2][boardRow - 1].type = Shape::Cirle;
-	else if (rand == 3) boards[boardCol / 2][boardRow - 1].type = Shape::Star;
-	boards[boardCol / 2][boardRow - 1].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
-	boards[boardCol / 2][boardRow - 1].resizeNum = uid(gen) % 7 - 3;
-
-	// 특수칸 설정
-	makeTile(Shape::Obstacle, uid(gen) % 5 + 30);
-	makeTile(Shape::Resize, uid(gen) % 5 + 10);
-	makeTile(Shape::ReShape, uid(gen) % 5 + 10);
-	makeTile(Shape::ChangeColor, uid(gen) % 5 + 10);
-
 	makePolygons();
-}
-
-void makeTile(Shape::TileType type, const int tileNum)
-{
-	std::vector<POINT> emptyCells{};
-	emptyCells.reserve(boardCol * boardRow);
-
-	for (int col{}; col < boardCol; ++col)
-	{
-		for (int row{}; row < boardRow; ++row)
-		{
-			if (boards[col][row].tileType == Shape::TileType::Nothing)
-			{
-				emptyCells.push_back(POINT{ col, row });
-			}
-		}
-	}
-
-	if (emptyCells.empty())
-	{
-		return;
-	}
-
-	std::shuffle(emptyCells.begin(), emptyCells.end(), gen);
-
-	const int placeCount = (tileNum < (int)emptyCells.size()) ? tileNum : (int)emptyCells.size();
-
-	for (int i{}; i < placeCount; ++i)
-	{
-		const int col = emptyCells[i].x;
-		const int row = emptyCells[i].y;
-
-		boards[col][row].tileType = type;
-
-		// 색깔 설정
-		if (type == Shape::ChangeColor && uid(gen) % 2)
-		{
-			boards[col][row].color = boards[boardCol / 2][boardRow - 1].color;
-		}
-		else if (type == Shape::Obstacle)
-		{
-			boards[col][row].setColor(255, 0, 0);
-		}
-		else
-		{
-			boards[col][row].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
-		}
-
-		// 도형 설정
-		if (type == Shape::Obstacle || type == Shape::Resize || type == Shape::TileType::ChangeColor)
-		{
-			boards[col][row].type = Shape::Rect;
-		}
-		else if (type == Shape::ReShape)
-		{
-			const int rand = uid(gen) % 4;
-			if (rand == 0) boards[col][row].type = Shape::Triangle;
-			else if (rand == 1) boards[col][row].type = Shape::Pie;
-			else if (rand == 2) boards[col][row].type = Shape::Cirle;
-			else if (rand == 3) boards[col][row].type = Shape::Star;
-
-			boards[col][row].reShapeCnt = 30;
-		}
-
-		// ReSize의 경우 숫자 설정
-		if (type == Shape::Resize)
-		{
-			boards[col][row].resizeNum = uid(gen) % 7 - 3;
-		}
-	}
 }
 
 POINT getTile(Shape::TileType type)
@@ -508,17 +413,6 @@ void moveTile(POINT pos, POINT target)
 	Shape& targetCell = boards[target.x][target.y];
 	const Shape::TileType tileType = targetCell.tileType;
 
-	if (tileType == Shape::Obstacle || tileType == Shape::Player1 || tileType == Shape::Player2)
-	{
-		return;
-	}
-
-	if (tileType == Shape::Goal)
-	{
-		checkWin(pos, target);
-		return;
-	}
-
 	const Shape::Type savedType = targetCell.type;
 	const Color savedColor = targetCell.color;
 	const int savedResizeNum = targetCell.resizeNum;
@@ -563,19 +457,16 @@ void moveTile(POINT pos, POINT target)
 	steppedCell.reShapeCnt = 0;
 }
 
-void checkWin(POINT pos, POINT target)
+POINT getEmptyTile()
 {
-	if (boards[pos.x][pos.y].type == boards[target.x][target.y].type
-		&& boards[pos.x][pos.y].resizeNum == boards[target.x][target.y].resizeNum
-		&& boards[pos.x][pos.y].color.r == boards[target.x][target.y].color.r
-		&& boards[pos.x][pos.y].color.g == boards[target.x][target.y].color.g
-		&& boards[pos.x][pos.y].color.b == boards[target.x][target.y].color.b)
-	{
-		const wchar_t* text = (boards[pos.x][pos.y].tileType == Shape::Player1)
-			? L"Player1 Win!!! Congratulations!"
-			: L"Player2 Win!!! Congratulations!";
+	POINT p;
 
-		MessageBoxW(ws.hWnd, text, L"Game Over", MB_OK | MB_ICONINFORMATION);
-		PostQuitMessage(0);
+	while (true)
+	{
+		p.x = uid(gen) % boardCol;
+		p.y = uid(gen) % boardRow;
+
+		if (boards[p.x][p.y].type == Shape::None)
+			return p;
 	}
 }

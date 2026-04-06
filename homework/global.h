@@ -113,4 +113,4 @@ void shapeSwap(Shape& a, Shape& b);
 
 void moveTile(POINT pos, POINT target);
 
-void checkWin(POINT pos, POINT target);
+POINT getEmptyTile();

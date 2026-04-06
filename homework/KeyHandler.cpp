@@ -71,51 +71,28 @@ void KeyHandler::Default(WPARAM key)
 {
 	const char _key = (char)tolower(key);
 	
-	if (_key == 'r')
+	POINT pos;
+	static std::vector<POINT> 
+	switch (_key)
 	{
-		setPosition();
-		return;
-	}
-	else if (_key == 'q')
-	{
-		exit(0);
-	}
-
-	if (whosTurn == 1)	return;
-	whosTurn = 1;
-
-	
-	POINT pos, target;
-	target = pos = getTile(Shape::Player2);
-	if (_key == 'w')
-	{
-		target.y = (target.y - 1 + boardRow) % boardRow;
-	}
-	else if (_key == 's')
-	{
-		target.y = (target.y + 1 + boardRow) % boardRow;
-	}
-	else if (_key == 'a')
-	{
-		target.x = (target.x - 1 + boardCol) % boardCol;
-	}
-	else if (_key == 'd')
-	{
-		target.x = (target.x + 1 + boardCol) % boardCol;
-	}
-
-	if (boards[target.x][target.y].tileType == Shape::Obstacle) return;
-
-	moveTile(pos, target);
-
-	if (boards[target.x][target.y].reShapeCnt > 0)
-	{
-		--boards[target.x][target.y].reShapeCnt;
-	}
-	else
-	{
-		boards[target.x][target.y].type = Shape::Pentagon;
-		applyPolygon(target.x, target.y);
+	case 'e':
+		pos = getEmptyTile();
+		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].type = Shape::Cirle;
+		applyPolygon(pos.x, pos.y);
+		break;
+	case 't':
+		pos = getEmptyTile();
+		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].type = Shape::Triangle;
+		applyPolygon(pos.x, pos.y);
+		break;
+	case 'r':
+		pos = getEmptyTile();
+		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].type = Shape::Rect;
+		applyPolygon(pos.x, pos.y);
+		break;
 	}
 }
 
