@@ -72,7 +72,9 @@ void KeyHandler::Default(WPARAM key)
 	const char _key = (char)tolower(key);
 	
 	POINT pos;
-	static std::vector<POINT> 
+	static std::vector<POINT> p;
+	static int choicedNum{ -1 };
+
 	switch (_key)
 	{
 	case 'e':
@@ -92,6 +94,10 @@ void KeyHandler::Default(WPARAM key)
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		boards[pos.x][pos.y].type = Shape::Rect;
 		applyPolygon(pos.x, pos.y);
+		break;
+	case'+':
+		break;
+	case'-':
 		break;
 	}
 }
