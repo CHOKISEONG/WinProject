@@ -78,6 +78,7 @@ void KeyHandler::Default(WPARAM key)
 	case 'e':
 		pos = getEmptyTile();
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].setTmpColor(boards[pos.x][pos.y].color);
 		boards[pos.x][pos.y].type = Shape::Cirle;
 		applyPolygon(pos.x, pos.y);
 
@@ -86,6 +87,7 @@ void KeyHandler::Default(WPARAM key)
 	case 't':
 		pos = getEmptyTile();
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].setTmpColor(boards[pos.x][pos.y].color);
 		boards[pos.x][pos.y].type = Shape::Triangle;
 		applyPolygon(pos.x, pos.y);
 
@@ -94,6 +96,7 @@ void KeyHandler::Default(WPARAM key)
 	case 'r':
 		pos = getEmptyTile();
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+		boards[pos.x][pos.y].setTmpColor(boards[pos.x][pos.y].color);
 		boards[pos.x][pos.y].type = Shape::Rect;
 		applyPolygon(pos.x, pos.y);
 
@@ -103,11 +106,6 @@ void KeyHandler::Default(WPARAM key)
 	case '0':case '1':case '2':case '3':case '4':
 	case '5':case '6':case '7':case '8':case '9':
 		choicedNum = static_cast<int>(_key - '0');
-		if (choicedNum < 0 || choicedNum > 9)
-		{
-			choicedNum = 0;
-		}
-
 		if (p.size() <= choicedNum) choicedNum = p.size() - 1;
 
 		break;
@@ -115,17 +113,25 @@ void KeyHandler::Default(WPARAM key)
 	case 'c':
 		for (int i{}; i < p.size(); ++i)
 		{
-			if (i == choicedNum) break;
+			if (i == choicedNum) continue;
 
-			if (boards[p[i].x][p[i].y].type == boards[p[choicedNum].x][p[choicedNum].y].type)
+			Shape& target = boards[p[choicedNum].x][p[choicedNum].y];
+			Shape& src = boards[p[i].x][p[i].y];
+
+			if (src.type == target.type)
 			{
-				boards[p[i].x][p[i].y].type = Shape::Pentagon;
-				boards[p[i].x][p[i].y].color.r = boards[p[choicedNum].x][p[choicedNum].y].color.r;
-				boards[p[i].x][p[i].y].color.g = boards[p[choicedNum].x][p[choicedNum].y].color.g;
-				boards[p[i].x][p[i].y].color.b = boards[p[choicedNum].x][p[choicedNum].y].color.b;
+				src.type = Shape::Pentagon;
+				src.setColor(target.color);
+				src.prvType = target.type;
 				applyPolygon(p[i].x, p[i].y);
 			}
-
+			else if (src.type == Shape::Pentagon
+				&& src.prvType == target.type)
+			{
+				src.type = target.type;
+				src.setColor(boards[p[i].x][p[i].y].tmpColor);
+				applyPolygon(p[i].x, p[i].y);
+			}
 		}
 		break;
 

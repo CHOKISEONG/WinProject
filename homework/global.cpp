@@ -20,12 +20,8 @@ void setPosition()
 	{
 		for (auto& cell : col)
 		{
-			if (cell.point != nullptr)
-			{
-				delete[] cell.point;
-				cell.point = nullptr;
-				cell.pointNum = 0;
-			}
+			cell.point.clear();
+			cell.pointNum = 0;
 		}
 	}
 
@@ -52,10 +48,9 @@ void setPosition()
 			boards[i][j].position.x = i * cellW + halfW;
 			boards[i][j].position.y = j * cellH + halfH;
 
-			boards[i][j].point = nullptr;
+			boards[i][j].point.clear();
 			boards[i][j].pointNum = 0;
 			boards[i][j].resizeNum = 0;
-			boards[i][j].reShapeCnt = 0;
 		}
 	}
 
@@ -86,13 +81,8 @@ void applyPolygon(int col, int row)
 
 	Shape& s = boards[col][row];
 
-
-	if (s.point != nullptr)
-	{
-		delete[] s.point;
-		s.point = nullptr;
-		s.pointNum = 0;
-	}
+	s.point.clear();
+	s.pointNum = 0;
 
 	const int cellW = ws.WIDTH / boardCol;
 	const int cellH = ws.HEIGHT / boardRow;
@@ -100,10 +90,10 @@ void applyPolygon(int col, int row)
 	const int halfH = cellH / 2;
 	const int length = ws.GetLength();
 
-	Shape::Type type = s.type;
+	const Shape::Type type = s.type;
 	if (type == Shape::Cirle)
 	{
-		s.point = new POINT[2];
+		s.point.resize(2);
 		s.point[0].x = -length;
 		s.point[0].y = -length;
 		s.point[1].x = length;
@@ -113,17 +103,17 @@ void applyPolygon(int col, int row)
 	}
 	else if (type == Shape::Ellipse)
 	{
-		s.point = new POINT[2];
+		s.point.resize(2);
 		s.point[0].x = -length;
-		s.point[0].y = -length * 0.8f;
+		s.point[0].y = (LONG)(-length * 0.8f);
 		s.point[1].x = length;
-		s.point[1].y = length * 0.8f;
+		s.point[1].y = (LONG)(length * 0.8f);
 
 		s.pointNum = 2;
 	}
 	else if (type == Shape::SandClock)
 	{
-		s.point = new POINT[5];
+		s.point.resize(5);
 		s.point[0].x = -length;
 		s.point[0].y = -length;
 
@@ -143,19 +133,19 @@ void applyPolygon(int col, int row)
 	}
 	else if (type == Shape::Triangle)
 	{
-		s.point = new POINT[3];
+		s.point.resize(3);
 
 		for (int i{}; i < 3; ++i)
 		{
-			s.point[i].x = cos(getRadian(i * 120.0f)) * length;
-			s.point[i].y = sin(getRadian(i * 120.0f)) * length;
+			s.point[i].x = (LONG)(cos(getRadian(i * 120.0f)) * length);
+			s.point[i].y = (LONG)(sin(getRadian(i * 120.0f)) * length);
 		}
 
 		s.pointNum = 3;
 	}
 	else if (type == Shape::Rect)
 	{
-		s.point = new POINT[4];
+		s.point.resize(4);
 
 		s.point[0] = { -halfW, -halfH };
 		s.point[1] = { +halfW, -halfH };
@@ -166,19 +156,19 @@ void applyPolygon(int col, int row)
 	}
 	else if (type == Shape::Pentagon)
 	{
-		s.point = new POINT[5];
+		s.point.resize(5);
 
 		for (int i{}; i < 5; ++i)
 		{
-			s.point[i].x = cos(getRadian(i * 72.0f)) * length;
-			s.point[i].y = sin(getRadian(i * 72.0f)) * length;
+			s.point[i].x = (LONG)(cos(getRadian(i * 72.0f)) * length);
+			s.point[i].y = (LONG)(sin(getRadian(i * 72.0f)) * length);
 		}
 
 		s.pointNum = 5;
 	}
 	else if (type == Shape::Pie)
 	{
-		s.point = new POINT[4];
+		s.point.resize(4);
 		s.point[0].x = -length;
 		s.point[0].y = -length;
 
@@ -195,19 +185,19 @@ void applyPolygon(int col, int row)
 	}
 	else if (type == Shape::Star)
 	{
-		s.point = new POINT[10];
+		s.point.resize(10);
 
 		for (int i{}; i < 10; ++i)
 		{
 			if (i % 2)
 			{
-				s.point[i].x = cos(getRadian(i * 36.0f)) * length / 2;
-				s.point[i].y = sin(getRadian(i * 36.0f)) * length / 2;
+				s.point[i].x = (LONG)(cos(getRadian(i * 36.0f)) * length / 2);
+				s.point[i].y = (LONG)(sin(getRadian(i * 36.0f)) * length / 2);
 			}
 			else
 			{
-				s.point[i].x = cos(getRadian(i * 36.0f)) * length;
-				s.point[i].y = sin(getRadian(i * 36.0f)) * length;
+				s.point[i].x = (LONG)(cos(getRadian(i * 36.0f)) * length);
+				s.point[i].y = (LONG)(sin(getRadian(i * 36.0f)) * length);
 			}
 		}
 
@@ -215,7 +205,7 @@ void applyPolygon(int col, int row)
 	}
 	else
 	{
-		s.point = nullptr;
+		s.point.clear();
 		s.pointNum = 0;
 	}
 }
@@ -239,7 +229,7 @@ void makeBoard()
 	int idx{};
 	for (int i{}; i < boardRow; ++i)
 	{
-		board[idx].point = new POINT[2];
+		board[idx].point.resize(2);
 
 		board[idx].point[0].x = 0;
 		board[idx].point[0].y = ws.HEIGHT * i / boardRow;
@@ -251,11 +241,11 @@ void makeBoard()
 
 	for (int i{}; i < boardCol; ++i)
 	{
-		board[idx].point = new POINT[2];
+		board[idx].point.resize(2);
 
 		board[idx].point[0].x = ws.WIDTH * i / boardCol;
 		board[idx].point[0].y = 0;
-		board[idx].point[1].x = ws.WIDTH * i / boardCol;;
+		board[idx].point[1].x = ws.WIDTH * i / boardCol;
 		board[idx].point[1].y = ws.HEIGHT;
 
 		++idx;
@@ -273,9 +263,9 @@ void drawPolygons(HDC hDC)
 		selectedCell = &boards[p[choicedNum].x][p[choicedNum].y];
 	}
 
-	for (const auto& b : boards)
+	for (auto& b : boards)
 	{
-		for (const auto& s : b)
+		for (auto& s : b)
 		{
 			if (s.type == Shape::Type::None) continue;
 
@@ -341,12 +331,12 @@ void drawBoard(HDC hDC)
 {
 	HPEN hPen, oldPen;
 
-	hPen = CreatePen(PS_DASHDOT, 2, RGB(0,0,0));
+	hPen = CreatePen(PS_DASHDOT, 2, RGB(0, 0, 0));
 	oldPen = (HPEN)SelectObject(hDC, hPen);
 
-	for (int i{}; i < board.size(); ++ i)
+	for (int i{}; i < (int)board.size(); ++i)
 	{
-		Polygon(hDC, board[i].point, 2);
+		Polygon(hDC, board[i].point.data(), 2);
 	}
 
 	SelectObject(hDC, oldPen);
@@ -366,28 +356,37 @@ void shapeSwap(Shape& a, Shape& b)
 void moveTile(POINT pos, POINT target)
 {
 	Shape& targetCell = boards[target.x][target.y];
-	const Shape::TileType tileType = targetCell.tileType;
 
-	const Shape::Type savedType = targetCell.type;
-	const Color savedColor = targetCell.color;
-	const int savedResizeNum = targetCell.resizeNum;
-	const int savedReShapeCnt = targetCell.reShapeCnt;
+	static Shape res;
+	static POINT resPos;
+
+	// 얕은복사라서 문제 발생하는듯 고치기
+	if (boards[target.x][target.y].type != Shape::None)
+	{
+		res.type = targetCell.type;
+		res.position = targetCell.position;
+		res.setColor(targetCell.color);
+		resPos = target;
+	}
+
+	if (pos.x == resPos.x && pos.y == resPos.y)
+	{
+		targetCell.type = res.type;
+		targetCell.position = res.position;
+		res.setColor(targetCell.color);
+		applyPolygon(target.x, target.y);
+	}
 
 	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
 
 	Shape& steppedCell = boards[pos.x][pos.y];
 
-	if (steppedCell.point != nullptr)
-	{
-		delete[] steppedCell.point;
-		steppedCell.point = nullptr;
-		steppedCell.pointNum = 0;
-	}
+	steppedCell.point.clear();
+	steppedCell.pointNum = 0;
 
 	steppedCell.type = Shape::None;
 	steppedCell.tileType = Shape::Nothing;
 	steppedCell.resizeNum = 0;
-	steppedCell.reShapeCnt = 0;
 }
 
 POINT getEmptyTile()

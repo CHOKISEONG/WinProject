@@ -38,13 +38,11 @@ struct Color { unsigned int r, g,  b; };
 struct Shape
 {
 	POINT position;
-	POINT* point;
+	std::vector<POINT> point;
 	Color color, tmpColor;
 	int pointNum;
 	
 	int resizeNum;
-
-	int reShapeCnt;
 
 	// 그려지는 도형의 타입
 	enum Type
@@ -60,6 +58,8 @@ struct Shape
 		Star
 	} type;
 
+	Type prvType;
+
 	// 타일의 속성
 	enum TileType
 	{
@@ -74,6 +74,8 @@ struct Shape
 	} tileType;
 
 	void setColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
+	void setColor(Color _color) { color.r = _color.r; color.g = _color.g; color.b = _color.b; }
+	void setTmpColor(Color _color) { tmpColor.r = _color.r; tmpColor.g = _color.g; tmpColor.b = _color.b; }
 };
 
 // 보드판
