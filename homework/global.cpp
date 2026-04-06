@@ -267,112 +267,67 @@ void drawPolygons(HDC hDC)
 	HPEN hPen, oldPen;
 	HBRUSH hBrush, oldBrush;
 
+	Shape* selectedCell = nullptr;
+	if (choicedNum >= 0 && choicedNum < (int)p.size())
+	{
+		selectedCell = &boards[p[choicedNum].x][p[choicedNum].y];
+	}
+
 	for (const auto& b : boards)
 	{
 		for (const auto& s : b)
 		{
 			if (s.type == Shape::Type::None) continue;
 
-			hPen = CreatePen(PS_SOLID, 1, RGB(0,0,0));
+			const bool isSelected = (selectedCell != nullptr && &s == selectedCell);
+
+			hPen = CreatePen(PS_SOLID, isSelected ? 200 : 1, RGB(0, 0, 0));
 			oldPen = (HPEN)SelectObject(hDC, hPen);
 
 			hBrush = CreateSolidBrush(RGB(s.color.r, s.color.g, s.color.b));
 			oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
-			std::vector<POINT> p{};
-			p.resize(s.pointNum);
-			float resized{1.0f};
+			std::vector<POINT> drawPoints{};
+			drawPoints.resize(s.pointNum);
+
+			float resized{ 1.0f };
 			switch (s.resizeNum)
 			{
-			case -3:
-				resized = 0.5f;
-				break;
-			case -2:
-				resized = 0.7f;
-				break;
-			case -1:
-				resized = 0.9f;
-				break;
-			case 1:
-				resized = 1.1f;
-				break;
-			case 2:
-				resized = 1.3f;
-				break;
-			case 3:
-				resized = 1.5f;
-				break;
-			default:
-				break;
+			case -3: resized = 0.5f; break;
+			case -2: resized = 0.7f; break;
+			case -1: resized = 0.9f; break;
+			case 1: resized = 1.1f; break;
+			case 2: resized = 1.3f; break;
+			case 3: resized = 1.5f; break;
+			default: break;
 			}
 
 			for (int i{}; i < s.pointNum; ++i)
 			{
-				p[i].x = s.point[i].x * resized + s.position.x;
-				p[i].y = s.point[i].y * resized + s.position.y;
+				drawPoints[i].x = (LONG)(s.point[i].x * resized + s.position.x);
+				drawPoints[i].y = (LONG)(s.point[i].y * resized + s.position.y);
 			}
 
 			if (s.type == Shape::Cirle || s.type == Shape::Ellipse)
 			{
-				Ellipse(hDC, p[0].x, p[0].y, p[1].x, p[1].y);
+				Ellipse(hDC, drawPoints[0].x, drawPoints[0].y, drawPoints[1].x, drawPoints[1].y);
 			}
 			else if (s.type == Shape::SandClock)
 			{
-				Polygon(hDC, p.data(), 5);
+				Polygon(hDC, drawPoints.data(), 5);
 			}
-			else if (s.type == Shape::Triangle 
-					|| s.type == Shape::Rect
-					|| s.type == Shape::Pentagon
-					|| s.type == Shape::Star)
+			else if (s.type == Shape::Triangle
+				|| s.type == Shape::Rect
+				|| s.type == Shape::Pentagon
+				|| s.type == Shape::Star)
 			{
-				Polygon(hDC, p.data(), p.size());
+				Polygon(hDC, drawPoints.data(), (int)drawPoints.size());
 			}
 			else if (s.type == Shape::Pie)
 			{
-				Pie(hDC, p[0].x, p[0].y, p[1].x, p[1].y, p[3].x, p[3].y, p[2].x, p[2].y);
+				Pie(hDC, drawPoints[0].x, drawPoints[0].y, drawPoints[1].x, drawPoints[1].y, drawPoints[3].x, drawPoints[3].y, drawPoints[2].x, drawPoints[2].y);
 			}
 
-			// ¼ýÀÚ ¶ç¿ì±â
-			if (s.resizeNum != 0)
-			{
-				const std::wstring text = std::to_wstring(s.resizeNum);
-
-				RECT rc{};
-
-				if (s.type == Shape::Cirle || s.type == Shape::Ellipse)
-				{
-					rc.left = min(p[0].x, p[1].x);
-					rc.top = min(p[0].y, p[1].y);
-					rc.right = max(p[0].x, p[1].x);
-					rc.bottom = max(p[0].y, p[1].y);
-				}
-				else
-				{
-					int left = p[0].x, right = p[0].x;
-					int top = p[0].y, bottom = p[0].y;
-
-					for (int i{}; i < (int)p.size(); ++i)
-					{
-						left = min(left, p[i].x);
-						right = max(right, p[i].x);
-						top = min(top, p[i].y);
-						bottom = max(bottom, p[i].y);
-					}
-
-					rc.left = left;
-					rc.top = top;
-					rc.right = right;
-					rc.bottom = bottom;
-				}
-
-				const int oldBkMode = SetBkMode(hDC, TRANSPARENT);
-				const COLORREF oldTextColor = SetTextColor(hDC, RGB(0, 0, 0));
-
-				DrawTextW(hDC, text.c_str(), -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
-				SetTextColor(hDC, oldTextColor);
-				SetBkMode(hDC, oldBkMode);
-			}
 			SelectObject(hDC, oldPen);
 			DeleteObject(hPen);
 
@@ -419,28 +374,6 @@ void moveTile(POINT pos, POINT target)
 	const int savedReShapeCnt = targetCell.reShapeCnt;
 
 	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
-
-	Shape& mover = boards[target.x][target.y];
-
-	switch (tileType)
-	{
-	case Shape::Resize:
-		mover.resizeNum = savedResizeNum;
-		break;
-
-	case Shape::ChangeColor:
-		mover.color = savedColor;
-		break;
-
-	case Shape::ReShape:
-		mover.type = savedType;
-		mover.reShapeCnt = savedReShapeCnt;
-		applyPolygon(target.x, target.y);
-		break;
-
-	default:
-		break;
-	}
 
 	Shape& steppedCell = boards[pos.x][pos.y];
 

@@ -10,6 +10,7 @@
 #include <vector>
 #include <sstream>
 #include <map>
+#include <queue>
 
 #include "Message.h"
 #include "KeyHandler.h"

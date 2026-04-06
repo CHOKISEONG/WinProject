@@ -79,6 +79,9 @@ struct Shape
 // 보드판
 extern std::vector<std::vector<Shape>> boards;
 
+static std::vector<POINT> p;
+static int choicedNum{ -1 };
+
 // 보드 테두리
 extern std::vector<Shape> board;
 
@@ -105,6 +108,7 @@ void applyPolygon(int col, int row);
 void makeTile(Shape::TileType type, const int tileNum = 0);
 
 POINT getTile(Shape::TileType type);
+POINT getTile(POINT pos);
 
 void drawPolygons(HDC hDC);
 void drawBoard(HDC hDC);

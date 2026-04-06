@@ -72,8 +72,6 @@ void KeyHandler::Default(WPARAM key)
 	const char _key = (char)tolower(key);
 	
 	POINT pos;
-	static std::vector<POINT> p;
-	static int choicedNum{ -1 };
 
 	switch (_key)
 	{
@@ -82,23 +80,96 @@ void KeyHandler::Default(WPARAM key)
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		boards[pos.x][pos.y].type = Shape::Cirle;
 		applyPolygon(pos.x, pos.y);
+
+		p.push_back(pos);
 		break;
 	case 't':
 		pos = getEmptyTile();
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		boards[pos.x][pos.y].type = Shape::Triangle;
 		applyPolygon(pos.x, pos.y);
+
+		p.push_back(pos);
 		break;
 	case 'r':
 		pos = getEmptyTile();
 		boards[pos.x][pos.y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		boards[pos.x][pos.y].type = Shape::Rect;
 		applyPolygon(pos.x, pos.y);
+
+		p.push_back(pos);
 		break;
-	case'+':
+
+	case '0':case '1':case '2':case '3':case '4':
+	case '5':case '6':case '7':case '8':case '9':
+		choicedNum = static_cast<int>(_key - '0');
+		if (choicedNum < 0 || choicedNum > 9)
+		{
+			choicedNum = 0;
+		}
+
+		if (p.size() <= choicedNum) choicedNum = p.size() - 1;
+
 		break;
-	case'-':
+
+	case 'c':
+		for (int i{}; i < p.size(); ++i)
+		{
+			if (i == choicedNum) break;
+
+			if (boards[p[i].x][p[i].y].type == boards[p[choicedNum].x][p[choicedNum].y].type)
+			{
+				boards[p[i].x][p[i].y].type = Shape::Pentagon;
+				boards[p[i].x][p[i].y].color.r = boards[p[choicedNum].x][p[choicedNum].y].color.r;
+				boards[p[i].x][p[i].y].color.g = boards[p[choicedNum].x][p[choicedNum].y].color.g;
+				boards[p[i].x][p[i].y].color.b = boards[p[choicedNum].x][p[choicedNum].y].color.b;
+				applyPolygon(p[i].x, p[i].y);
+			}
+
+		}
 		break;
+
+	case'k': // 확대
+		if (choicedNum == -1) return;
+
+		boards[p[choicedNum].x][p[choicedNum].y].resizeNum += 1;
+		if (boards[p[choicedNum].x][p[choicedNum].y].resizeNum > 3)
+			boards[p[choicedNum].x][p[choicedNum].y].resizeNum = 3;
+		break;
+
+	case'l': // 축소
+		if (choicedNum == -1) return;
+
+		boards[p[choicedNum].x][p[choicedNum].y].resizeNum -= 1;
+		if (boards[p[choicedNum].x][p[choicedNum].y].resizeNum < -3)
+			boards[p[choicedNum].x][p[choicedNum].y].resizeNum = -3;
+		break;
+
+	case'd':
+		if (choicedNum == -1) return;
+		boards[p[choicedNum].x][p[choicedNum].y].type = Shape::None;
+		applyPolygon(p[choicedNum].x, p[choicedNum].y);
+		p.erase(p.begin() + choicedNum);
+		choicedNum = -1;
+		break;
+
+	case 'p':
+		choicedNum = -1;
+		p.clear();
+		makeBoard();
+		setPosition();
+		break;
+
+	case 'q':
+		exit(0);
+		break;
+	}
+
+	if (p.size() > 10)
+	{
+		boards[p[0].x][p[0].y].type = Shape::None;
+		applyPolygon(p[0].x, p[0].y);
+		p.erase(p.begin());
 	}
 }
 
@@ -118,11 +189,10 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(WPARAM key)
 {
-	if (whosTurn == 2)	return;
-	whosTurn = 2;
+	if (choicedNum == -1) return;
 
 	POINT pos, target;
-	target = pos = getTile(Shape::Player1);
+	target = pos = p[choicedNum];
 	if (key == VK_UP)
 	{
 		target.y = (target.y - 1 + boardRow) % boardRow;
@@ -140,19 +210,9 @@ void KeyHandler::Arrow(WPARAM key)
 		target.x = (target.x + 1 + boardCol) % boardCol;
 	}
 
-	if (boards[target.x][target.y].tileType == Shape::Obstacle) return;
-
 	moveTile(pos, target);
 
-	if (boards[target.x][target.y].reShapeCnt > 0)
-	{
-		--boards[target.x][target.y].reShapeCnt;
-	}
-	else
-	{
-		boards[target.x][target.y].type = Shape::SandClock;
-		applyPolygon(target.x, target.y);
-	}
+	p[choicedNum] = target;
 }
 
 void KeyHandler::Tab()
