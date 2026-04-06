@@ -146,7 +146,7 @@ void makeTile(Shape::TileType type, const int tileNum)
 			else if (rand == 2) boards[col][row].type = Shape::Cirle;
 			else if (rand == 3) boards[col][row].type = Shape::Star;
 
-			boards[col][row].reShapeCnt = 30;
+			boards[col][row].reShapeCnt = 3;
 		}
 
 		// ReSize의 경우 숫자 설정
