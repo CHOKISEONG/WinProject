@@ -156,7 +156,9 @@ void KeyHandler::Default(WPARAM key)
 		boards[p[choicedNum].x][p[choicedNum].y].type = Shape::None;
 		applyPolygon(p[choicedNum].x, p[choicedNum].y);
 		p.erase(p.begin() + choicedNum);
-		choicedNum = -1;
+
+		if (choicedNum >= p.size())
+			choicedNum = p.size() - 1;
 		break;
 
 	case 'p':

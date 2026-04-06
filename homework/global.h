@@ -81,8 +81,12 @@ struct Shape
 // 보드판
 extern std::vector<std::vector<Shape>> boards;
 
-static std::vector<POINT> p;
-static int choicedNum{ -1 };
+extern std::vector<POINT> p;
+extern int choicedNum;
+
+extern Shape res;
+extern bool onShape;
+extern POINT resPos;
 
 // 보드 테두리
 extern std::vector<Shape> board;

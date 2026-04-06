@@ -4,6 +4,12 @@ SZ ws;
 std::vector<std::vector<Shape>> boards;
 std::vector<Shape> board;
 int whosTurn = 1;
+std::vector<POINT> p;
+int choicedNum{ -1 };
+
+Shape res;
+POINT resPos;
+bool onShape = false;
 
 std::map<char, bool> isKeyDown{ {'c',false},{'s',false},{'p',false},{'e',false} };
 
@@ -262,7 +268,7 @@ void drawPolygons(HDC hDC)
 	{
 		selectedCell = &boards[p[choicedNum].x][p[choicedNum].y];
 	}
-
+	
 	for (auto& b : boards)
 	{
 		for (auto& s : b)
@@ -271,7 +277,7 @@ void drawPolygons(HDC hDC)
 
 			const bool isSelected = (selectedCell != nullptr && &s == selectedCell);
 
-			hPen = CreatePen(PS_SOLID, isSelected ? 200 : 1, RGB(0, 0, 0));
+			hPen = CreatePen(PS_SOLID, isSelected ? 6 : 1, isSelected ? RGB(255,0,0) : RGB(0, 0, 0));
 			oldPen = (HPEN)SelectObject(hDC, hPen);
 
 			hBrush = CreateSolidBrush(RGB(s.color.r, s.color.g, s.color.b));
@@ -283,12 +289,12 @@ void drawPolygons(HDC hDC)
 			float resized{ 1.0f };
 			switch (s.resizeNum)
 			{
-			case -3: resized = 0.5f; break;
-			case -2: resized = 0.7f; break;
-			case -1: resized = 0.9f; break;
-			case 1: resized = 1.1f; break;
-			case 2: resized = 1.3f; break;
-			case 3: resized = 1.5f; break;
+			case -3: resized = 0.1f; break;
+			case -2: resized = 0.3f; break;
+			case -1: resized = 0.6f; break;
+			case 1: resized = 1.3f; break;
+			case 2: resized = 1.6f; break;
+			case 3: resized = 1.9f; break;
 			default: break;
 			}
 
@@ -355,38 +361,34 @@ void shapeSwap(Shape& a, Shape& b)
 
 void moveTile(POINT pos, POINT target)
 {
-	Shape& targetCell = boards[target.x][target.y];
+	Shape player = boards[pos.x][pos.y];
 
-	static Shape res;
-	static POINT resPos;
+	if (onShape && pos.x == resPos.x && pos.y == resPos.y)
+	{
+		boards[pos.x][pos.y] = res; 
+		applyPolygon(pos.x, pos.y); 
+		onShape = false;
+	}
+	else
+	{
+		boards[pos.x][pos.y].type = Shape::None;
+		boards[pos.x][pos.y].point.clear();
+		boards[pos.x][pos.y].pointNum = 0;
+	}
 
-	// 얕은복사라서 문제 발생하는듯 고치기
 	if (boards[target.x][target.y].type != Shape::None)
 	{
-		res.type = targetCell.type;
-		res.position = targetCell.position;
-		res.setColor(targetCell.color);
+		res = boards[target.x][target.y];
 		resPos = target;
+		onShape = true;
 	}
 
-	if (pos.x == resPos.x && pos.y == resPos.y)
-	{
-		targetCell.type = res.type;
-		targetCell.position = res.position;
-		res.setColor(targetCell.color);
-		applyPolygon(target.x, target.y);
-	}
+	boards[target.x][target.y] = player;
 
-	shapeSwap(boards[pos.x][pos.y], boards[target.x][target.y]);
-
-	Shape& steppedCell = boards[pos.x][pos.y];
-
-	steppedCell.point.clear();
-	steppedCell.pointNum = 0;
-
-	steppedCell.type = Shape::None;
-	steppedCell.tileType = Shape::Nothing;
-	steppedCell.resizeNum = 0;
+	const int cellW = ws.WIDTH / boardCol;
+	const int cellH = ws.HEIGHT / boardRow;
+	boards[target.x][target.y].position.x = target.x * cellW + (cellW / 2);
+	boards[target.x][target.y].position.y = target.y * cellH + (cellH / 2);
 }
 
 POINT getEmptyTile()
