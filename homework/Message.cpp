@@ -3,7 +3,7 @@
 
 void Message::OnCreate(HWND hWnd)
 {
-	shape.setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+	shapeInitialize();
 	SetTimer(hWnd, 3, 10, (TIMERPROC)TimerProc);
 }
 
@@ -45,7 +45,13 @@ void Message::OnPaint(HWND hWnd)
 
 	SetROP2(hDC, currentROP2);
 
-	shape.draw(hDC);
+	for (int i{}; i < 4; ++i)
+	{
+		for (int j{}; j < 4; ++j)
+		{
+			shapes[i][j].draw(hDC);
+		}
+	}
 
 	EndPaint(hWnd, &ps);
 }
@@ -65,13 +71,12 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 
 void Message::MouseClick()
 {
-	shape.isDrawing = true;
-	shape.setPos(Vec2{ (double)ws.mouse.x, (double)ws.mouse.y });
+	
 }
 
 void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	shape.checkCollide();
+	
 	InvalidateRect(hWnd, NULL, TRUE);
 }
 

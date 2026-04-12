@@ -20,6 +20,7 @@ class Shape
 {
 private:
 	Vec2 pos;
+	Vec2 dPos;
 
 	std::vector<POINT> points;
 	int length;
@@ -64,4 +65,6 @@ public:
 	void changeSpeed(float delta) { moveSpeed += delta; }
 };
 
-inline Shape shape;
+inline std::vector<std::vector<Shape>> shapes;
+
+void shapeInitialize();

@@ -73,64 +73,12 @@ void KeyHandler::Default(WPARAM key)
 	
 	switch (_key)
 	{
-	// 마우스를 클릭하는 곳에 사각형
-	case'r':
-	{
-		shape.setShape(Type::RECTANGLE, 30);
-		break;
-	}
-	// 마우스를 클릭하는 곳에 원
-	case'e':
-	{
-		shape.setShape(Type::CIRCLE, 30);
-		break;
-	}
-	// 마우스를 클릭하는 곳에 삼각형
-	case't':
-	{
-		shape.setShape(Type::TRIANGLE, 30);
-		break;
-	}
-	// 현재 위치에서 우측으로 자동 이동
-	case'h':
-	{
-		shape.setDir(0.0f);
-		break;
-	}
-	// 현재 위치에서 아래쪽으로 자동 이동
-	case'v':
-	{
-		shape.setDir(90.0f);
-		break;
-	}
-	// 현재 위치에서 대각선 방향으로 자동 이동
-	case's':
-	{
-		Vec2 sPos = shape.getPos();
-		shape.setDir(atan2(sPos.y - ws.mouse.y,sPos.x - ws.mouse.x)  * 180.0f / PI);
-		break;
-	}
-	// 이동을 멈추기
-	case'p':
-	{
-		shape.setDir(0.0f);
-		shape.isMoving = false;
-		break;
-	}
+
 	case'q':
 	{
 		exit(0);
 		break;
 	}
-	}
-
-	if (key == VK_OEM_PLUS)
-	{
-		shape.changeSpeed(1.0f);
-	}
-	else if (key == VK_OEM_MINUS)
-	{
-		shape.changeSpeed(-1.0f);
 	}
 }
 

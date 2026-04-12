@@ -62,22 +62,23 @@ void Shape::checkCollide()
 
 void Shape::draw(HDC hDC)
 {
-	if (type == Type::NONE
-		|| isDrawing == false) return;
+	if (type == Type::NONE || isDrawing == false) return;
+	else if (points.size() == 0) return;
 
 	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(color.r, color.g, color.b));
 	HPEN oldPen = (HPEN)SelectObject(hDC, hPen);
 
 	std::vector<POINT> p;
-	for (int i{}; i < points.size(); ++i)
+	p.reserve(points.size());
+	for (int i{}; i < (int)points.size(); ++i)
 	{
-		p.push_back(POINT{ points[i].x + (int)pos.x, points[i].y + (int)pos.y });
+		p.push_back(POINT{ points[i].x + (int)pos.x + (int)dPos.x, points[i].y + (int)pos.y + (int)dPos.y });
 	}
 
 	switch (this->type)
 	{
 	case TRIANGLE:case RECTANGLE:
-		Polygon(hDC, p.data(), p.size());
+		Polygon(hDC, p.data(), (int)p.size());
 		break;
 	case CIRCLE:
 		Ellipse(hDC, p[0].x, p[0].y, p[1].x, p[1].y);
@@ -138,4 +139,46 @@ void Shape::setShape(Type _type, int _length)
 	default:
 		break;
 	}
+}
+
+void shapeInitialize()
+{
+	for (int i{}; i < 4; ++i)
+	{
+		shapes[i].clear();
+	}
+	shapes.clear();
+
+	shapes.resize(4);
+	for (int i{}; i < 4; ++i)
+	{
+		shapes[i].resize(4);
+	}
+
+	for (int i{}; i < 4; ++i)
+	{
+		shapes[i][0].setShape(Type::CIRCLE, 5);
+		shapes[i][1].setShape(Type::CIRCLE, min(ws.WIDTH / 4, ws.HEIGHT / 4));
+		shapes[i][2].setShape(Type::CIRCLE, 10);
+		shapes[i][3].setShape(Type::RECTANGLE, min(ws.WIDTH / 2, ws.HEIGHT / 2));
+	}
+	shapes[0][0].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+	shapes[0][1].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+	shapes[0][2].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+	shapes[0][3].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+
+	shapes[1][0].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+	shapes[1][1].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
+	shapes[1][2].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
+	shapes[1][3].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
+
+	shapes[2][0].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+	shapes[2][1].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
+	shapes[2][2].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
+	shapes[2][3].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
+
+	shapes[3][0].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+	shapes[3][1].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+	shapes[3][2].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+	shapes[3][3].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
 }
