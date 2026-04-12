@@ -1,7 +1,7 @@
 #include "global.h"
 
 SZ ws;
-
+bool rButtonClicked = false;
 int currentROP2 = R2_COPYPEN;
 
 std::random_device rd;

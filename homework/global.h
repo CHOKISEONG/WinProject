@@ -29,6 +29,8 @@ struct Color { unsigned int r, g, b; };
 
 extern int currentROP2;
 
+extern bool rButtonClicked;
+
 // 랜덤값을 구하기 위해
 extern std::random_device rd;
 extern unsigned __int64 seed;

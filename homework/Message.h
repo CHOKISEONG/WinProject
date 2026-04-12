@@ -27,7 +27,10 @@ public:
     // 마우스가 움직일 때
     static void MouseMove(int mouse_x, int mouse_y);
 
-    static void MouseClick();
+    static void LMouseClick();
+    static void RMouseClick();
+    static void LMouseDBClick();
+    static void RMouseDBClick();
 
     static void CALLBACK TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };

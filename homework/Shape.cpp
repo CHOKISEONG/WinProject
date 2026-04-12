@@ -65,8 +65,11 @@ void Shape::draw(HDC hDC)
 	if (type == Type::NONE || isDrawing == false) return;
 	else if (points.size() == 0) return;
 
-	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(color.r, color.g, color.b));
+	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(lineColor.r, lineColor.g, lineColor.b));
 	HPEN oldPen = (HPEN)SelectObject(hDC, hPen);
+
+	HBRUSH hBrush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+	HBRUSH oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
 	std::vector<POINT> p;
 	p.reserve(points.size());
@@ -89,6 +92,9 @@ void Shape::draw(HDC hDC)
 
 	SelectObject(hDC, oldPen);
 	DeleteObject(hPen);
+
+	SelectObject(hDC, oldBrush);
+	DeleteObject(hBrush);
 
 	if (isMoving)
 	{
@@ -155,25 +161,25 @@ Vec2 Shape::getPos(double degree)
 		{
 			t = (degree / 90.0) * 2;
 			p.x = pos.x + length;
-			p.y = pos.y + length - length * t;
+			p.y = pos.y - length + length * t;
 		}
 		else if (degree >= 90.0 && degree < 180.0)
 		{
 			t = ((degree - 90.0) / 90.0) * 2;
 			p.x = pos.x + length - length * t;
-			p.y = pos.y - length;
+			p.y = pos.y + length;
 		}
 		else if (degree >= 180.0 && degree < 270.0)
 		{
 			t = ((degree - 180.0) / 90.0) * 2;
 			p.x = pos.x - length;
-			p.y = pos.y - length + length * t;
+			p.y = pos.y + length - length * t;
 		}
 		else if (degree >= 270.0 && degree < 360.0)
 		{
 			t = ((degree - 270.0) / 90.0) * 2;
 			p.x = pos.x - length + length * t;
-			p.y = pos.y + length;
+			p.y = pos.y - length;
 		}
 	}
 	else if (type == Type::TRIANGLE)
@@ -208,6 +214,17 @@ Vec2 Shape::getPos(double degree)
 		}
 	}
 	return p;
+}
+
+void Shape::invertColor()
+{
+	color.r = 255 - color.r;
+	color.g = 255 - color.g;
+	color.b = 255 - color.b;
+
+	lineColor.r = 255 - lineColor.r;
+	lineColor.g = 255 - lineColor.g;
+	lineColor.b = 255 - lineColor.b;
 }
 
 void shapeInitialize()
@@ -247,21 +264,35 @@ void shapeInitialize()
 	shapes[3][2].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
 	shapes[3][3].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
 
+	int c[3]{ uidColor(gen),uidColor(gen),uidColor(gen) };
 	for (int i{}; i < 4; ++i)
 	{
 		shapes[i][0].isDrawing = false;
 		shapes[i][0].setShape(Type::RECTANGLE, min(ws.WIDTH / 4, ws.HEIGHT / 4));
 
 		shapes[i][1].setShape(Type::CIRCLE, min(ws.WIDTH / 5, ws.HEIGHT / 5));
+		shapes[i][1].setLineColor(c[0], c[1], c[2]);
 		shapes[i][1].isDrawing = true;
 
 		shapes[i][2].setShape(Type::CIRCLE, 10);
 		shapes[i][2].setPos(shapes[i][1].getPos(shapes[i][2].getProgress()));
+		shapes[i][2].setLineColor(c[0], c[1], c[2]);
+		shapes[i][2].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 		shapes[i][2].isDrawing = true;
 
 		shapes[i][3].setShape(Type::CIRCLE, 5);
+		shapes[i][3].setLineColor(c[0], c[1], c[2]);
+		shapes[i][3].setColor(255, 0, 0);
 		shapes[i][3].isDrawing = true;
 	}
+}
+
+void setPosAll(int idx, Vec2 pos)
+{
+	shapes[idx][0].setPos(Vec2{ pos.x,pos.y });
+	shapes[idx][1].setPos(Vec2{ pos.x,pos.y });
+	shapes[idx][2].setPos(shapes[idx][1].getPos(shapes[idx][2].getProgress()));
+	shapes[idx][3].setPos(Vec2{ pos.x,pos.y });
 }
 
 void selectShape(int idx)
