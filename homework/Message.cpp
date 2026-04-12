@@ -3,6 +3,7 @@
 
 void Message::OnCreate(HWND hWnd)
 {
+	SetTimer(hWnd, 3, 500, (TIMERPROC)TimerProc);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -41,6 +42,8 @@ void Message::OnPaint(HWND hWnd)
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
 
+	SetROP2(hDC, currentROP2);
+
 	EndPaint(hWnd, &ps);
 }
 
@@ -49,6 +52,10 @@ void Message::OnSize(HWND hWnd, int width, int height)
 	ws.WIDTH = width;
 	ws.HEIGHT = height;
 	InvalidateRect(hWnd, NULL, TRUE);
+}
+
+void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
 }
 
 void Message::OnDestroy(HWND hWnd)
