@@ -3,7 +3,8 @@
 
 void Message::OnCreate(HWND hWnd)
 {
-	SetTimer(hWnd, 3, 100, (TIMERPROC)TimerProc);
+	shape.setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+	SetTimer(hWnd, 3, 10, (TIMERPROC)TimerProc);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -65,10 +66,13 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 void Message::MouseClick()
 {
 	shape.isDrawing = true;
+	shape.setPos(Vec2{ (double)ws.mouse.x, (double)ws.mouse.y });
 }
 
 void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	shape.checkCollide();
+	InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void Message::OnDestroy(HWND hWnd)

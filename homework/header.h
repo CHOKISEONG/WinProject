@@ -17,3 +17,4 @@
 
 #include "Message.h"
 #include "KeyHandler.h"
+#include "global.h"

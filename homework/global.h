@@ -6,7 +6,7 @@
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
 
-// 윈도우의 가로, 세로 크기
+// 윈도우
 class SZ
 {
 public:

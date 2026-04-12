@@ -76,19 +76,19 @@ void KeyHandler::Default(WPARAM key)
 	// 마우스를 클릭하는 곳에 사각형
 	case'r':
 	{
-		shape.setType(Type::RECT);
+		shape.setShape(Type::RECTANGLE, 30);
 		break;
 	}
 	// 마우스를 클릭하는 곳에 원
 	case'e':
 	{
-		shape.setType(Type::CIRCLE);
+		shape.setShape(Type::CIRCLE, 30);
 		break;
 	}
 	// 마우스를 클릭하는 곳에 삼각형
 	case't':
 	{
-		shape.setType(Type::TRIANGLE);
+		shape.setShape(Type::TRIANGLE, 30);
 		break;
 	}
 	// 현재 위치에서 우측으로 자동 이동
@@ -100,14 +100,14 @@ void KeyHandler::Default(WPARAM key)
 	// 현재 위치에서 아래쪽으로 자동 이동
 	case'v':
 	{
-		shape.setDir(-90.0f);
+		shape.setDir(90.0f);
 		break;
 	}
 	// 현재 위치에서 대각선 방향으로 자동 이동
 	case's':
 	{
-		POINT sPos = shape.getPos();
-		shape.setDir(atan2(ws.mouse.y - sPos.y, ws.mouse.x - sPos.x)  * 180.0f / PI);
+		Vec2 sPos = shape.getPos();
+		shape.setDir(atan2(sPos.y - ws.mouse.y,sPos.x - ws.mouse.x)  * 180.0f / PI);
 		break;
 	}
 	// 이동을 멈추기
@@ -117,23 +117,20 @@ void KeyHandler::Default(WPARAM key)
 		shape.isMoving = false;
 		break;
 	}
-	// 이동 속도 늘이기
-	case'+':
-	{
-		shape.changeSpeed(1.0f);
-		break;
-	}
-	// 이동 속도 줄이기
-	case'-':
-	{
-		shape.changeSpeed(-1.0f);
-		break;
-	}
 	case'q':
 	{
 		exit(0);
 		break;
 	}
+	}
+
+	if (key == VK_OEM_PLUS)
+	{
+		shape.changeSpeed(1.0f);
+	}
+	else if (key == VK_OEM_MINUS)
+	{
+		shape.changeSpeed(-1.0f);
 	}
 }
 
