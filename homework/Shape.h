@@ -71,7 +71,12 @@ public:
 	
 
 	void changeDir() { progressDir *= -1; }
-	void updateProgress(float delta) { progress += delta * progressDir; }
+	void updateProgress(float delta) 
+	{
+		progress += delta * progressDir; 
+		if (progress > 360.0) progress -= 360.0;
+		else if (progress < -360.0) progress += 360.0;
+	}
 
 	void addPoint(POINT point) { points.push_back(point); }
 

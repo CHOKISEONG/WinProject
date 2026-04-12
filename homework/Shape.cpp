@@ -186,7 +186,7 @@ Vec2 Shape::getPos(double degree)
 			float lenY = points[1].y - points[0].y;
 
 			p.x = pos.x + points[0].x + lenX * t;
-			p.y = pos.y + points[0].y + lenX * t;
+			p.y = pos.y + points[0].y + lenY * t;
 		}
 		else if (degree >= 120.0 && degree < 240.0)
 		{
@@ -195,7 +195,7 @@ Vec2 Shape::getPos(double degree)
 			float lenY = points[2].y - points[1].y;
 
 			p.x = pos.x + points[1].x + lenX * t;
-			p.y = pos.y + points[1].y + lenX * t;
+			p.y = pos.y + points[1].y + lenY * t;
 		}
 		else if (degree >= 240.0 && degree < 360.0)
 		{
@@ -204,7 +204,7 @@ Vec2 Shape::getPos(double degree)
 			float lenY = points[0].y - points[2].y;
 
 			p.x = pos.x + points[2].x + lenX * t;
-			p.y = pos.y + points[2].y + lenX * t;
+			p.y = pos.y + points[2].y + lenY * t;
 		}
 	}
 	return p;

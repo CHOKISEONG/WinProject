@@ -109,11 +109,11 @@ void KeyHandler::Default(WPARAM key)
 	}
 	case 'r':
 		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		shapes[selectedShapes][1].setType(Type::RECTANGLE);
+		shapes[selectedShapes][1].setShape(Type::RECTANGLE, shapes[selectedShapes][1].getLength());
 		break;
 	case 't':
 		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		shapes[selectedShapes][1].setType(Type::TRIANGLE);
+		shapes[selectedShapes][1].setShape(Type::TRIANGLE, shapes[selectedShapes][1].getLength());
 		break;
 	case'q':
 	{
