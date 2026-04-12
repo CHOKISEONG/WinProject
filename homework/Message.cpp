@@ -4,7 +4,7 @@
 void Message::OnCreate(HWND hWnd)
 {
 	shapeInitialize();
-	SetTimer(hWnd, 3, 10, (TIMERPROC)TimerProc);
+	SetTimer(hWnd, 3, 20, (TIMERPROC)TimerProc);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -76,6 +76,11 @@ void Message::MouseClick()
 
 void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	for (int i{}; i < 4; ++i)
+	{
+		shapes[i][2].setPos(shapes[i][1].getPos(shapes[i][2].getProgress()));
+		shapes[i][2].updateProgress(1.0f);
+	}
 	
 	InvalidateRect(hWnd, NULL, TRUE);
 }

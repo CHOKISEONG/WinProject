@@ -73,7 +73,48 @@ void KeyHandler::Default(WPARAM key)
 	
 	switch (_key)
 	{
-
+	case '1':
+		selectShape(0);
+		break;
+	case '2':
+		selectShape(1);
+		break;
+	case '3':
+		selectShape(2);
+		break;
+	case '4':
+		selectShape(3);
+		break;
+	case 'c':
+		if (selectedShapes < 0 || selectedShapes >= 4) break;
+		shapes[selectedShapes][2].changeDir();
+		break;
+	case 'm':
+	{
+		if (selectedShapes < 0 || selectedShapes >= 4) break;
+		Type type = shapes[selectedShapes][1].getType();
+		if (type == Type::CIRCLE)
+		{
+			shapes[selectedShapes][1].setShape(Type::RECTANGLE, shapes[selectedShapes][1].getLength());
+		}
+		else if (type == Type::RECTANGLE)
+		{
+			shapes[selectedShapes][1].setShape(Type::TRIANGLE, shapes[selectedShapes][1].getLength());
+		}
+		else if (type == Type::TRIANGLE)
+		{
+			shapes[selectedShapes][1].setShape(Type::CIRCLE, shapes[selectedShapes][1].getLength());
+		}
+		break;
+	}
+	case 'r':
+		if (selectedShapes < 0 || selectedShapes >= 4) break;
+		shapes[selectedShapes][1].setType(Type::RECTANGLE);
+		break;
+	case 't':
+		if (selectedShapes < 0 || selectedShapes >= 4) break;
+		shapes[selectedShapes][1].setType(Type::TRIANGLE);
+		break;
 	case'q':
 	{
 		exit(0);

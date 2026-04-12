@@ -128,51 +128,116 @@ void Shape::setShape(Type _type, int _length)
 		}
 		break;
 	case RECTANGLE:
-		for (int i{}; i < 4; ++i)
-		{
-			int x = _length * cos(getRadian(i * 90.0f));
-			int y = _length * sin(getRadian(i * 90.0f));
-
-			addPoint(POINT{ x,y });
-		}
+		addPoint(POINT{ -_length, -_length });
+		addPoint(POINT{ _length, -_length });
+		addPoint(POINT{ _length,  _length });
+		addPoint(POINT{ -_length,  _length });
 		break;
 	default:
 		break;
 	}
 }
 
+Vec2 Shape::getPos(double degree)
+{
+	const double rad = getRadian(degree);
+	Vec2 p{};
+
+	if (type == Type::CIRCLE)
+	{
+		p.x = pos.x + cos(rad) * length;
+		p.y = pos.y + sin(rad) * length;
+	}
+	else if (type == Type::RECTANGLE)
+	{
+		float t{};
+		if (degree >= 0.0 && degree < 90.0)
+		{
+			t = (degree / 90.0) * 2;
+			p.x = pos.x + length;
+			p.y = pos.y + length - length * t;
+		}
+		else if (degree >= 90.0 && degree < 180.0)
+		{
+			t = ((degree - 90.0) / 90.0) * 2;
+			p.x = pos.x + length - length * t;
+			p.y = pos.y - length;
+		}
+		else if (degree >= 180.0 && degree < 270.0)
+		{
+			t = ((degree - 180.0) / 90.0) * 2;
+			p.x = pos.x - length;
+			p.y = pos.y - length + length * t;
+		}
+		else if (degree >= 270.0 && degree < 360.0)
+		{
+			t = ((degree - 270.0) / 90.0) * 2;
+			p.x = pos.x - length + length * t;
+			p.y = pos.y + length;
+		}
+	}
+	else if (type == Type::TRIANGLE)
+	{
+		float t{};
+		if (degree >= 0.0 && degree < 120.0)
+		{
+			t = degree / 120.0;
+			float lenX = points[1].x - points[0].x;
+			float lenY = points[1].y - points[0].y;
+
+			p.x = pos.x + points[0].x + lenX * t;
+			p.y = pos.y + points[0].y + lenX * t;
+		}
+		else if (degree >= 120.0 && degree < 240.0)
+		{
+			t = (degree - 120.0) / 120.0;
+			float lenX = points[2].x - points[1].x;
+			float lenY = points[2].y - points[1].y;
+
+			p.x = pos.x + points[1].x + lenX * t;
+			p.y = pos.y + points[1].y + lenX * t;
+		}
+		else if (degree >= 240.0 && degree < 360.0)
+		{
+			t = (degree - 240.0) / 120.0;
+			float lenX = points[0].x - points[2].x;
+			float lenY = points[0].y - points[2].y;
+
+			p.x = pos.x + points[2].x + lenX * t;
+			p.y = pos.y + points[2].y + lenX * t;
+		}
+	}
+	return p;
+}
+
 void shapeInitialize()
 {
-	for (int i{}; i < 4; ++i)
+	if (!shapes.empty())
 	{
-		shapes[i].clear();
+		for (int i{}; i < shapes[i].size(); ++i)
+		{
+			shapes[i].clear();
+		}
+		shapes.clear();
 	}
-	shapes.clear();
-
+	
 	shapes.resize(4);
 	for (int i{}; i < 4; ++i)
 	{
 		shapes[i].resize(4);
 	}
 
-	for (int i{}; i < 4; ++i)
-	{
-		shapes[i][0].setShape(Type::CIRCLE, 5);
-		shapes[i][1].setShape(Type::CIRCLE, min(ws.WIDTH / 4, ws.HEIGHT / 4));
-		shapes[i][2].setShape(Type::CIRCLE, 10);
-		shapes[i][3].setShape(Type::RECTANGLE, min(ws.WIDTH / 2, ws.HEIGHT / 2));
-	}
 	shapes[0][0].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
 	shapes[0][1].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
 	shapes[0][2].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
 	shapes[0][3].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
 
-	shapes[1][0].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+	shapes[1][0].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
 	shapes[1][1].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
 	shapes[1][2].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
 	shapes[1][3].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.25 });
 
-	shapes[2][0].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.25 });
+	shapes[2][0].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
 	shapes[2][1].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
 	shapes[2][2].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
 	shapes[2][3].setPos(Vec2{ ws.WIDTH * 0.25, ws.HEIGHT * 0.75 });
@@ -181,4 +246,37 @@ void shapeInitialize()
 	shapes[3][1].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
 	shapes[3][2].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
 	shapes[3][3].setPos(Vec2{ ws.WIDTH * 0.75, ws.HEIGHT * 0.75 });
+
+	for (int i{}; i < 4; ++i)
+	{
+		shapes[i][0].isDrawing = false;
+		shapes[i][0].setShape(Type::RECTANGLE, min(ws.WIDTH / 4, ws.HEIGHT / 4));
+
+		shapes[i][1].setShape(Type::CIRCLE, min(ws.WIDTH / 5, ws.HEIGHT / 5));
+		shapes[i][1].isDrawing = true;
+
+		shapes[i][2].setShape(Type::CIRCLE, 10);
+		shapes[i][2].setPos(shapes[i][1].getPos(shapes[i][2].getProgress()));
+		shapes[i][2].isDrawing = true;
+
+		shapes[i][3].setShape(Type::CIRCLE, 5);
+		shapes[i][3].isDrawing = true;
+	}
+}
+
+void selectShape(int idx)
+{
+	selectedShapes = idx;
+
+	for (int i{}; i < 4; ++i)
+	{
+		if (i != selectedShapes)
+		{
+			shapes[i][0].isDrawing = false;
+		}
+		else
+		{
+			shapes[i][0].isDrawing = true;
+		}
+	}
 }

@@ -16,6 +16,8 @@ struct Vec2
 	double y;
 };
 
+inline int selectedShapes = -1;
+
 class Shape
 {
 private:
@@ -32,6 +34,8 @@ private:
 	long moveSpeed = 10.0f;
 	Vec2 moveDir;
 
+	float progress = 0.0f;
+	int progressDir = 1;
 public:
 	bool isDrawing = false;
 	bool isMoving = false;
@@ -57,8 +61,17 @@ public:
 	void setColor(int r, int g, int b) { color.r = r; color.g = g; color.b = b; }
 	void setDir(float degree);
 	void setShape(Type _type, int length);
+	
 
 	Vec2 getPos() const { return pos; }
+	Vec2 getPos(double degree);
+	Type getType() const { return type;}
+	float getProgress() const { return progress; }
+	int getLength() const { return length; }
+	
+
+	void changeDir() { progressDir *= -1; }
+	void updateProgress(float delta) { progress += delta * progressDir; }
 
 	void addPoint(POINT point) { points.push_back(point); }
 
@@ -67,4 +80,6 @@ public:
 
 inline std::vector<std::vector<Shape>> shapes;
 
+
 void shapeInitialize();
+void selectShape(int idx);
