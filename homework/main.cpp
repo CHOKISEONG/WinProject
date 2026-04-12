@@ -32,6 +32,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Message::OnSize(hWnd, (int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
+	case WM_MOUSEMOVE:
+		Message::MouseMove((int)LOWORD(lParam), (int)HIWORD(lParam));
+		return 0;
+
+	case WM_LBUTTONDOWN:
+		Message::MouseClick();
+		return 0;
+
 	case WM_DESTROY:
 		Message::OnDestroy(hWnd);
 		return 0;

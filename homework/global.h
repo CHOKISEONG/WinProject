@@ -1,6 +1,7 @@
 #pragma once
 
 #include "header.h"
+#include "Shape.h"
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
@@ -11,6 +12,8 @@ class SZ
 public:
 	int WIDTH = 1200;
 	int HEIGHT = 800;
+
+	POINT mouse;
 
 	int GetLength() const
 	{
@@ -23,7 +26,6 @@ extern SZ ws;
 
 // »ö±ò
 struct Color { unsigned int r, g, b; };
-
 
 extern int currentROP2;
 

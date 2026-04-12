@@ -3,7 +3,7 @@
 
 void Message::OnCreate(HWND hWnd)
 {
-	SetTimer(hWnd, 3, 500, (TIMERPROC)TimerProc);
+	SetTimer(hWnd, 3, 100, (TIMERPROC)TimerProc);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -44,6 +44,8 @@ void Message::OnPaint(HWND hWnd)
 
 	SetROP2(hDC, currentROP2);
 
+	shape.draw(hDC);
+
 	EndPaint(hWnd, &ps);
 }
 
@@ -52,6 +54,17 @@ void Message::OnSize(HWND hWnd, int width, int height)
 	ws.WIDTH = width;
 	ws.HEIGHT = height;
 	InvalidateRect(hWnd, NULL, TRUE);
+}
+
+void Message::MouseMove(int mouse_x, int mouse_y)
+{
+	ws.mouse.x = mouse_x;
+	ws.mouse.y = mouse_y;
+}
+
+void Message::MouseClick()
+{
+	shape.isDrawing = true;
 }
 
 void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)

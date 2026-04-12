@@ -71,6 +71,70 @@ void KeyHandler::Default(WPARAM key)
 {
 	const char _key = (char)tolower(key);
 	
+	switch (_key)
+	{
+	// 마우스를 클릭하는 곳에 사각형
+	case'r':
+	{
+		shape.setType(Type::RECT);
+		break;
+	}
+	// 마우스를 클릭하는 곳에 원
+	case'e':
+	{
+		shape.setType(Type::CIRCLE);
+		break;
+	}
+	// 마우스를 클릭하는 곳에 삼각형
+	case't':
+	{
+		shape.setType(Type::TRIANGLE);
+		break;
+	}
+	// 현재 위치에서 우측으로 자동 이동
+	case'h':
+	{
+		shape.setDir(0.0f);
+		break;
+	}
+	// 현재 위치에서 아래쪽으로 자동 이동
+	case'v':
+	{
+		shape.setDir(-90.0f);
+		break;
+	}
+	// 현재 위치에서 대각선 방향으로 자동 이동
+	case's':
+	{
+		POINT sPos = shape.getPos();
+		shape.setDir(atan2(ws.mouse.y - sPos.y, ws.mouse.x - sPos.x)  * 180.0f / PI);
+		break;
+	}
+	// 이동을 멈추기
+	case'p':
+	{
+		shape.setDir(0.0f);
+		shape.isMoving = false;
+		break;
+	}
+	// 이동 속도 늘이기
+	case'+':
+	{
+		shape.changeSpeed(1.0f);
+		break;
+	}
+	// 이동 속도 줄이기
+	case'-':
+	{
+		shape.changeSpeed(-1.0f);
+		break;
+	}
+	case'q':
+	{
+		exit(0);
+		break;
+	}
+	}
 }
 
 void KeyHandler::Enter()

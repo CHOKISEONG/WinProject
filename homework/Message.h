@@ -24,5 +24,10 @@ public:
     // 윈도우 크기가 변경될 때
     static void OnSize(HWND hWnd, int width, int height);
 
+    // 마우스가 움직일 때
+    static void MouseMove(int mouse_x, int mouse_y);
+
+    static void MouseClick();
+
     static void CALLBACK TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };
