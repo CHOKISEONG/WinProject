@@ -121,25 +121,11 @@ void Message::RMouseDBClick()
 {
 	for (int i{}; i < 4; ++i)
 	{
-		const Vec2 base = shapes[i][0].getPos();
-
-		const int x0 = shapes[i][0].points[0].x + (int)base.x;
-		const int y0 = shapes[i][0].points[0].y + (int)base.y;
-		const int x2 = shapes[i][0].points[2].x + (int)base.x;
-		const int y2 = shapes[i][0].points[2].y + (int)base.y;
-
-		RECT rc{};
-		rc.left = min(x0, x2);
-		rc.right = max(x0, x2);
-		rc.top = min(y0, y2);
-		rc.bottom = max(y0, y2);
-
-		if (PtInRect(&rc, POINT{ ws.mouse.x, ws.mouse.y }))
+		for (int j{}; j < 4; ++j)
 		{
-			for (int j{}; j < 4; ++j)
-			{
+			const Vec2 base = shapes[i][j].getPos();
+			if (getDistance(base.x, base.y, ws.mouse.x, ws.mouse.y) < shapes[i][j].getLength())
 				shapes[i][j].invertColor();
-			}
 		}
 	}
 }

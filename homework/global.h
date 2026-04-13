@@ -5,6 +5,7 @@
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
+float getDistance(int x1, int y1, int x2, int y2);
 
 // À©µµ¿ì
 class SZ

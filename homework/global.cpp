@@ -9,3 +9,8 @@ unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().coun
 std::mt19937 gen(static_cast<std::mt19937::result_type>(seed));
 std::uniform_int_distribution<int> uid(0, 9999);
 std::uniform_int_distribution<int> uidColor(0, 255);
+
+float getDistance(int x1, int y1, int x2, int y2)
+{
+	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}

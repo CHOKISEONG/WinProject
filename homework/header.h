@@ -3,6 +3,7 @@
 // 헤더만 모아놓는 용
 #include <windows.h>
 #include <tchar.h>
+#include <math.h>
 
 #include <algorithm>
 #include <chrono>
