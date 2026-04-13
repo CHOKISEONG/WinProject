@@ -32,5 +32,5 @@ public:
     static void LMouseDBClick();
     static void RMouseDBClick();
 
-    static void CALLBACK TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
+    static void SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };

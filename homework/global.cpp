@@ -4,6 +4,11 @@ SZ ws;
 
 int currentROP2 = R2_COPYPEN;
 
+int playerAnimEvent = 1;
+int playerAnimFPS = 10;
+
+int timerProcCnt = 2;
+
 bool isGameStarted = false;
 
 std::random_device rd;

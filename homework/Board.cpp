@@ -40,13 +40,13 @@ void Board::initialize()
 		}
 	}
 
-	// 스네이크 초기화(머리 1개)
+	// 스네이크 
 	snake.clear();
-	snake.push_back(POINT{ 0, 0 });
+	snake.push_back(POINT{ uid(gen) % boardCol, uid(gen) % boardRow});
 
-	Shape& head = field[0][0];
+	Shape& head = field[snake[0].x][snake[0].y];
 	head.setTileType(TileType::PLAYER);
-	head.setShape(Type::CIRCLE, (dX > dY) ? dY : dX);
+	head.setShape(Type::CIRCLE, ws.GetCellLen() / 2);
 	head.setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 	head.push(Direction::DOWNDIR);
 
@@ -117,6 +117,101 @@ void Board::draw(HDC hDC) const
 	}
 }
 
+bool Board::checkCollide(POINT from, POINT to)
+{
+	if (!isInside(to))
+	{
+		Shape& target = field[from.x][from.y];
+		while (target.dirSize() != 0)
+		{
+			target.pop();
+		}
+
+		if (to.x < 0)
+		{
+			if (target.getMoveType() == 1)
+			{
+				while (target.dirSize() != 0)
+					target.pop();
+
+				target.push(Direction::RIGHTDIR);
+			}
+			else
+			{
+				target.push(Direction::DOWNDIR);
+				target.push(Direction::RIGHTDIR);
+			}
+		}
+		else if (to.x >= boardCol)
+		{
+			if (target.getMoveType() == 1)
+			{
+				while (target.dirSize() != 0)
+					target.pop();
+
+				target.push(Direction::LEFTDIR);
+			}
+			else
+			{
+				target.push(Direction::DOWNDIR);
+				target.push(Direction::LEFTDIR);
+			}
+		}
+		else if (to.y < 0)
+		{
+			target.push(Direction::RIGHTDIR);
+			target.push(Direction::DOWNDIR);
+		}
+		else if (to.y >= boardRow)
+		{
+			target.push(Direction::RIGHTDIR);
+			target.push(Direction::UPDIR);
+		}
+		
+		return true;
+	}
+	else if (isObstacle(to))
+	{
+		Shape& target = field[from.x][from.y];
+		while (target.dirSize() != 0)
+		{
+			target.pop();
+		}
+
+		Direction dir;
+		if (from.x == to.x)
+		{
+			if (from.y > to.y)
+			{
+				target.push(Direction::RIGHTDIR);
+				target.push(Direction::UPDIR);
+			}
+			else
+			{
+				target.push(Direction::LEFTDIR);
+				target.push(Direction::DOWNDIR);
+			}
+		}
+		if (from.y == to.y)
+		{
+			if (from.x > to.x)
+			{
+				target.push(Direction::DOWNDIR);
+				target.push(Direction::LEFTDIR);
+			}
+			else
+			{
+				target.push(Direction::DOWNDIR);
+				target.push(Direction::RIGHTDIR);
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 POINT Board::findPlayer()
 {
 	if (!snake.empty())
@@ -129,6 +224,13 @@ POINT Board::findPlayer()
 bool Board::isInside(POINT p) const
 {
 	return (p.x >= 0) && (p.x < boardCol) && (p.y >= 0) && (p.y < boardRow);
+}
+
+bool Board::isObstacle(POINT p) const
+{
+	if (field[p.x][p.y].getTileType() == TileType::OBSTACLE)
+		return true;
+	return false;
 }
 
 bool Board::isSnakeAt(POINT p) const
@@ -168,7 +270,7 @@ void Board::applySnakeTiles()
 	const POINT h = snake[0];
 	Shape& head = field[h.x][h.y];
 	head.setTileType(TileType::PLAYER);
-	head.setShape(Type::CIRCLE, ws.GetCellLen() / 4);
+	head.setShape(Type::CIRCLE, ws.GetCellLen() / 2);
 
 	// 꼬리들
 	for (size_t i = 1; i < snake.size(); ++i)
@@ -176,9 +278,18 @@ void Board::applySnakeTiles()
 		const POINT t = snake[i];
 		Shape& tail = field[t.x][t.y];
 		tail.setTileType(TileType::CHASER);
-		int tailLen{ ws.GetCellLen() / 5 - (int)i };
+		int tailLen{ ws.GetCellLen() / 2 - (int)(i*2) };
 		tail.setShape(Type::CIRCLE, (tailLen > 0) ? tailLen : 1 );
 		tail.setColor(head.getColor(0), head.getColor(1), head.getColor(2));
+	}
+}
+
+void Board::swapSnake()
+{
+	for (int i{}; i < snake.size(); ++i)
+	{
+		snake.push_back(snake[snake.size() - 1]);
+		snake.erase(snake.begin());
 	}
 }
 
@@ -201,47 +312,16 @@ void Board::processMove()
 	const POINT newHead = nextPos(headPos, dir);
 
 	// 벽 충돌 처리
-	if (!isInside(newHead))
-	{
-		field[headPos.x][headPos.y] = headBackup;
-
-		while (field[headPos.x][headPos.y].dirSize() != 0)
-		{
-			field[headPos.x][headPos.y].pop();
-		}
-
-		if (newHead.x < 0)
-		{
-			field[headPos.x][headPos.y].push(Direction::DOWNDIR);
-			field[headPos.x][headPos.y].push(Direction::RIGHTDIR);
-		}
-		else if (newHead.x >= boardCol)
-		{
-			field[headPos.x][headPos.y].push(Direction::DOWNDIR);
-			field[headPos.x][headPos.y].push(Direction::LEFTDIR);
-		}
-		else if (newHead.y < 0)
-		{
-			field[headPos.x][headPos.y].push(Direction::RIGHTDIR);
-			field[headPos.x][headPos.y].push(Direction::DOWNDIR);
-		}
-		else if (newHead.y >= boardRow)
-		{
-			field[headPos.x][headPos.y].push(Direction::RIGHTDIR);
-			field[headPos.x][headPos.y].push(Direction::UPDIR);
-		}
-
-		return;
-	}
-
+	if (checkCollide(headPos, newHead)) return;
+	
 	// 자기 몸 충돌(이동 금지)
 	if (isSnakeAt(newHead))
 	{
+		field[headPos.x][headPos.y].pop();
 		return;
 	}
 
 	const bool ateItem = (field[newHead.x][newHead.y].getTileType() == TileType::ITEM);
-
 	const bool ateMover = (field[newHead.x][newHead.y].getTileType() == TileType::MOVER);
 
 	// 이동(좌표 리스트)
@@ -254,8 +334,10 @@ void Board::processMove()
 
 	if (ateItem)
 	{
-		field[oldTail.x][oldTail.y].setShape(Type::NONE);
-		field[oldTail.x][oldTail.y].setTileType(TileType::EMPTY);
+		Shape& itm = field[newHead.x][newHead.y];
+		headBackup.setColor(itm.getColor(0), itm.getColor(1), itm.getColor(2));
+		itm.setShape(Type::NONE);
+		itm.setTileType(TileType::EMPTY);
 		createItem();
 	}
 
@@ -264,23 +346,15 @@ void Board::processMove()
 		snake.push_back(oldTail);
 	}
 
-	// 1) 이동 전 좌표를 전부 지움 (잔상 제거 핵심)
+	// 1) 이동 전 좌표를 전부 지움
 	for (const auto& p : prevSnake)
 	{
 		field[p.x][p.y] = Shape{};
 	}
 
-	// 2) 이동 후 스네이크를 다시 그림
+	// 스네이크 헤드 재설정
 	field[newHead.x][newHead.y] = headBackup;
 	field[newHead.x][newHead.y].setTileType(TileType::PLAYER);
-
-	for (size_t i = 1; i < snake.size(); ++i)
-	{
-		const POINT t = snake[i];
-		Shape& tail = field[t.x][t.y];
-		tail.setTileType(TileType::CHASER);
-		tail.setShape(Type::CIRCLE, ws.GetCellLen() / 5);
-	}
 
 	// dir 큐 소모
 	if (field[newHead.x][newHead.y].dirSize() > 1)
@@ -289,37 +363,121 @@ void Board::processMove()
 	}
 }
 
-void Board::createItem()
+void Board::moverMove()
 {
-	int x{}, y{};
+	int moveType{};
+	std::vector<POINT> movers;
+
+	for (int i{}; i < boardRow; ++i)
+	{
+		for (int j{}; j < boardCol; ++j)
+		{
+			if (field[i][j].getMoveType() == 1)
+			{
+				movers.push_back({ i, j });
+			}
+		}
+	}
+
+	for (const auto& pt : movers)
+	{
+		int i = pt.x;
+		int j = pt.y;
+
+		if (field[i][j].getMoveType() != 1) continue;
+
+		Direction dir = field[i][j].getDir();
+		const POINT target = nextPos(POINT{ i, j }, dir);
+
+		if (checkCollide(POINT{ i, j }, target)) continue;
+		else
+		{
+			std::swap(field[i][j], field[target.x][target.y]);
+		}
+	}
+}
+
+void Board::createItem(TileType type, int x, int y)
+{
+	
 	int dX{ ws.WIDTH / (boardCol * 2) };
 	int dY{ ws.HEIGHT / (boardRow * 2) };
-	while (true)
-	{
-		x = uid(gen) % boardCol;
-		y = uid(gen) % boardCol;
+	int moveType = uid(gen) % 5 + 1;
 
-		if (field[x][y].getTileType() == TileType::EMPTY)
+	if (x == -1 && y == -1)
+	{
+		while (true)
+		{
+			x = uid(gen) % boardCol;
+			y = uid(gen) % boardCol;
+
+			if (field[x][y].getTileType() == TileType::EMPTY)
+			{
+				if (type == TileType::MOVER)
+				{
+					field[x][y].setShape(Type::CIRCLE, (dX > dY) ? dY : dX);
+					field[x][y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+					field[x][y].setTileType(TileType::MOVER);
+					
+					field[x][y].setMoveType(moveType);
+					if (moveType == 1)
+					{
+						field[x][y].push(Direction::LEFTDIR);
+					}
+					if (moveType == 2)
+					{
+						field[x][y].push(Direction::UPDIR);
+					}
+					if (moveType == 3)
+					{
+						field[x][y].push(Direction::UPDIR);
+					}
+					return;
+				}
+				else if (type == TileType::OBSTACLE)
+				{
+					field[x][y].setShape(Type::RECTANGLE, (dX > dY) ? dY : dX);
+					field[x][y].setColor(255, 0, 0);
+					field[x][y].setTileType(TileType::OBSTACLE);
+					return;
+				}
+			}
+		}
+	}
+	else if(field[x][y].getTileType() == TileType::EMPTY)
+	{
+		if (type == TileType::MOVER)
 		{
 			field[x][y].setShape(Type::CIRCLE, (dX > dY) ? dY : dX);
 			field[x][y].setColor(uidColor(gen), uidColor(gen), uidColor(gen));
 			field[x][y].setTileType(TileType::MOVER);
-			field[x][y].setMoveType(uid(gen) % 5);
-			break;
+			field[x][y].setMoveType(moveType);
+			if (moveType == 1)
+			{
+				field[x][y].push(Direction::LEFTDIR);
+			}
+			if (moveType == 2)
+			{
+				field[x][y].push(Direction::UPDIR);
+			}
+			if (moveType == 3)
+			{
+				field[x][y].push(Direction::UPDIR);
+			}
+			return;
+		}
+		else if (type == TileType::OBSTACLE)
+		{
+			field[x][y].setShape(Type::RECTANGLE, (dX > dY) ? dY : dX);
+			field[x][y].setColor(255, 0, 0);
+			field[x][y].setTileType(TileType::OBSTACLE);
+			return;
 		}
 	}
 }
 
 void Board::changeDir(Direction dir)
 {
-	const POINT pos = findPlayer();
-	if (pos.x < 0) return;
-
-	Shape& player = field[pos.x][pos.y];
-
-	while (player.dirSize() != 0)
-	{
-		player.pop();
-	}
-	player.push(dir);
+	const POINT headPos = snake[0];
+	field[headPos.x][headPos.y].push(dir);
 }

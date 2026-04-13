@@ -1,9 +1,5 @@
 #include "Shape.h"
 
-void Shape::checkCollide()
-{
-}
-
 void Shape::draw(HDC hDC, POINT pos) const
 {
 	//if (type == Type::NONE || isDrawing == false) return;

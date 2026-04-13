@@ -54,6 +54,7 @@ public:
 
 	Type getType() const { return type; }
 	TileType getTileType() const { return tileType; }
+	int getMoveType() const { return moveType; }
 	Direction getDir() const { return dir.front(); };
 	int getLength() const { return length; }
 	POINT getChildPos() const { return childPos; }
@@ -76,9 +77,6 @@ public:
 	void setShape(Type _type, int length);
 
 	bool hasChild() { return childExist; }
-
-	// 벽과의 충돌 검사
-	void checkCollide();
 
 	// 그리기
 	void draw(HDC hDC, POINT pos) const;

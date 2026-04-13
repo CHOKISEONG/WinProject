@@ -1,11 +1,12 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
 #include "Board.h"
+#include <string>
 
 void Message::OnCreate(HWND hWnd)
 {
 	board.initialize();
-	SetTimer(hWnd, 3, 10, (TIMERPROC)TimerProc);
+	SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)SnakeTimer);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -18,14 +19,15 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 	case VK_DELETE:case VK_PRIOR:case VK_NEXT:
 	case VK_F1:case VK_F2:case VK_F3:case VK_F4:
 	case VK_F5:case VK_F6:case VK_F7:case VK_F8:
-		KeyHandler::KeyDown(wParam);
+	case VK_OEM_PLUS: case VK_OEM_MINUS:
+		KeyHandler::KeyDown(hWnd, wParam);
 		InvalidateRect(hWnd, NULL, TRUE);
 		return;
 	default:
+		KeyHandler::Default(wParam);
 		break;
 	}
 
-	KeyHandler::KeyDown(wParam);
 	InvalidateRect(hWnd, NULL, TRUE);
 }
 
@@ -70,6 +72,18 @@ void Message::LMouseClick()
 
 void Message::RMouseClick()
 {
+	const int cellW = ws.WIDTH / boardCol;
+	const int cellH = ws.HEIGHT / boardRow;
+
+	const int col = ws.mouse.x / cellW;
+	const int row = ws.mouse.y / cellH;
+
+	if (col < 0 || col >= boardCol || row < 0 || row >= boardRow)
+	{
+		return;
+	}
+
+	board.createItem(TileType::OBSTACLE, col, row);
 }
 
 void Message::LMouseDBClick()
@@ -80,11 +94,15 @@ void Message::RMouseDBClick()
 {
 }
 
-void Message::TimerProc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+void Message::SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	board.processMove();
-	board.applySnakeTiles();
-	InvalidateRect(hWnd, NULL, TRUE);
+	if (isGameStarted)
+	{
+		board.moverMove();
+		board.processMove();
+		board.applySnakeTiles();
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
 }
 
 void Message::OnDestroy(HWND hWnd)

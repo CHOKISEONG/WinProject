@@ -30,6 +30,10 @@ extern int currentROP2;
 
 extern bool rButtonClicked;
 
+extern int playerAnimEvent;
+extern int playerAnimFPS;
+extern int timerProcCnt;
+
 extern bool isGameStarted;
 
 // 랜덤값을 구하기 위해
