@@ -1,10 +1,12 @@
 #pragma once
 
 #include "header.h"
-#include "Shape.h"
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
+
+constexpr int boardRow = 40;
+constexpr int boardCol = 40;
 
 // 윈도우
 class SZ
@@ -15,21 +17,20 @@ public:
 
 	POINT mouse;
 
-	int GetLength() const
+	int GetCellLen() const
 	{
-		return (WIDTH > HEIGHT) ? WIDTH / 80 : HEIGHT / 80;
+		return (WIDTH > HEIGHT) ? WIDTH / boardCol : HEIGHT / boardRow;
 	}
 
 	HWND hWnd = NULL;
 };
 extern SZ ws;
 
-// 색깔
-struct Color { unsigned int r, g, b; };
-
 extern int currentROP2;
 
 extern bool rButtonClicked;
+
+extern bool isGameStarted;
 
 // 랜덤값을 구하기 위해
 extern std::random_device rd;

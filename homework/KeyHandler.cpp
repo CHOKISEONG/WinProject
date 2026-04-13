@@ -1,4 +1,5 @@
 #include "KeyHandler.h"
+#include "Board.h"
 
 void KeyHandler::KeyDown(WPARAM key)
 {
@@ -73,47 +74,18 @@ void KeyHandler::Default(WPARAM key)
 	
 	switch (_key)
 	{
-	case '1':
-		selectShape(0);
+	case 's':
+		isGameStarted = true;
 		break;
-	case '2':
-		selectShape(1);
-		break;
-	case '3':
-		selectShape(2);
-		break;
-	case '4':
-		selectShape(3);
-		break;
-	case 'c':
-		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		shapes[selectedShapes][2].changeDir();
-		break;
-	case 'm':
-	{
-		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		Type type = shapes[selectedShapes][1].getType();
-		if (type == Type::CIRCLE)
-		{
-			shapes[selectedShapes][1].setShape(Type::RECTANGLE, shapes[selectedShapes][1].getLength());
-		}
-		else if (type == Type::RECTANGLE)
-		{
-			shapes[selectedShapes][1].setShape(Type::TRIANGLE, shapes[selectedShapes][1].getLength());
-		}
-		else if (type == Type::TRIANGLE)
-		{
-			shapes[selectedShapes][1].setShape(Type::CIRCLE, shapes[selectedShapes][1].getLength());
-		}
-		break;
-	}
-	case 'r':
-		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		shapes[selectedShapes][1].setShape(Type::RECTANGLE, shapes[selectedShapes][1].getLength());
+	case 'j':
+		// 주인공원과그꼬리들은그자리에서(또는이동하면서)
+		// 이동방향에수직방향으로점프하도록한다.
 		break;
 	case 't':
-		if (selectedShapes < 0 || selectedShapes >= 4) break;
-		shapes[selectedShapes][1].setShape(Type::TRIANGLE, shapes[selectedShapes][1].getLength());
+		// 주인공원이맨뒤의꼬리원이되고, 첫번째꼬리원이주인공원이된다.
+		break;
+	case 'a':
+		//  아주빠른속도로지그재그이동
 		break;
 	case'q':
 	{
@@ -141,19 +113,19 @@ void KeyHandler::Arrow(WPARAM key)
 {
 	if (key == VK_UP)
 	{
-		
+		board.changeDir(Direction::UPDIR);
 	}
 	else if (key == VK_DOWN)
 	{
-		
+		board.changeDir(Direction::DOWNDIR);
 	}
 	else if (key == VK_LEFT)
 	{
-		
+		board.changeDir(Direction::LEFTDIR);
 	}
 	else if (key == VK_RIGHT)
 	{
-		
+		board.changeDir(Direction::RIGHTDIR);
 	}
 }
 
