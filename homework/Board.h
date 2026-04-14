@@ -13,6 +13,7 @@ private:
 	std::vector<POINT> snake; // [0]=PLAYER(¸Ó¸®), 1..=CHASER(²¿¸®)
 
 	std::vector<POINT> obstacleLoc;
+	POINT snakePosTemp = POINT{ 0,0 };
 	bool isHigh = false;
 
 	bool isInside(POINT p) const;

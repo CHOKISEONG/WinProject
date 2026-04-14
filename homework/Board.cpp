@@ -623,11 +623,65 @@ void Board::changeDir(Direction dir)
 
 void Board::setHighSnake()
 {
-	POINT sPos = snake[0];
+	POINT sPos = snake[0], snakePosTemp = snake[0];
+
+	int turnLen = 1;
+
+	// 테두리쪽 끝으로 이동
+	while (true)
+	{
+		Direction dir = field[snake[0].x][snake[0].y].getDir();
+		changeDir(dir);
+		if (isInside(nextPos(sPos, dir)))
+			sPos = nextPos(sPos, dir);
+		else break;
+	}
+
+	// 좌상단으로 이동
+	if (sPos.x == 0 || sPos.x == boardCol - 1)
+	{
+		while (sPos.y != 0)
+		{
+			changeDir(Direction::UPDIR);
+			if (isInside(nextPos(sPos, Direction::UPDIR)))
+				sPos = nextPos(sPos, Direction::UPDIR);
+		}
+
+		while (sPos.x != 0)
+		{
+			changeDir(Direction::LEFTDIR);
+			if (isInside(nextPos(sPos, Direction::LEFTDIR)))
+				sPos = nextPos(sPos, Direction::LEFTDIR);
+		}
+	}
+	else if (sPos.y == 0 || sPos.y == boardRow - 1)
+	{
+		while (sPos.x != 0)
+		{
+			changeDir(Direction::LEFTDIR);
+			if (isInside(nextPos(sPos, Direction::LEFTDIR)))
+				sPos = nextPos(sPos, Direction::LEFTDIR);
+		}
+
+		while (sPos.y != 0)
+		{
+			changeDir(Direction::UPDIR);
+			if (isInside(nextPos(sPos, Direction::UPDIR)))
+				sPos = nextPos(sPos, Direction::UPDIR);
+		}
+	}
+
 	while (sPos.x == 0 && sPos.y == 0)
 	{
-		// 상하좌우 검사 후 없는 곳으로 가야됨
-		
+		for (int i{}; i < turnLen; ++i)
+			changeDir(Direction::UPDIR);
+		for (int i{}; i < turnLen; ++i)
+			changeDir(Direction::RIGHTDIR);
+		for (int i{}; i < turnLen; ++i)
+			changeDir(Direction::DOWNDIR);
+		for (int i{}; i < turnLen; ++i)
+			changeDir(Direction::LEFTDIR);
+		++
 	}
 }
 
