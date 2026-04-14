@@ -4,12 +4,7 @@ SZ ws;
 
 int currentROP2 = R2_COPYPEN;
 
-int playerAnimEvent = 1;
-int playerAnimFPS = 10;
-
-int timerProcCnt = 2;
-
-bool isGameStarted = false;
+int TimerFuncFPS = 60;
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();

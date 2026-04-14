@@ -2,13 +2,12 @@
 
 void Shape::draw(HDC hDC, POINT pos) const
 {
-	//if (type == Type::NONE || isDrawing == false) return;
-	//else if (points.size() == 0) return;
+	if (type == Type::NONE) return;
 
-	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(lineColor.r, lineColor.g, lineColor.b));
+	HPEN hPen = CreatePen(PS_SOLID, 1, colorPen);
 	HPEN oldPen = (HPEN)SelectObject(hDC, hPen);
 
-	HBRUSH hBrush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+	HBRUSH hBrush = CreateSolidBrush(colorBrush);
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 
 	std::vector<POINT> p;
@@ -48,7 +47,6 @@ void Shape::setShape(Type _type)
 
 void Shape::setShape(Type _type, int _length)
 {
-	clear();
 	type = _type;
 	length = _length;
 
@@ -78,13 +76,16 @@ void Shape::setShape(Type _type, int _length)
 	}
 }
 
+void Shape::clearAll()
+{
+	points.clear();
+	length = 0;
+	type = Type::NONE;
+	colorPen = RGB(0, 0, 0);
+	colorBrush = RGB(0, 0, 0);
+}
+
 void Shape::invertColor()
 {
-	color.r = 255 - color.r;
-	color.g = 255 - color.g;
-	color.b = 255 - color.b;
-
-	lineColor.r = 255 - lineColor.r;
-	lineColor.g = 255 - lineColor.g;
-	lineColor.b = 255 - lineColor.b;
+	colorBrush = RGB(255 - getColorBrush(0), 255 - getColorBrush(1), 255 - getColorBrush(2));
 }

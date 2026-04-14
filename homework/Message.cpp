@@ -1,13 +1,48 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
-#include "Board.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
 {
-	board.initialize();
-	SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)SnakeTimer);
+	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
+	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
 }
+
+void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
+
+}
+
+void Message::OnPaint(HWND hWnd)
+{
+	PAINTSTRUCT ps;
+	HDC hDC = BeginPaint(hWnd, &ps);
+
+	SetROP2(hDC, currentROP2);
+
+	
+
+	EndPaint(hWnd, &ps);
+}
+
+void Message::LMouseClick()
+{
+	
+}
+
+void Message::RMouseClick()
+{
+	
+}
+
+void Message::LMouseDBClick()
+{
+}
+
+void Message::RMouseDBClick()
+{
+}
+
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 {
@@ -24,7 +59,7 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 		InvalidateRect(hWnd, NULL, TRUE);
 		return;
 	default:
-		KeyHandler::Default(wParam);
+		KeyHandler::Default(hWnd, wParam);
 		break;
 	}
 
@@ -41,18 +76,6 @@ void Message::OnChar(HWND hWnd, WPARAM wParam)
 	InvalidateRect(hWnd, NULL, TRUE);
 }
 
-void Message::OnPaint(HWND hWnd)
-{
-	PAINTSTRUCT ps;
-	HDC hDC = BeginPaint(hWnd, &ps);
-
-	SetROP2(hDC, currentROP2);
-
-	board.draw(hDC);
-
-	EndPaint(hWnd, &ps);
-}
-
 void Message::OnSize(HWND hWnd, int width, int height)
 {
 	ws.WIDTH = width;
@@ -62,89 +85,8 @@ void Message::OnSize(HWND hWnd, int width, int height)
 
 void Message::MouseMove(int mouse_x, int mouse_y)
 {
-	ws.mouse.x = mouse_x;
-	ws.mouse.y = mouse_y;
-}
-
-void Message::LMouseClick()
-{
-	const int cellW = ws.WIDTH / boardCol;
-	const int cellH = ws.HEIGHT / boardRow;
-
-	const int col = ws.mouse.x / cellW;
-	const int row = ws.mouse.y / cellH;
-
-	if (col < 0 || col >= boardCol || row < 0 || row >= boardRow)
-	{
-		return;
-	}
-
-	Shape& tile = board.getTile(POINT{ col,row });
-	TileType type = tile.getTileType();
-
-	if (type == TileType::EMPTY)
-	{
-		// 마우스가클릭된방향으로주인공원이이동방향을바꾸고다시지그재그로이동
-		POINT playerPos = board.findPlayer();
-
-		if (playerPos.x < col)
-		{
-			board.changeDir(Direction::RIGHTDIR);
-		}
-		else
-		{
-			board.changeDir(Direction::LEFTDIR);
-		}
-	}
-	else if (type == TileType::PLAYER)
-	{
-		//꼬리원들이모두사라진다.주인공원은모양을삼각형으로
-		//로이동한다.다시주인공원내부를클릭하면삼각형이다시원으로모양이바뀐다.
-
-		board.explodeSnake();
-	}
-	else if (type == TileType::CHASER)
-	{
-		// 꼬리원은주인공원에서분리되어보드의칸에남겨지며이동한다.분리된꼬리원은앞페이지
-		board.seperateSnake(POINT{col,row});
-	}
-}
-
-void Message::RMouseClick()
-{
-	if (board.checkObstacleNum() >= 20) return;
-
-	const int cellW = ws.WIDTH / boardCol;
-	const int cellH = ws.HEIGHT / boardRow;
-
-	const int col = ws.mouse.x / cellW;
-	const int row = ws.mouse.y / cellH;
-
-	if (col < 0 || col >= boardCol || row < 0 || row >= boardRow)
-	{
-		return;
-	}
-
-	board.createItem(TileType::OBSTACLE, col, row);
-}
-
-void Message::LMouseDBClick()
-{
-}
-
-void Message::RMouseDBClick()
-{
-}
-
-void Message::SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
-{
-	if (isGameStarted)
-	{
-		board.moverMove();
-		board.processMove();
-		board.applySnakeTiles();
-		InvalidateRect(hWnd, NULL, TRUE);
-	}
+	ws.mousePos.x = mouse_x;
+	ws.mousePos.y = mouse_y;
 }
 
 void Message::OnDestroy(HWND hWnd)

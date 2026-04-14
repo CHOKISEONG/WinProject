@@ -9,13 +9,14 @@ public:
 	static void KeyDown(HWND hWnd, WPARAM key);
 
 	// 일반적인 키들은 여기로
-	static void Default(WPARAM key);
+	static void Default(HWND hWnd, WPARAM key);
 
 	// 특수키들은 여기로
-	static void Enter();
+	static void Enter(HWND hWnd);
+	static void Space();
 	static void BackSpace();
 	static void Esc();
-	static void Arrow(WPARAM key);
+	static void Arrow(HWND hWnd, WPARAM key);
 	static void Tab();
 	static void Home();
 	static void End();

@@ -7,12 +7,9 @@ public:
     // 윈도우가 생성될 때
     static void OnCreate(HWND hWnd);
 
-    // 특수키 처리용
+    // 키보드 처리
     static void OnKeyDown(HWND hWnd, WPARAM wParam);
-
     static void OnKeyUp(HWND hWnd, WPARAM wParam);
-
-    // 문자를 눌렀을 때
     static void OnChar(HWND hWnd, WPARAM wParam);
 
     // 그리기가 호출되었을 때
@@ -32,5 +29,5 @@ public:
     static void LMouseDBClick();
     static void RMouseDBClick();
 
-    static void SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
+    static void TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };
