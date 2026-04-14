@@ -184,8 +184,16 @@ bool Board::checkCollide(POINT from, POINT to)
 			}
 			else
 			{
-				target.push(Direction::RIGHTDIR);
-				target.push(Direction::UPDIR);
+				// 보드판 우하단에 가면 멈춰있는 경우 해결용
+				if (to.x == boardCol - 1)
+				{
+					target.push(Direction::LEFTDIR);
+				}
+				else
+				{
+					target.push(Direction::RIGHTDIR);
+					target.push(Direction::UPDIR);
+				}
 			}
 		}
 		
@@ -320,11 +328,33 @@ void Board::applySnakeTiles()
 
 void Board::swapSnake()
 {
-	for (int i{}; i < snake.size(); ++i)
+	if (field[snake[0].x][snake[0].y].dirSize() != 0)
 	{
-		snake.push_back(snake[snake.size() - 1]);
-		snake.erase(snake.begin());
+		Shape& lastTail = field[snake[snake.size() - 1].x][snake[snake.size() - 1].y];
+		Direction orgDir = field[snake[0].x][snake[0].y].getDir();
+		if (orgDir == Direction::RIGHTDIR)
+		{
+			lastTail.push(Direction::LEFTDIR);
+		}
+		else if (orgDir == Direction::LEFTDIR)
+		{
+			lastTail.push(Direction::RIGHTDIR);
+		}
+		else if (orgDir == Direction::UPDIR)
+		{
+			lastTail.push(Direction::DOWNDIR);
+		}
+		else if (orgDir == Direction::DOWNDIR)
+		{
+			lastTail.push(Direction::UPDIR);
+		}
 	}
+		
+
+	std::reverse(snake.begin(), snake.end());
+	Shape& head = field[snake[0].x][snake[0].y];
+	head.setShape(Type::CIRCLE, ws.GetCellLen() / 2);
+	applySnakeTiles();
 }
 
 void Board::explodeSnake()
@@ -589,4 +619,18 @@ void Board::changeDir(Direction dir)
 {
 	const POINT headPos = snake[0];
 	field[headPos.x][headPos.y].push(dir);
+}
+
+void Board::setHighSnake()
+{
+	POINT sPos = snake[0];
+	while (sPos.x == 0 && sPos.y == 0)
+	{
+		// 상하좌우 검사 후 없는 곳으로 가야됨
+		
+	}
+}
+
+void Board::setNormalSnake()
+{
 }

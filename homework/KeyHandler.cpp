@@ -73,7 +73,7 @@ void KeyHandler::KeyDown(HWND hWnd, WPARAM key)
 	}
 }
 
-void KeyHandler::Default(WPARAM key)
+void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
 	
@@ -127,6 +127,21 @@ void KeyHandler::Default(WPARAM key)
 		break;
 	case 'a':
 		//  아주빠른속도로지그재그이동
+		isAkeyToggled = !isAkeyToggled;
+
+		if (isAkeyToggled)
+		{
+			board.setHighSnake();
+			KillTimer(hWnd, playerAnimEvent);
+			SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS * 10, (TIMERPROC)Message::SnakeTimer);
+		}
+		else
+		{
+			board.setNormalSnake();
+			KillTimer(hWnd, playerAnimEvent);
+			SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)Message::SnakeTimer);
+		}
+
 		break;
 	case'q':
 	{
@@ -235,10 +250,15 @@ void KeyHandler::F8()
 void KeyHandler::Plus(HWND hWnd)
 {
 	KillTimer(hWnd, playerAnimEvent);
-	playerAnimFPS += 10;
+	if (playerAnimFPS < 20)
+		playerAnimFPS += 3;
 	SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)Message::SnakeTimer);
 }
 
 void KeyHandler::Minus(HWND hWnd)
 {
+	KillTimer(hWnd, playerAnimEvent);
+	if (playerAnimFPS > 1)
+		playerAnimFPS -= 3;
+	SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)Message::SnakeTimer);
 }

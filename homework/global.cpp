@@ -10,6 +10,7 @@ int playerAnimFPS = 10;
 int timerProcCnt = 2;
 
 bool isGameStarted = false;
+bool isAkeyToggled = false;
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();

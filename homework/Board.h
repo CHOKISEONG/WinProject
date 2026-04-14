@@ -12,6 +12,9 @@ private:
 
 	std::vector<POINT> snake; // [0]=PLAYER(머리), 1..=CHASER(꼬리)
 
+	std::vector<POINT> obstacleLoc;
+	bool isHigh = false;
+
 	bool isInside(POINT p) const;
 	bool isObstacle(POINT p) const;
 	bool isSnakeAt(POINT p) const;
@@ -48,6 +51,10 @@ public:
 	void insertMove3(int x, int y);
 
 	void changeDir(Direction dir);
+
+	// a Key 전용
+	void setHighSnake();
+	void setNormalSnake();
 };
 
 inline Board board;

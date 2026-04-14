@@ -9,7 +9,7 @@ public:
 	static void KeyDown(HWND hWnd, WPARAM key);
 
 	// 일반적인 키들은 여기로
-	static void Default(WPARAM key);
+	static void Default(HWND hWnd, WPARAM key);
 
 	// 특수키들은 여기로
 	static void Enter();

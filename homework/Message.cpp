@@ -7,6 +7,7 @@ void Message::OnCreate(HWND hWnd)
 {
 	board.initialize();
 	SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS, (TIMERPROC)SnakeTimer);
+	SetTimer(hWnd, playerAnimEvent + 1, 1000 / playerAnimFPS * 2, (TIMERPROC)MoverTimer);
 }
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
@@ -24,7 +25,7 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 		InvalidateRect(hWnd, NULL, TRUE);
 		return;
 	default:
-		KeyHandler::Default(wParam);
+		KeyHandler::Default(hWnd, wParam);
 		break;
 	}
 
@@ -140,8 +141,17 @@ void Message::SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
 	if (isGameStarted)
 	{
-		board.moverMove();
 		board.processMove();
+		board.applySnakeTiles();
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
+}
+
+void Message::MoverTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
+	if (isGameStarted)
+	{
+		board.moverMove();
 		board.applySnakeTiles();
 		InvalidateRect(hWnd, NULL, TRUE);
 	}

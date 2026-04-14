@@ -28,6 +28,8 @@ extern SZ ws;
 
 extern int currentROP2;
 
+extern bool isAkeyToggled;
+
 extern bool rButtonClicked;
 
 extern int playerAnimEvent;

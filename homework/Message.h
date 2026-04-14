@@ -33,4 +33,5 @@ public:
     static void RMouseDBClick();
 
     static void SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
+    static void MoverTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };
