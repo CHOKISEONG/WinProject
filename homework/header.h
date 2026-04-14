@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <ranges>
 
 #include <cctype>
 #include <cstdlib>

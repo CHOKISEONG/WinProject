@@ -42,13 +42,25 @@ class Shape
 {
 public:
 	Shape(unsigned int r = 0, unsigned int g = 0, unsigned int b = 0)
-		:type(Type::NONE), color(255 - r,255 - g,255 -b), lineColor(r,g,b)
+		:type(Type::NONE)
 	{
+		color.r = 255 - r;
+		color.g = 255 - g;
+		color.b = 255 - b;
+		lineColor.r = r;
+		lineColor.g = g;
+		lineColor.b = b;
 		length = ws.GetCellLen() / 2;
 	}
 	Shape(Type drawType, unsigned int r = 0, unsigned int g = 0, unsigned int b = 0)
-		:type(drawType), color(255 - r, 255 - g, 255 - b), lineColor(r, g, b)
+		:type(drawType)
 	{
+		color.r = 255 - r;
+		color.g = 255 - g;
+		color.b = 255 - b;
+		lineColor.r = r;
+		lineColor.g = g;
+		lineColor.b = b;
 		length = ws.GetCellLen() / 2;
 	}
 

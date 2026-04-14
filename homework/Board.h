@@ -29,14 +29,23 @@ public:
 	void draw(HDC hDC) const;
 
 	bool checkCollide(POINT from, POINT to);
+	int checkObstacleNum();
+
+	TileType getTileType(POINT pos) { return field[pos.x][pos.y].getTileType(); }
+	Shape& getTile(POINT pos) { return field[pos.x][pos.y]; }
 
 	POINT findPlayer();
 	void processMove();
 	void moverMove();
+
 	void applySnakeTiles();
 	void swapSnake();
+	void explodeSnake();
+	void seperateSnake(POINT pos);
 
-	void createItem(TileType type = TileType::MOVER, int x = -1, int y = -1);
+	void createItem(TileType type = TileType::MOVER, int x = -1, int y = -1, int r = 255, int g = 0, int b = 0);
+
+	void insertMove3(int x, int y);
 
 	void changeDir(Direction dir);
 };

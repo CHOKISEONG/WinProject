@@ -68,10 +68,52 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 
 void Message::LMouseClick()
 {
+	const int cellW = ws.WIDTH / boardCol;
+	const int cellH = ws.HEIGHT / boardRow;
+
+	const int col = ws.mouse.x / cellW;
+	const int row = ws.mouse.y / cellH;
+
+	if (col < 0 || col >= boardCol || row < 0 || row >= boardRow)
+	{
+		return;
+	}
+
+	Shape& tile = board.getTile(POINT{ col,row });
+	TileType type = tile.getTileType();
+
+	if (type == TileType::EMPTY)
+	{
+		// 마우스가클릭된방향으로주인공원이이동방향을바꾸고다시지그재그로이동
+		POINT playerPos = board.findPlayer();
+
+		if (playerPos.x < col)
+		{
+			board.changeDir(Direction::RIGHTDIR);
+		}
+		else
+		{
+			board.changeDir(Direction::LEFTDIR);
+		}
+	}
+	else if (type == TileType::PLAYER)
+	{
+		//꼬리원들이모두사라진다.주인공원은모양을삼각형으로
+		//로이동한다.다시주인공원내부를클릭하면삼각형이다시원으로모양이바뀐다.
+
+		board.explodeSnake();
+	}
+	else if (type == TileType::CHASER)
+	{
+		// 꼬리원은주인공원에서분리되어보드의칸에남겨지며이동한다.분리된꼬리원은앞페이지
+		board.seperateSnake(POINT{col,row});
+	}
 }
 
 void Message::RMouseClick()
 {
+	if (board.checkObstacleNum() >= 20) return;
+
 	const int cellW = ws.WIDTH / boardCol;
 	const int cellH = ws.HEIGHT / boardRow;
 
