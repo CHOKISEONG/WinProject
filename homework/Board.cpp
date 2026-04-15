@@ -47,7 +47,10 @@ void Board::initialize()
 	Shape& head = field[snake[0].x][snake[0].y];
 	head.setTileType(TileType::PLAYER);
 	head.setShape(Type::CIRCLE, ws.GetCellLen() / 2);
-	head.setColor(uidColor(gen), uidColor(gen), uidColor(gen));
+	headColor[0] = uidColor(gen);
+	headColor[1] = uidColor(gen);
+	headColor[2] = uidColor(gen);
+	head.setColor(headColor[0], headColor[1], headColor[2]);
 	head.push(Direction::DOWNDIR);
 
 	// 아이템
@@ -215,28 +218,36 @@ bool Board::checkCollide(POINT from, POINT to)
 		Direction dir;
 		if (from.x == to.x)
 		{
-			if (from.y > to.y)
-			{
-				target.push(Direction::RIGHTDIR);
-				target.push(Direction::UPDIR);
-			}
-			else
+			POINT left = from;
+			left.x -= 1;
+
+			POINT right = from;
+			right.x += 1;
+
+			if (!isObstacle(left))
 			{
 				target.push(Direction::LEFTDIR);
-				target.push(Direction::DOWNDIR);
+			}
+			else if (!isObstacle(right))
+			{
+				target.push(Direction::RIGHTDIR);
 			}
 		}
 		if (from.y == to.y)
 		{
-			if (from.x > to.x)
+			POINT up = from;
+			up.y -= 1;
+
+			POINT down = from;
+			down.y += 1;
+
+			if (!isObstacle(up))
 			{
-				target.push(Direction::DOWNDIR);
-				target.push(Direction::LEFTDIR);
+				target.push(Direction::UPDIR);
 			}
-			else
+			else if (!isObstacle(down))
 			{
 				target.push(Direction::DOWNDIR);
-				target.push(Direction::RIGHTDIR);
 			}
 		}
 
@@ -276,7 +287,8 @@ bool Board::isInside(POINT p) const
 
 bool Board::isObstacle(POINT p) const
 {
-	if (field[p.x][p.y].getTileType() == TileType::OBSTACLE)
+	if (!isInside(p)) return true;
+	else if (field[p.x][p.y].getTileType() == TileType::OBSTACLE)
 		return true;
 	return false;
 }
@@ -314,52 +326,70 @@ void Board::applySnakeTiles()
 {
 	if (snake.empty()) return;
 
+	int tailLen{ ws.GetCellLen() / 2 };
+
 	// 머리
-	const POINT h = snake[0];
+	const POINT h = snake[headNum];
 	Shape& head = field[h.x][h.y];
 	head.setTileType(TileType::PLAYER);
+	head.setShape(Type::CIRCLE, tailLen);
+	head.setColor(headColor[0], headColor[1], headColor[2]);
+	tailLen -= 2;
 
 	// 꼬리들
-	for (size_t i = 1; i < snake.size(); ++i)
+	for (size_t i = headNum + 1; i < snake.size(); ++i)
 	{
 		const POINT t = snake[i];
 		Shape& tail = field[t.x][t.y];
 		tail.setTileType(TileType::CHASER);
-		int tailLen{ ws.GetCellLen() / 2 - (int)(i*2) };
-		tail.setShape(Type::CIRCLE, (tailLen > 0) ? tailLen : 1 );
-		tail.setColor(head.getColor(0), head.getColor(1), head.getColor(2));
+		tail.setShape(Type::CIRCLE, (tailLen > 2) ? tailLen : 2 );
+		tail.setColor(headColor[0],headColor[1],headColor[2]);
+
+		tailLen -= 1;
+	}
+	for (size_t i{}; i < headNum; ++i)
+	{
+		const POINT t = snake[i];
+		Shape& tail = field[t.x][t.y];
+		tail.setTileType(TileType::CHASER);
+		tail.setShape(Type::CIRCLE, (tailLen > 2) ? tailLen : 2);
+		tail.setColor(headColor[0], headColor[1], headColor[2]);
+
+		tailLen -= 1;
 	}
 }
 
 void Board::swapSnake()
 {
-	if (field[snake[0].x][snake[0].y].dirSize() != 0)
+	POINT prvHeadNum = snake[headNum];
+	Shape& prvHead = field[prvHeadNum.x][prvHeadNum.y];
+	headColor[0] = prvHead.getColor(0);
+	headColor[1] = prvHead.getColor(1);
+	headColor[2] = prvHead.getColor(2);
+
+	if (snake.size() > 0)
+	{
+		headNum = (headNum + snake.size() - 1) % snake.size();
+		
+		const POINT t = snake[headNum];
+		Shape& curHead = field[t.x][t.y];
+	}
+	else
+	{
+		headNum = 0;
+	}
+		
+	/*if (field[snake[0].x][snake[0].y].dirSize() != 0)
 	{
 		Shape& lastTail = field[snake[snake.size() - 1].x][snake[snake.size() - 1].y];
 		Direction orgDir = field[snake[0].x][snake[0].y].getDir();
-		if (orgDir == Direction::RIGHTDIR)
-		{
-			lastTail.push(Direction::LEFTDIR);
-		}
-		else if (orgDir == Direction::LEFTDIR)
-		{
-			lastTail.push(Direction::RIGHTDIR);
-		}
-		else if (orgDir == Direction::UPDIR)
-		{
-			lastTail.push(Direction::DOWNDIR);
-		}
-		else if (orgDir == Direction::DOWNDIR)
-		{
-			lastTail.push(Direction::UPDIR);
-		}
 	}
 		
 
 	std::reverse(snake.begin(), snake.end());
 	Shape& head = field[snake[0].x][snake[0].y];
 	head.setShape(Type::CIRCLE, ws.GetCellLen() / 2);
-	applySnakeTiles();
+	applySnakeTiles();*/
 }
 
 void Board::explodeSnake()

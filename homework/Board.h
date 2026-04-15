@@ -10,7 +10,9 @@ private:
 	std::vector<std::vector<POINT>> pos;
 	std::vector<Shape> cells;
 
-	std::vector<POINT> snake; // [0]=PLAYER(¸Ó¸®), 1..=CHASER(²¿¸®)
+	std::vector<POINT> snake;
+	int headNum = 0;
+	int headColor[3]{};
 
 	std::vector<POINT> obstacleLoc;
 	POINT snakePosTemp = POINT{ 0,0 };
