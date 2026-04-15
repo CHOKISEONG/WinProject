@@ -115,6 +115,11 @@ void Board::draw(HDC hDC) const
 			field[i][j].draw(hDC, pos[i][j]);
 		}
 	}
+
+	for (const auto& s : snake)
+	{
+		field[s.x][s.y].draw(hDC, pos[s.x][s.y]);
+	}
 }
 
 bool Board::checkCollide(POINT from, POINT to)
@@ -623,68 +628,61 @@ void Board::changeDir(Direction dir)
 
 void Board::setHighSnake()
 {
-	POINT sPos = snake[0], snakePosTemp = snake[0];
+	isHigh = true;
 
-	int turnLen = 1;
+	snakePosTemp = snake.back();
 
-	// 테두리쪽 끝으로 이동
-	while (true)
+	obstacleLoc.clear();
+	for (int i{}; i < boardRow; ++i)
 	{
-		Direction dir = field[snake[0].x][snake[0].y].getDir();
-		changeDir(dir);
-		if (isInside(nextPos(sPos, dir)))
-			sPos = nextPos(sPos, dir);
-		else break;
-	}
-
-	// 좌상단으로 이동
-	if (sPos.x == 0 || sPos.x == boardCol - 1)
-	{
-		while (sPos.y != 0)
+		for (int j{}; j < boardCol; ++j)
 		{
-			changeDir(Direction::UPDIR);
-			if (isInside(nextPos(sPos, Direction::UPDIR)))
-				sPos = nextPos(sPos, Direction::UPDIR);
+			if (field[i][j].getTileType() == TileType::OBSTACLE)
+			{
+				obstacleLoc.push_back(POINT{ i,j });
+				field[i][j].setTileType(TileType::FAKE);
+			}
 		}
-
-		while (sPos.x != 0)
-		{
-			changeDir(Direction::LEFTDIR);
-			if (isInside(nextPos(sPos, Direction::LEFTDIR)))
-				sPos = nextPos(sPos, Direction::LEFTDIR);
-		}
-	}
-	else if (sPos.y == 0 || sPos.y == boardRow - 1)
-	{
-		while (sPos.x != 0)
-		{
-			changeDir(Direction::LEFTDIR);
-			if (isInside(nextPos(sPos, Direction::LEFTDIR)))
-				sPos = nextPos(sPos, Direction::LEFTDIR);
-		}
-
-		while (sPos.y != 0)
-		{
-			changeDir(Direction::UPDIR);
-			if (isInside(nextPos(sPos, Direction::UPDIR)))
-				sPos = nextPos(sPos, Direction::UPDIR);
-		}
-	}
-
-	while (sPos.x == 0 && sPos.y == 0)
-	{
-		for (int i{}; i < turnLen; ++i)
-			changeDir(Direction::UPDIR);
-		for (int i{}; i < turnLen; ++i)
-			changeDir(Direction::RIGHTDIR);
-		for (int i{}; i < turnLen; ++i)
-			changeDir(Direction::DOWNDIR);
-		for (int i{}; i < turnLen; ++i)
-			changeDir(Direction::LEFTDIR);
-		++
 	}
 }
 
 void Board::setNormalSnake()
 {
+	if (isHigh)
+	{
+		isHigh = false;
+
+		int dX{ ws.WIDTH / (boardCol * 2) };
+		int dY{ ws.HEIGHT / (boardRow * 2) };
+
+		for (const auto& obs : obstacleLoc)
+		{
+			field[obs.x][obs.y].setShape(Type::RECTANGLE, (dX > dY) ? dY : dX);
+			field[obs.x][obs.y].setColor(255, 0, 0);
+			field[obs.x][obs.y].setTileType(TileType::OBSTACLE);
+		}
+	}
+}
+
+void Board::adjustHighSnake()
+{
+	if (snake[0].x == 0 && snake[0].y == 0)
+	{
+		setNormalSnake();
+	}
+	else if (!isHigh)
+	{
+		int dX{ ws.WIDTH / (boardCol * 2) };
+		int dY{ ws.HEIGHT / (boardRow * 2) };
+
+		for (const auto& obs : obstacleLoc)
+		{
+			if (field[obs.x][obs.y].getTileType() == TileType::EMPTY)
+			{
+				field[obs.x][obs.y].setShape(Type::RECTANGLE, (dX > dY) ? dY : dX);
+				field[obs.x][obs.y].setColor(255, 0, 0);
+				field[obs.x][obs.y].setTileType(TileType::FAKE);
+			}
+		}
+	}
 }

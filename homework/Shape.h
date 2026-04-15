@@ -19,6 +19,7 @@ enum TileType
 	EMPTY,
 	PLAYER,
 	OBSTACLE,
+	FAKE,
 	ITEM,
 	MOVER,
 	CHASER

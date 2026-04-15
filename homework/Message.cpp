@@ -143,6 +143,7 @@ void Message::SnakeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 	{
 		board.processMove();
 		board.applySnakeTiles();
+		board.adjustHighSnake();
 		InvalidateRect(hWnd, NULL, TRUE);
 	}
 }

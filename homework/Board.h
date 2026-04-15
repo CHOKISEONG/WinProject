@@ -56,6 +56,7 @@ public:
 	// a Key Àü¿ë
 	void setHighSnake();
 	void setNormalSnake();
+	void adjustHighSnake();
 };
 
 inline Board board;

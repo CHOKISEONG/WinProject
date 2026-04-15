@@ -133,7 +133,7 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 		{
 			board.setHighSnake();
 			KillTimer(hWnd, playerAnimEvent);
-			SetTimer(hWnd, playerAnimEvent, 1000 / playerAnimFPS * 10, (TIMERPROC)Message::SnakeTimer);
+			SetTimer(hWnd, playerAnimEvent, 1000 / (playerAnimFPS * 30), (TIMERPROC)Message::SnakeTimer);
 		}
 		else
 		{

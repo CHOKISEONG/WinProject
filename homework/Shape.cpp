@@ -2,6 +2,7 @@
 
 void Shape::draw(HDC hDC, POINT pos) const
 {
+	
 	//if (type == Type::NONE || isDrawing == false) return;
 	//else if (points.size() == 0) return;
 
