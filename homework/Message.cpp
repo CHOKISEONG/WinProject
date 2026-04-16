@@ -1,16 +1,39 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
+#include "Road.h"
+#include "TrafficLight.h"
+#include "Car.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
 {
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
+
+	for (int i{}; i < 4; ++i)
+	{
+		cars.push_back(Car());
+		cars[i].initialize();
+		cars[i].setPos(POINT{ ws.WIDTH / 2, ws.HEIGHT / 2 });
+	}
+
+	cars[0].setDir(Direction::UPDIR);
+	cars[1].setDir(Direction::DOWNDIR);
+	cars[2].setDir(Direction::LEFTDIR);
+	cars[3].setDir(Direction::RIGHTDIR);
+	
+		
+
+	trafficLight.initialize();
+	road.Initialize();
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	for (auto& c : cars)
+		c.move();
 
+	InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void Message::OnPaint(HWND hWnd)
@@ -20,7 +43,12 @@ void Message::OnPaint(HWND hWnd)
 
 	SetROP2(hDC, currentROP2);
 
-	
+	road.draw(hDC);
+
+	for (const auto& c : cars)
+		c.draw(hDC);
+
+	trafficLight.draw(hDC);
 
 	EndPaint(hWnd, &ps);
 }
@@ -80,6 +108,10 @@ void Message::OnSize(HWND hWnd, int width, int height)
 {
 	ws.WIDTH = width;
 	ws.HEIGHT = height;
+
+	road.Initialize();
+	trafficLight.initialize();
+
 	InvalidateRect(hWnd, NULL, TRUE);
 }
 

@@ -4,7 +4,7 @@ void Shape::draw(HDC hDC, POINT pos) const
 {
 	if (type == Type::NONE) return;
 
-	HPEN hPen = CreatePen(PS_SOLID, 1, colorPen);
+	HPEN hPen = CreatePen(penStyle, thickness, colorPen);
 	HPEN oldPen = (HPEN)SelectObject(hDC, hPen);
 
 	HBRUSH hBrush = CreateSolidBrush(colorBrush);

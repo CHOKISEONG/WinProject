@@ -64,6 +64,8 @@ public:
 	}
 
 	void setType(Type _type) { type = _type; }
+	void setThickness(int s) { thickness = s; }
+	void setPenStyle(int p) { penStyle = p; }
 	void setColorPen(COLORREF c) { colorPen = c; }
 	void setColorBrush(COLORREF c) { colorBrush = c; }
 
@@ -71,7 +73,7 @@ public:
 	void setShape(Type _type, int length);
 
 	// 그리기
-	void draw(HDC hDC, POINT pos) const;
+	void draw(HDC hDC, POINT pos = POINT{0,0}) const;
 
 	// 점 추가
 	void addPoint(POINT point) { points.push_back(point); }
@@ -82,17 +84,10 @@ public:
 	// 색상 반전
 	void invertColor();
 
-	friend void swap(Shape& first, Shape& second) noexcept {
-		using std::swap;
-		swap(first.length, second.length);
-		swap(first.colorBrush, second.colorBrush);
-		swap(first.colorPen, second.colorPen);
-		swap(first.type, second.type);
-		swap(first.points, second.points);
-	}
-
 private:
 	int length = 0; // 도형의 반지름
+	int thickness = 1;
+	int penStyle = PS_SOLID;
 
 	COLORREF colorBrush;// 내부 색상
 	COLORREF colorPen;  // 테두리 색상
