@@ -111,11 +111,7 @@ void Message::LMouseClick()
 
 void Message::RMouseClick()
 {
-	// 포인터 접근으로 변경
-	cars[0]->setMoving(true);
-	cars[1]->setMoving(true);
-	cars[2]->setMoving(false);
-	cars[3]->setMoving(false);
+	SetTimer(ws.hWnd, 999, 100, (TIMERPROC)WaitTimer);
 }
 
 void Message::LMouseDBClick()

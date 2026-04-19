@@ -57,3 +57,5 @@ inline TrafficLight trafficLight;
 void LightTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 
 void SwitchTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
+
+void WaitTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);

@@ -206,7 +206,7 @@ void Car::move()
 	bool isReversing = false;
 	if (checkCrossing && IsColliding(getRect(), road.getCenter()))
 	{
-		d = -2.0f;
+		d = reverseSpeed;
 		isReversing = true;
 	}
 

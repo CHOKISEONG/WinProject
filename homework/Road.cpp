@@ -168,7 +168,7 @@ std::map<Direction,bool>& Road::checkCross()
 			canCross[Direction::DOWNDIR] = false;
 		}
 
-		if (IsColliding(c->getRect(), diagonalCrossing))
+		if (IsColliding(c->getRect(), center))
 		{
 			canCross[Direction::DIAGONALDIR] = false;
 		}

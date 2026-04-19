@@ -1,4 +1,5 @@
 #include "TrafficLight.h"
+#include "NPC.h"
 
 void TrafficLight::OnNotify(TrafficSignal signal)
 {
@@ -112,4 +113,13 @@ void LightTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 void SwitchTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
 	trafficLight.Notify(TrafficSignal::YELLOW);
+}
+
+void WaitTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
+	if (npc->getDir() == Direction::STOP)
+	{
+		trafficLight.Notify(TrafficSignal::RED);
+		KillTimer(hWnd, idEvent);
+	}
 }

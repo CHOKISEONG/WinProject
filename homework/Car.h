@@ -11,10 +11,11 @@ private:
 
 	POINT pos;
 	std::vector<POINT> dPos; // 이동할 방향의 차 앞쪽 위치
-	Direction dir;
+	Direction dir; // 이동 방향
 
-	float speed = 1.0f;
-	float dSpeed = 1.0f;
+	float speed = 1.0f;			// 현재 속도
+	float dSpeed = 1.0f;		// 전진 속도
+	float reverseSpeed = -4.0f;	// 후진 속도
 	int radius = 0.0f;
 
 	bool isMoving = true;

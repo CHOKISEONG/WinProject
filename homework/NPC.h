@@ -7,6 +7,8 @@ class NPC : public Observer
 {
 private:
 	std::vector<Shape> body;
+	Shape angryFace;
+
 	POINT curPos;
 	POINT targetPos;
 	Direction dir;
@@ -19,6 +21,9 @@ private:
 	bool canCross = false;
 
 public:
+	Direction getDir() const { return dir; }
+
+	bool canCrossing(std::map<Direction, bool>& m);
 	void move(std::map<Direction,bool>& m);
 
 	void draw(HDC hDC) const;

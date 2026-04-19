@@ -18,9 +18,6 @@ private:
 	RECT center;
 	std::map<Direction, bool> canCross{};
 
-	// 개발 예정
-	RECT diagonalCrossing;
-
 public:
 	void draw(HDC hDC) const;
 
