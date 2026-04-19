@@ -3,6 +3,7 @@
 #include "Road.h"
 #include "TrafficLight.h"
 #include "Car.h"
+#include "NPC.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
@@ -10,28 +11,54 @@ void Message::OnCreate(HWND hWnd)
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
 
-	for (int i{}; i < 4; ++i)
+	int cellW = ws.WIDTH / 12;
+	int cellH = ws.HEIGHT / 12;
+
+	cars.clear();
+
+	struct CarInfo { Direction dir; POINT pos; };
+	CarInfo carInfos[8] = {
+		{ Direction::LEFTDIR,  POINT{ cellW, cellH * 5 } },
+		{ Direction::LEFTDIR,  POINT{ cellW * 10, cellH * 5 } },
+		{ Direction::RIGHTDIR, POINT{ cellW, cellH * 7 } },
+		{ Direction::RIGHTDIR, POINT{ cellW * 10, cellH * 7 } },
+		{ Direction::UPDIR,    POINT{ cellW * 7, cellH } },
+		{ Direction::UPDIR,    POINT{ cellW * 7, cellH * 10 } },
+		{ Direction::DOWNDIR,  POINT{ cellW * 5, cellH } },
+		{ Direction::DOWNDIR,  POINT{ cellW * 5, cellH * 10 } }
+	};
+
+	for (int i = 0; i < 8; ++i)
 	{
-		cars.push_back(Car());
-		cars[i].initialize();
-		cars[i].setPos(POINT{ ws.WIDTH / 2, ws.HEIGHT / 2 });
-	}
-
-	cars[0].setDir(Direction::UPDIR);
-	cars[1].setDir(Direction::DOWNDIR);
-	cars[2].setDir(Direction::LEFTDIR);
-	cars[3].setDir(Direction::RIGHTDIR);
-	
+		auto c = std::make_shared<Car>();
+		c->initialize(carInfos[i].dir);
+		c->setPos(carInfos[i].pos);
 		
-
+		cars.push_back(c);
+		trafficLight.AddObserver(c);
+	}
+	
 	trafficLight.initialize();
-	road.Initialize();
+
+	road.initialize();
+
+	npc = std::make_shared<NPC>();
+	npc->initialize();
+	trafficLight.AddObserver(npc);
+
+	ws.hWnd = hWnd;
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
 	for (auto& c : cars)
-		c.move();
+	{
+		c->checkCollide();
+		c->checkSignal();
+		c->move();
+	}
+
+	npc->move(road.checkCross());
 
 	InvalidateRect(hWnd, NULL, TRUE);
 }
@@ -46,21 +73,49 @@ void Message::OnPaint(HWND hWnd)
 	road.draw(hDC);
 
 	for (const auto& c : cars)
-		c.draw(hDC);
+		c->draw(hDC);
 
 	trafficLight.draw(hDC);
+
+	npc->draw(hDC);
 
 	EndPaint(hWnd, &ps);
 }
 
 void Message::LMouseClick()
 {
-	
+	for (int i{}; i < 6; ++i)
+	{
+		if (trafficLight.getRad() > getDistance(trafficLight.getPos(i), ws.mousePos))
+		{
+			if (i == 0 || i == 5)
+			{
+				trafficLight.Notify(TrafficSignal::RED);
+				return;
+			}
+			else if (i == 1 || i == 4)
+			{
+				trafficLight.Notify(TrafficSignal::YELLOW);
+				return;
+			}
+			else
+			{
+				trafficLight.Notify(TrafficSignal::GREEN);
+				return;
+			}
+		}
+	}
+
+	trafficLight.Notify(TrafficSignal::RED_ALL);
 }
 
 void Message::RMouseClick()
 {
-	
+	// 포인터 접근으로 변경
+	cars[0]->setMoving(true);
+	cars[1]->setMoving(true);
+	cars[2]->setMoving(false);
+	cars[3]->setMoving(false);
 }
 
 void Message::LMouseDBClick()
@@ -70,7 +125,6 @@ void Message::LMouseDBClick()
 void Message::RMouseDBClick()
 {
 }
-
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 {
@@ -109,7 +163,7 @@ void Message::OnSize(HWND hWnd, int width, int height)
 	ws.WIDTH = width;
 	ws.HEIGHT = height;
 
-	road.Initialize();
+	road.initialize();
 	trafficLight.initialize();
 
 	InvalidateRect(hWnd, NULL, TRUE);

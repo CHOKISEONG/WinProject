@@ -2,6 +2,8 @@
 
 SZ ws;
 
+std::map<char, bool> isKeyDown;
+
 int currentROP2 = R2_COPYPEN;
 
 int TimerFuncFPS = 60;

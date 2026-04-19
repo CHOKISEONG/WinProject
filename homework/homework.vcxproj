@@ -130,6 +130,8 @@
     <ClCompile Include="KeyHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
+    <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="Road.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
   </ItemGroup>
@@ -139,6 +141,8 @@
     <ClInclude Include="header.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="NPC.h" />
+    <ClInclude Include="POINT.h" />
     <ClInclude Include="Road.h" />
     <ClInclude Include="TrafficLight.h" />
     <ClInclude Include="Observer.h" />

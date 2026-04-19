@@ -4,14 +4,19 @@
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
+inline bool IsColliding(const RECT& a, const RECT& b) 
+{
+	return (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top);
+}
 extern float getDistance(POINT p1, POINT p2);
+
 
 // À©µµ¿ì
 class SZ
 {
 public:
-	int WIDTH = 1200;
-	int HEIGHT = 800;
+	int WIDTH = 800;
+	int HEIGHT = 600;
 
 	POINT mousePos;
 	HWND hWnd = NULL;
@@ -22,8 +27,11 @@ enum class TrafficSignal
 {
 	RED,
 	YELLOW,
-	GREEN
+	GREEN,
+	RED_ALL
 };
+
+extern std::map<char, bool> isKeyDown;
 
 extern int currentROP2;
 

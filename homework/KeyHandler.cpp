@@ -1,5 +1,7 @@
 #include "KeyHandler.h"
 #include "Message.h"
+#include "Car.h"
+#include "TrafficLight.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
@@ -7,7 +9,17 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 	
 	switch (_key)
 	{
-	
+	case'a':
+		isKeyDown['a'] = !isKeyDown['a'];
+		if (isKeyDown['a'])
+		{
+			SetTimer(hWnd, 99, 2000, (TIMERPROC)SwitchTimer);
+		}
+		else
+		{
+			KillTimer(hWnd, 99);
+		}
+		break;
 	case'q':
 	{
 		exit(0);
@@ -105,11 +117,18 @@ void KeyHandler::F8()
 
 void KeyHandler::Plus(HWND hWnd)
 {
-
+	for (auto& c : cars)
+	{
+		c->changeSpeed(0.1f);
+	}
 }
 
 void KeyHandler::Minus(HWND hWnd)
 {
+	for (auto& c : cars)
+	{
+		c->changeSpeed(-0.1f);
+	}
 }
 
 void KeyHandler::KeyDown(HWND hWnd, WPARAM key)

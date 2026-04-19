@@ -1,6 +1,7 @@
 #pragma once
 
 #include "header.h"
+#include "POINT.h"
 
 extern SZ ws;
 
@@ -20,6 +21,7 @@ enum Direction
 	RIGHTDIR,
 	UPDIR,
 	DOWNDIR,
+	DIAGONALDIR,
 	STOP
 };
 
