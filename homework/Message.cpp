@@ -26,6 +26,9 @@ void Message::OnPaint(HWND hWnd)
 
 	
 	BitBlt(hDC, 0, 0, ws.WIDTH, ws.HEIGHT, mDC, 0, 0, SRCCOPY);
+	DeleteDC(mDC);
+	DeleteObject(hBitmap);
+
 	EndPaint(hWnd, &ps);
 }
 
