@@ -17,11 +17,15 @@ void Message::OnPaint(HWND hWnd)
 {
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
+	HDC mDC = CreateCompatibleDC(hDC);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, ws.WIDTH, ws.HEIGHT);
+	SelectObject(mDC, (HBITMAP)hBitmap);
 
-	SetROP2(hDC, currentROP2);
+	SetROP2(mDC, currentROP2);
+
 
 	
-
+	BitBlt(hDC, 0, 0, ws.WIDTH, ws.HEIGHT, mDC, 0, 0, SRCCOPY);
 	EndPaint(hWnd, &ps);
 }
 
@@ -56,31 +60,36 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 	case VK_F5:case VK_F6:case VK_F7:case VK_F8:
 	case VK_OEM_PLUS: case VK_OEM_MINUS:
 		KeyHandler::KeyDown(hWnd, wParam);
-		InvalidateRect(hWnd, NULL, TRUE);
+		InvalidateRect(hWnd, NULL, FALSE);
 		return;
 	default:
 		KeyHandler::Default(hWnd, wParam);
 		break;
 	}
 
-	InvalidateRect(hWnd, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::OnKeyUp(HWND hWnd, WPARAM wParam)
 {
-	InvalidateRect(hWnd, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::OnChar(HWND hWnd, WPARAM wParam)
 {
-	InvalidateRect(hWnd, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::OnSize(HWND hWnd, int width, int height)
 {
 	ws.WIDTH = width;
 	ws.HEIGHT = height;
-	InvalidateRect(hWnd, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, FALSE);
+}
+
+void Message::OnMessage(HWND hWnd, WPARAM wParam)
+{
+	return;
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)

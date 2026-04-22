@@ -136,7 +136,11 @@
     <ClInclude Include="header.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Shape.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

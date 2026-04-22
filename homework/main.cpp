@@ -53,6 +53,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Message::RMouseDBClick();
 		return 0;
 
+	case WM_COMMAND:
+		Message::OnMessage(hWnd, wParam);
+		return 0;
+
 	case WM_DESTROY:
 		Message::OnDestroy(hWnd);
 		return 0;

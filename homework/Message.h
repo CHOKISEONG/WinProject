@@ -21,6 +21,8 @@ public:
     // 윈도우 크기가 변경될 때
     static void OnSize(HWND hWnd, int width, int height);
 
+    static void OnMessage(HWND hWnd, WPARAM wParam);
+
     // 마우스가 움직일 때
     static void MouseMove(int mouse_x, int mouse_y);
 
