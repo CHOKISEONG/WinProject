@@ -29,6 +29,9 @@ void Shape::draw(HDC hDC, POINT pos) const
 	case Type::CIRCLE:
 		Ellipse(hDC, p[0].x, p[0].y, p[1].x, p[1].y);
 		break;
+	case Type::STRING:
+		TextOut(hDC, pos.x, pos.y, str.c_str(), str.size());
+		break;
 	default:
 		break;
 	}
@@ -74,6 +77,15 @@ void Shape::setShape(Type _type, int _length)
 	default:
 		break;
 	}
+}
+
+void Shape::setShape(Type _type, std::wstring _str)
+{
+	if (_type != Type::STRING) return;
+
+	type = _type;
+	str = _str;
+	colorPen = RGB(255, 0, 0);
 }
 
 void Shape::clearAll()

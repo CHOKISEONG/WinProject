@@ -23,7 +23,8 @@ public:
 		CIRCLE,
 		TRIANGLE,
 		POLYGON,
-		LINE
+		LINE,
+		STRING
 	};
 
 	Shape(int _length = 10, unsigned int r = 0, unsigned int g = 0, unsigned int b = 0)
@@ -69,6 +70,7 @@ public:
 
 	void setShape(Type _type);
 	void setShape(Type _type, int length);
+	void setShape(Type _type, std::wstring _str);
 
 	// 그리기
 	void draw(HDC hDC, POINT pos) const;
@@ -100,4 +102,6 @@ private:
 	Type type; // 도형의 타입(원,삼각형 등)
 
 	std::vector<POINT> points;  // 그려질 점들
+
+	std::wstring str;
 };
