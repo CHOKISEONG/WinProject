@@ -6,12 +6,19 @@ constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
 float getDistance(POINT p1, POINT p2);
 
+constexpr int WIDTH = 600;
+constexpr int HEIGHT = 600;
+constexpr int boardRow = 10;
+constexpr int boardCol = 10;
+constexpr int cell = WIDTH / boardRow;
+constexpr int rad = cell / 2;
+
 // À©µµ¿ì
 class SZ
 {
 public:
-	int WIDTH = 1200;
-	int HEIGHT = 800;
+	int width = WIDTH;
+	int height = HEIGHT;
 
 	POINT mousePos;
 	HWND hWnd = NULL;

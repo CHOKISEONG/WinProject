@@ -1,16 +1,19 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
+#include "Board.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
 {
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
+
+	board.initialize();
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-
+	
 }
 
 void Message::OnPaint(HWND hWnd)
@@ -18,14 +21,14 @@ void Message::OnPaint(HWND hWnd)
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
 	HDC mDC = CreateCompatibleDC(hDC);
-	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, ws.WIDTH, ws.HEIGHT);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, ws.width, ws.height);
 	SelectObject(mDC, (HBITMAP)hBitmap);
 
 	SetROP2(mDC, currentROP2);
 
-
+	board.draw(mDC);
 	
-	BitBlt(hDC, 0, 0, ws.WIDTH, ws.HEIGHT, mDC, 0, 0, SRCCOPY);
+	BitBlt(hDC, 0, 0, ws.width, ws.height, mDC, 0, 0, SRCCOPY);
 	DeleteDC(mDC);
 	DeleteObject(hBitmap);
 
@@ -85,8 +88,8 @@ void Message::OnChar(HWND hWnd, WPARAM wParam)
 
 void Message::OnSize(HWND hWnd, int width, int height)
 {
-	ws.WIDTH = width;
-	ws.HEIGHT = height;
+	ws.width = width;
+	ws.height = height;
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 

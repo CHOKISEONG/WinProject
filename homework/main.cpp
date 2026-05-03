@@ -94,14 +94,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	int style = WS_OVERLAPPEDWINDOW;
 	int exStyle = 0;
 
-	RECT rc{ 0, 0, ws.WIDTH, ws.HEIGHT };
+	RECT rc{ 0, 0, ws.width, ws.height };
 	AdjustWindowRectEx(&rc, style, FALSE, exStyle);
 
 	hWnd = CreateWindow(
 		lpszClass,
 		lpszWindowName,
 		style,
-		0,
+		400,
 		0,
 		rc.right - rc.left,
 		rc.bottom - rc.top,

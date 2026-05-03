@@ -4,16 +4,6 @@
 
 extern SZ ws;
 
-enum Type
-{
-	NONE,
-	RECTANGLE,
-	CIRCLE,
-	TRIANGLE,
-	POLYGON,
-	LINE
-};
-
 enum Direction
 {
 	LEFTDIR,
@@ -26,6 +16,16 @@ enum Direction
 class Shape
 {
 public:
+	enum class Type
+	{
+		NONE,
+		RECTANGLE,
+		CIRCLE,
+		TRIANGLE,
+		POLYGON,
+		LINE
+	};
+
 	Shape(int _length = 10, unsigned int r = 0, unsigned int g = 0, unsigned int b = 0)
 		:type(Type::NONE), length(_length), colorPen(RGB(r,g,b)), colorBrush(RGB(255 - r, 255 - g, 255 - b))
 	{

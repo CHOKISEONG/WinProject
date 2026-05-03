@@ -19,14 +19,14 @@ void Shape::draw(HDC hDC, POINT pos) const
 
 	switch (type)
 	{
-	case TRIANGLE:case RECTANGLE:case POLYGON:
+	case Type::TRIANGLE:case Type::RECTANGLE:case Type::POLYGON:
 		Polygon(hDC, p.data(), (int)p.size());
 		break;
-	case LINE:
+	case Type::LINE:
 		MoveToEx(hDC, p[0].x, p[0].y, NULL);
 		LineTo(hDC, p[1].x, p[1].y);
 		break;
-	case CIRCLE:
+	case Type::CIRCLE:
 		Ellipse(hDC, p[0].x, p[0].y, p[1].x, p[1].y);
 		break;
 	default:
@@ -52,11 +52,11 @@ void Shape::setShape(Type _type, int _length)
 
 	switch (type)
 	{
-	case CIRCLE:
+	case Type::CIRCLE:
 		addPoint(POINT{ -_length,-_length });
 		addPoint(POINT{ _length,_length });
 		break;
-	case TRIANGLE:
+	case Type::TRIANGLE:
 		for (int i{}; i < 3; ++i)
 		{
 			int x = static_cast<int>(_length * cos(getRadian(i * 120.0f)));
@@ -65,7 +65,7 @@ void Shape::setShape(Type _type, int _length)
 			addPoint(POINT{ x,y });
 		}
 		break;
-	case RECTANGLE:
+	case Type::RECTANGLE:
 		addPoint(POINT{ -_length, -_length });
 		addPoint(POINT{ _length, -_length });
 		addPoint(POINT{ _length,  _length });
