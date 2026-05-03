@@ -11,7 +11,7 @@ void Board::initialize()
 		pos[i].resize(boardCol);
 		for (int y{}; y < boardRow; ++y)
 		{
-			field[i][y].setShape(Shape::Type::RECTANGLE);
+			field[i][y].setShape(Shape::Type::RECTANGLE, rad);
 			pos[i][y] = POINT{ i * cell + rad, y * cell + rad };
 		}
 	}
