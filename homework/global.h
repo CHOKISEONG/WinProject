@@ -4,10 +4,7 @@
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
-constexpr float getDistance(POINT p1, POINT p2)
-{
-	return (sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2)));
-}
+float getDistance(POINT p1, POINT p2);
 
 // À©µµ¿ì
 class SZ
