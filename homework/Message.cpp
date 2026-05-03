@@ -35,14 +35,20 @@ void Message::OnPaint(HWND hWnd)
 	EndPaint(hWnd, &ps);
 }
 
-void Message::LMouseClick()
+void Message::LMouseDown()
 {
-	
 }
 
-void Message::RMouseClick()
+void Message::LMouseUp()
 {
-	
+}
+
+void Message::RMouseDown()
+{
+}
+
+void Message::RMouseUp()
+{
 }
 
 void Message::LMouseDBClick()

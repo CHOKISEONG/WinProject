@@ -26,8 +26,10 @@ public:
     // 마우스가 움직일 때
     static void MouseMove(int mouse_x, int mouse_y);
 
-    static void LMouseClick();
-    static void RMouseClick();
+    static void LMouseDown();
+    static void LMouseUp();
+    static void RMouseDown();
+    static void RMouseUp();
     static void LMouseDBClick();
     static void RMouseDBClick();
 
