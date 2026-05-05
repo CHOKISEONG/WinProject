@@ -5,6 +5,10 @@ SZ ws;
 int currentROP2 = R2_COPYPEN;
 
 int TimerFuncFPS = 60;
+bool isInvert = false;
+int dividedNum = 1;
+int selectedNum = 0;
+POINT paintDiff;
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();

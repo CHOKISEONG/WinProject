@@ -4,10 +4,19 @@
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
-	
+	selectedNum = 0;
+
+	if (_key >= '1' && _key <= '9')
+	{
+		dividedNum = _key - '0';
+		return;
+	}
+
 	switch (_key)
 	{
-	
+	case'r':
+		isInvert = !isInvert;
+		break;
 	case'q':
 	{
 		exit(0);
@@ -105,11 +114,14 @@ void KeyHandler::F8()
 
 void KeyHandler::Plus(HWND hWnd)
 {
-
+	paintDiff.x += 2;
+	paintDiff.y += 2;
 }
 
 void KeyHandler::Minus(HWND hWnd)
 {
+	paintDiff.x -= 2;
+	paintDiff.y -= 2;
 }
 
 void KeyHandler::KeyDown(HWND hWnd, WPARAM key)

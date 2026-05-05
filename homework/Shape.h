@@ -93,6 +93,7 @@ public:
 		swap(first.points, second.points);
 	}
 
+	int penWidth = 1;
 private:
 	int length = 0; // 도형의 반지름
 

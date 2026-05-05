@@ -3,7 +3,7 @@
 #include "global.h"
 #include <map>
 
-std::map<char, bool> keyboard;
+inline std::map<char, bool> keyboard;
 
 class KeyHandler
 {

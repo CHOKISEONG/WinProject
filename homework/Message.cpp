@@ -30,13 +30,72 @@ void Message::OnPaint(HWND hWnd)
 
 	GetObject(MyBitmap, sizeof(BITMAP), &bmp);
 
+	DWORD type;
+	if (isInvert)
+		type = DSTINVERT;
+	else
+		type = SRCCOPY;
+
 	if (keyboard['a'])
 	{
-		StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+		StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, type);
 	}
 	else
 	{
-		BitBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, SRCCOPY);
+		int cellW = ws.width / dividedNum;
+
+		int left{};
+		for (int i{1}; i < dividedNum + 1; ++i)
+		{
+			RECT rt;
+			rt.left = paintDiff.x;
+			rt.top = paintDiff.y;
+			rt.right = bmp.bmWidth - paintDiff.x;
+			rt.bottom = bmp.bmHeight - paintDiff.y;
+			if (isInvert)
+			{
+				if (i == selectedNum)
+				{
+					StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, NOTSRCCOPY);
+				}
+				else
+				{
+					StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, SRCCOPY);
+				}
+			}
+			else
+			{
+				StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, type);
+			}
+
+			if (i == selectedNum)
+			{
+				static Shape temp[4];
+				for (int i{}; i < 4; ++i)
+				{
+					temp[i].clearAll();
+					temp[i].setColorPen(RGB(255, 0, 0));
+					temp[i].setType(Shape::Type::LINE);
+					temp[i].penWidth = 4;
+				}
+				temp[0].addPoint(POINT{ left,0 });
+				temp[0].addPoint(POINT{ left + cellW,0 });
+				temp[1].addPoint(POINT{ left + cellW,0 });
+				temp[1].addPoint(POINT{ left + cellW,ws.height });
+				temp[2].addPoint(POINT{ left + cellW,ws.height });
+				temp[2].addPoint(POINT{ left ,ws.height });
+				temp[3].addPoint(POINT{ left ,ws.height });
+				temp[3].addPoint(POINT{ left ,0 });
+
+				for (int i{}; i < 4; ++i)
+				{
+					temp[i].draw(hDC, POINT{ 0,0 });
+				}
+			}
+			
+			left += cellW;
+		}
+		
 	}
 	
 	
@@ -47,6 +106,25 @@ void Message::OnPaint(HWND hWnd)
 
 void Message::LMouseDown()
 {
+	RECT rt;
+	int cellW = ws.width / dividedNum;
+	rt.left = 0;
+	rt.right = cellW;
+	for (int i{}; i < dividedNum; ++i)
+	{
+		rt.top = 0;
+		rt.bottom = ws.height;
+		if (PtInRect(&rt, ws.mousePos))
+		{
+			selectedNum = i + 1;
+		}
+
+		rt.left += cellW;
+		rt.right += cellW;
+	}
+
+
+	InvalidateRect(ws.hWnd, NULL, FALSE);
 }
 
 void Message::LMouseUp()

@@ -1,5 +1,4 @@
 #include "Message.h"
-#include "Image.h"
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
