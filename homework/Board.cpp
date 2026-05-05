@@ -2,7 +2,6 @@
 
 void Board::initialize()
 {
-	
 	field.resize(boardCol);
 	pos.resize(boardCol);
 	for (int i{}; i < boardCol; ++i)

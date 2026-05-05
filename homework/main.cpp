@@ -1,4 +1,5 @@
 #include "Message.h"
+#include "Image.h"
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
@@ -79,6 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	MSG msg;
 	WNDCLASSEX WndClass{};
 	g_hInst = hInstance;
+	ws.instance = hInstance;
 
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;

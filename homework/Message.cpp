@@ -1,6 +1,7 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
 #include "Board.h"
+#include "resource.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
@@ -8,7 +9,9 @@ void Message::OnCreate(HWND hWnd)
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
 
-	board.initialize();
+	// board.initialize();
+
+	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
@@ -20,18 +23,17 @@ void Message::OnPaint(HWND hWnd)
 {
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
-	HDC mDC = CreateCompatibleDC(hDC);
-	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, ws.width, ws.height);
-	SelectObject(mDC, (HBITMAP)hBitmap);
+	RECT rect;
+	BITMAP bmp;
+	HDC MemDC = CreateCompatibleDC(hDC); // 메모리DC 생성
+	HBITMAP MyBitmap = LoadBitmap(ws.instance, MAKEINTRESOURCE(IDB_BITMAP1)); //로딩
+	HBITMAP OldBitmap = (HBITMAP)SelectObject(MemDC, MyBitmap); //비트맵 선택
 
-	SetROP2(mDC, currentROP2);
-
-	board.draw(mDC);
+	GetObject(MyBitmap, sizeof(BITMAP), &bmp);
+	StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
 	
-	BitBlt(hDC, 0, 0, ws.width, ws.height, mDC, 0, 0, SRCCOPY);
-	DeleteDC(mDC);
-	DeleteObject(hBitmap);
-
+	SelectObject(MemDC, OldBitmap);
+	DeleteObject(MyBitmap);
 	EndPaint(hWnd, &ps);
 }
 
