@@ -16,7 +16,6 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	
 }
 
 void Message::OnPaint(HWND hWnd)
@@ -30,7 +29,16 @@ void Message::OnPaint(HWND hWnd)
 	HBITMAP OldBitmap = (HBITMAP)SelectObject(MemDC, MyBitmap); //비트맵 선택
 
 	GetObject(MyBitmap, sizeof(BITMAP), &bmp);
-	StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+
+	if (keyboard['a'])
+	{
+		StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	}
+	else
+	{
+		BitBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, SRCCOPY);
+	}
+	
 	
 	SelectObject(MemDC, OldBitmap);
 	DeleteObject(MyBitmap);
@@ -80,12 +88,14 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 		KeyHandler::Default(hWnd, wParam);
 		break;
 	}
+	keyboard[tolower(wParam)] = true;
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::OnKeyUp(HWND hWnd, WPARAM wParam)
 {
+	keyboard[tolower(wParam)] = false;
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 

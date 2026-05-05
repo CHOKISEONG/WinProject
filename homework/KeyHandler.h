@@ -1,6 +1,9 @@
 #pragma once
 
 #include "global.h"
+#include <map>
+
+std::map<char, bool> keyboard;
 
 class KeyHandler
 {
