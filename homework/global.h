@@ -35,6 +35,11 @@ public:
 	POINT mousePos;
 	HWND hWnd = NULL;
 	HINSTANCE instance;
+
+	std::vector<RECT> outOfWindowRect;
+
+	// 화면 밖을 체크하는 용도의 RECT 생성
+	void makeOOWRect();
 };
 extern SZ ws;
 

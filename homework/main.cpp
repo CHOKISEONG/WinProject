@@ -105,7 +105,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	int exStyle = 0;
 
 	RECT rc{ 0, 0, ws.width, ws.height };
-	AdjustWindowRectEx(&rc, style, FALSE, exStyle);
+	rc.bottom += 2;
+	rc.right += 2;
+	AdjustWindowRectEx(&rc, style, TRUE, exStyle);
 
 	hWnd = CreateWindow(
 		lpszClass,

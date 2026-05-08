@@ -17,10 +17,13 @@ public:
 	int targetPoint{32};
 	bool isGameStarted = false;
 
+	std::vector<RECT>& getCollideRect() { return collideRect; }
+
 private:
 	std::vector<std::vector<POINT>> pos;
 
 	std::vector<Image> collide;
+	std::vector<RECT> collideRect;
 
 	std::vector<Shape> line;
 

@@ -12,12 +12,39 @@ void Message::OnCreate(HWND hWnd)
 	SetTimer(hWnd, 0, 1000 / TimerFuncFPS, (TIMERPROC)TimerFunc);
 
 	board.initialize();
+	board.makeCollide(2);
+
+	ws.makeOOWRect();
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	if (!dirQueue.empty())
+	{
+		for (auto& b : blocks)
+		{
+			b.move(dirQueue.front(), dirQueue.size());
+		}
+	}
+
+	bool moved = false;
+	for (auto& b : blocks)
+	{
+		if (b.IsMoved())
+		{
+			moved = true;
+			break;
+		}
+	}
+
+	if (!moved && !dirQueue.empty())
+	{
+		dirQueue.pop();
+		blocks.push_back(Block());
+		blocks.push_back(Block());
+	}
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
@@ -156,6 +183,7 @@ void Message::OnSize(HWND hWnd, int width, int height)
 {
 	ws.width = width;
 	ws.height = height;
+	ws.makeOOWRect();
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 

@@ -20,3 +20,13 @@ float getDistance(POINT p1, POINT p2)
 {
 	return (sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2)));
 }
+
+void SZ::makeOOWRect()
+{
+	outOfWindowRect.clear();
+	outOfWindowRect.resize(4);
+	outOfWindowRect[0] = RECT{ -1	, 0		, 0			, height	};
+	outOfWindowRect[1] = RECT{ 0	, -1	, width		, 0			};
+	outOfWindowRect[2] = RECT{ width, 0		, width + 1, height		};
+	outOfWindowRect[3] = RECT{ 0	, height, width		, height+1	};
+}

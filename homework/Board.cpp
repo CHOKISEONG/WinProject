@@ -1,4 +1,5 @@
 #include "Board.h"
+#include "Block.h"
 #include <numeric>
 
 void Board::initialize()
@@ -48,6 +49,7 @@ void Board::draw(HDC hDC, HDC mDC)
 void Board::makeCollide(int num)
 {
 	collide.clear();
+	collideRect.clear();
 	indices.clear();
 	indices.resize(boardRow * boardCol);
 	std::iota(indices.begin(), indices.end(), 0);
@@ -64,9 +66,15 @@ void Board::makeCollide(int num)
 		collide[i].pos.x = col * cell + rad;
 		collide[i].pos.y = row * cell + rad;
 		collide[i].rad = rad;
+
+		collideRect.push_back(RECT{ collide[i].pos.x - rad,collide[i].pos.y - rad,collide[i].pos.x + rad,collide[i].pos.y + rad });
 	}
 
 	indices.erase(indices.begin(), indices.begin() + num);
+
+	blocks.clear();
+	for (int i{}; i < num; ++i)
+		blocks.push_back(Block());
 }
 
 POINT Board::getRandPos()
