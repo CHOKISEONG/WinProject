@@ -26,6 +26,11 @@ void Block::move(Direction dir, int speedMult)
 		isMoved = false;
 		return;
 	}
+	else if (checkCombine(nextPos))
+	{
+		isMoved = true;
+		return;
+	}
 	else
 	{
 		pos = nextPos;
@@ -51,6 +56,40 @@ bool Block::isCollide(POINT& nextPos, Direction dir)
 	{
 		if (IntersectRect(&destRect, &rt, &myRect))
 			return true;
+	}
+
+	// 다른 블록과의 충돌 계산
+	for (int i{}; i < blocks.size(); ++i)
+	{
+		if (&blocks[i] == this) continue;
+		else if (blocks[i].point == point) continue;
+
+		RECT targetRect{ blocks[i].pos.x - rad, blocks[i].pos.y - rad, blocks[i].pos.x + rad, blocks[i].pos.y + rad };
+
+		if (IntersectRect(&destRect, &myRect, &targetRect))
+			return true;
+	}
+
+	return false;
+}
+
+bool Block::checkCombine(POINT& nextPos)
+{
+	std::vector<int> indices;
+
+	for (int i{}; i < blocks.size(); ++i)
+	{
+		if (&blocks[i] == this) continue;
+		else if (blocks[i].point != point) continue;
+
+		RECT myRect{ blocks[i].pos.x - rad, blocks[i].pos.y - rad, blocks[i].pos.x + rad, blocks[i].pos.y + rad };
+		if (PtInRect(&myRect, nextPos))
+		{
+			blocks.erase(blocks.begin() + i);
+			point += 1;
+			load(point);
+			return true;
+		}
 	}
 
 	return false;

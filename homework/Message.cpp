@@ -23,9 +23,9 @@ void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
 	if (!dirQueue.empty())
 	{
-		for (auto& b : blocks)
+		for (int i{}; i < blocks.size(); ++i)
 		{
-			b.move(dirQueue.front(), dirQueue.size());
+			blocks[i].move(dirQueue.front(), dirQueue.size());
 		}
 	}
 

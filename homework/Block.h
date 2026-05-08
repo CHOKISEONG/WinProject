@@ -12,9 +12,13 @@ public:
 	bool isCollide(POINT& nextPos, Direction dir);
 
 	bool IsMoved() const { return isMoved; }
+	bool checkCombine(POINT& nextPos);
 
 private:
 	bool isMoved = false;
+
+	int point = 0;
 };
 
 inline std::vector<Block> blocks;
+

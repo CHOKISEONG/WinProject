@@ -18,6 +18,7 @@ public:
 	bool isGameStarted = false;
 
 	std::vector<RECT>& getCollideRect() { return collideRect; }
+	std::vector<std::vector<POINT>>& getPos() { return pos; }
 
 private:
 	std::vector<std::vector<POINT>> pos;
