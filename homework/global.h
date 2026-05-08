@@ -1,6 +1,9 @@
 #pragma once
 
-#include "header.h"
+#include <Windows.h>
+#include <chrono>
+#include <random>
+#include <queue>
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
@@ -12,6 +15,15 @@ constexpr int boardRow = 6;
 constexpr int boardCol = 6;
 constexpr int cell = WIDTH / boardRow;
 constexpr int rad = cell / 2;
+
+enum Direction
+{
+	LEFTDIR,
+	RIGHTDIR,
+	UPDIR,
+	DOWNDIR,
+	STOP
+};
 
 // À©µµ¿ì
 class SZ
@@ -31,6 +43,8 @@ extern int currentROP2;
 extern int TimerFuncFPS;
 
 extern POINT mouseDownPos;
+
+extern std::queue<Direction> dirQueue;
 
 extern std::random_device rd;
 extern unsigned __int64 seed;

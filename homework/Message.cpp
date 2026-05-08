@@ -59,12 +59,36 @@ void Message::OnPaint(HWND hWnd)
 
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
-
+	mouseDownPos = POINT{ mouse_x, mouse_y };
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
 {
+	int xDiff = mouse_x - mouseDownPos.x;
+	int yDiff = mouse_y - mouseDownPos.y;
 
+	if (abs(xDiff) > abs(yDiff))
+	{
+		if (xDiff < 0)
+		{
+			dirQueue.push(Direction::LEFTDIR);
+		}
+		else
+		{
+			dirQueue.push(Direction::RIGHTDIR);
+		}
+	}
+	else
+	{
+		if (yDiff < 0)
+		{
+			dirQueue.push(Direction::UPDIR);
+		}
+		else
+		{
+			dirQueue.push(Direction::DOWNDIR);
+		}
+	}
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)

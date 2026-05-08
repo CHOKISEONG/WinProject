@@ -4,15 +4,6 @@
 
 extern SZ ws;
 
-enum Direction
-{
-	LEFTDIR,
-	RIGHTDIR,
-	UPDIR,
-	DOWNDIR,
-	STOP
-};
-
 class Shape
 {
 public:
