@@ -10,6 +10,8 @@ POINT mouseDownPos{};
 
 std::queue<Direction> dirQueue;
 
+int highestPoint = 0;
+
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 gen(static_cast<std::mt19937::result_type>(seed));

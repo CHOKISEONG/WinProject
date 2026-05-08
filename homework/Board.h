@@ -14,7 +14,7 @@ public:
 	void makeCollide(int num);
 	POINT getRandPos();
 
-	int targetPoint{32};
+	int targetPoint{4};
 	bool isGameStarted = false;
 
 	std::vector<RECT>& getCollideRect() { return collideRect; }

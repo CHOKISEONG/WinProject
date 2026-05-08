@@ -5,6 +5,7 @@
 #include "Image.h"
 #include "Block.h"
 #include <string>
+#include <algorithm>
 
 void Message::OnCreate(HWND hWnd)
 {
@@ -21,13 +22,26 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	static bool winPop = false;
+	if (!winPop && highestPoint >= board.targetPoint)
+	{
+		winPop = true;
+		MessageBox(ws.hWnd, L"게임 성공", L"성공", MB_OK);
+	}
+
 	if (!dirQueue.empty())
 	{
-		for (int i{}; i < blocks.size(); ++i)
+		for (int i{}; i < (int)blocks.size(); ++i)
 		{
-			blocks[i].move(dirQueue.front(), dirQueue.size());
+			blocks[i].move(dirQueue.front(), (int)dirQueue.size());
 		}
 	}
+
+	blocks.erase(
+		std::remove_if(blocks.begin(), blocks.end(),
+			[](const Block& b) { return !b.IsAlive(); }),
+		blocks.end()
+	);
 
 	bool moved = false;
 	for (auto& b : blocks)
@@ -41,9 +55,31 @@ void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 
 	if (!moved && !dirQueue.empty())
 	{
+		auto snapCoord = [](int v, int maxCount)
+		{
+			int idx = (v - ::rad + (::cell / 2)) / ::cell;
+			if (idx < 0) idx = 0;
+			if (idx >= maxCount) idx = maxCount - 1;
+			return idx * ::cell + ::rad;
+		};
+
+		for (auto& b : blocks)
+		{
+			if (!b.IsAlive()) continue;
+			b.pos.x = snapCoord(b.pos.x, ::boardCol);
+			b.pos.y = snapCoord(b.pos.y, ::boardRow);
+		}
+
 		dirQueue.pop();
 		blocks.push_back(Block());
 		blocks.push_back(Block());
+		if (blocks.back().pos.x == -1
+			&& blocks.back().pos.y == -1)
+		{
+			MessageBox(hWnd, L"게임 실패", L"실패", MB_OK);
+			DestroyWindow(hWnd);
+			return;
+		}
 	}
 
 	InvalidateRect(hWnd, NULL, FALSE);
@@ -191,23 +227,23 @@ void Message::OnMessage(HWND hWnd, WPARAM wParam)
 {
 	switch (wParam)
 	{
-		case ID_MENU_GAMESTART:
-			board.isGameStarted = true;
+	case ID_MENU_GAMESTART:
+		board.isGameStarted = true;
+		break;
+
+	case ID_MENU_GAMEEND:
+		DestroyWindow(hWnd);
+		break;
+
+	case ID_TARGETPOINT_32:
+			board.targetPoint = 4;
 			break;
 
-		case ID_MENU_GAMEEND:
-			exit(0);
+	case ID_TARGETPOINT_64:
+			board.targetPoint = 5;
 			break;
 
-		case ID_TARGETPOINT_32:
-			board.targetPoint = 32;
-			break;
-
-		case ID_TARGETPOINT_64:
-			board.targetPoint = 64;
-			break;
-
-		case ID_COLLIDENUM_2:
+	case ID_COLLIDENUM_2:
 			board.makeCollide(2);
 			break;
 		case ID_COLLIDENUM_3:
@@ -224,5 +260,6 @@ void Message::OnMessage(HWND hWnd, WPARAM wParam)
 
 void Message::OnDestroy(HWND hWnd)
 {
+	Image::ReleaseCachedBitmaps();
 	PostQuitMessage(0);
 }

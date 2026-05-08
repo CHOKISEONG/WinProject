@@ -50,6 +50,7 @@ extern int TimerFuncFPS;
 extern POINT mouseDownPos;
 
 extern std::queue<Direction> dirQueue;
+extern int highestPoint;
 
 extern std::random_device rd;
 extern unsigned __int64 seed;

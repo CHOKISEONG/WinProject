@@ -79,9 +79,26 @@ void Board::makeCollide(int num)
 
 POINT Board::getRandPos()
 {
-	const int col = indices[0] % boardCol;
-	const int row = indices[0] / boardCol;
-	std::rotate(indices.begin(), indices.begin() + 1, indices.end());
+	std::vector<POINT> makablePoint;
+	for (const auto& ps : indices)
+	{
+		POINT p = POINT{ ps % boardCol, ps / boardCol };
 
-	return pos[col][row];
+		bool canMake = true;
+		for (int i{}; i < blocks.size(); ++i)
+		{
+			RECT targetRect{ blocks[i].pos.x - rad, blocks[i].pos.y - rad, blocks[i].pos.x + rad, blocks[i].pos.y + rad };
+			
+			if (PtInRect(&targetRect, pos[p.x][p.y]))
+				canMake = false;
+		}
+
+		if (canMake)
+			makablePoint.push_back(pos[p.x][p.y]);
+	}
+
+	if (makablePoint.size() < 2)
+		return POINT{ -1,-1 };
+	else
+		return makablePoint[uid(gen) % makablePoint.size()];
 }

@@ -12,10 +12,16 @@ public:
 	bool isCollide(POINT& nextPos, Direction dir);
 
 	bool IsMoved() const { return isMoved; }
+
 	bool checkCombine(POINT& nextPos);
+
+	bool IsAlive() const { return isAlive; }
+
+	void draw(HDC hDC, HDC mDC);
 
 private:
 	bool isMoved = false;
+	bool isAlive = true;
 
 	int point = 0;
 };
