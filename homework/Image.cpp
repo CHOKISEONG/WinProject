@@ -10,6 +10,7 @@ void Image::push(POINT p, float t)
 
 void Image::load(int idx)
 {
+	// 800 x 800 으로 그림 맞춰야 잘 작동함
 	switch (idx)
 	{
 	case 1:
@@ -106,6 +107,52 @@ void Image::reset()
 	hInvert = false;
 	vInvert = false;
 	targetRaster = SRCCOPY;
+}
+
+void Image::move()
+{
+	for (int i{}; i < 4; ++i)
+	{
+		mag.p[i].x += dir.x;
+		mag.p[i].y += dir.y;
+	}
+
+	int speedMax = 9;
+	int speedMin = 3;
+
+	if (mag.p[1].x > ws.width)
+		dir.x = -(uid(gen) % speedMax + speedMin);
+
+	if (mag.p[0].x < 0)
+		dir.x = (uid(gen) % speedMax + speedMin);
+
+	if (mag.p[0].y < 0)
+		dir.y = (uid(gen) % speedMax + speedMin);
+
+	if (mag.p[2].y > ws.height)
+		dir.y = -(uid(gen) % speedMax + speedMin);
+}
+
+void Image::resize()
+{
+	static float d = 0.1f;
+	
+	tResize += d;
+
+	if (tResize > 0.5f) d = -0.1f;
+	if (tResize < -0.5f) d = 0.1f;
+
+	mag.p[0].x -= tResize * 10;
+	mag.p[0].y -= tResize * 10;
+
+	mag.p[1].x += tResize * 10;
+	mag.p[1].y -= tResize * 10;
+
+	mag.p[2].x += tResize * 10;
+	mag.p[2].y += tResize * 10;
+
+	mag.p[3].x -= tResize * 10;
+	mag.p[3].y += tResize * 10;
 }
 
 void Magnifier::setArrangeType(int x, int y)

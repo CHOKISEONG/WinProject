@@ -70,6 +70,8 @@ struct Image
 
 	bool isMoving = false;
 	bool isResizing = false;
+	float tResize = 0.0f;
+	POINT dir{ 5,5 };
 
 	void push(POINT p, float t = 1.0f);
 
@@ -78,5 +80,9 @@ struct Image
 	void draw(HDC hDC, HDC mDC);
 
 	void reset();
+
+	void move();
+
+	void resize();
 };
 inline Image img;

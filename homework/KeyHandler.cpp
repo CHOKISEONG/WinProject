@@ -47,6 +47,15 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 		img.vInvert = !img.vInvert;
 		break;
 
+	case 'm':
+		img.isMoving = !img.isMoving;
+		break;
+
+	case 'n':
+		img.isResizing = !img.isResizing;
+		img.tResize = 0.0f;
+		break;
+
 	case 'i':
 		if (img.targetRaster == SRCCOPY)
 			img.targetRaster = NOTSRCCOPY;

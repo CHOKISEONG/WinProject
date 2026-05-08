@@ -18,6 +18,12 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	if (img.isMoving)
+		img.move();
+	
+	if (img.isResizing)
+		img.resize();
+
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
@@ -26,6 +32,7 @@ void Message::OnPaint(HWND hWnd)
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
 
+	// ai도움 많이 받음
 	RECT rect;
 	GetClientRect(hWnd, &rect);
 	int width = rect.right - rect.left;
