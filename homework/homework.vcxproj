@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="global.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="resource.h" />
@@ -145,7 +147,8 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="orobas.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\darv.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\orobas.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,148 +2,94 @@
 #include "KeyHandler.h"
 #include "Board.h"
 #include "resource.h"
+#include "Image.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
 {
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
-	SetTimer(hWnd, 0, TimerFuncFPS, (TIMERPROC)TimerFunc);
+	SetTimer(hWnd, 0, 1000 / TimerFuncFPS, (TIMERPROC)TimerFunc);
 
 	// board.initialize();
+	img.load(1);
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
+	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::OnPaint(HWND hWnd)
 {
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
+
 	RECT rect;
-	BITMAP bmp;
-	HDC MemDC = CreateCompatibleDC(hDC); // 메모리DC 생성
-	HBITMAP MyBitmap = LoadBitmap(ws.instance, MAKEINTRESOURCE(IDB_BITMAP1)); //로딩
-	HBITMAP OldBitmap = (HBITMAP)SelectObject(MemDC, MyBitmap); //비트맵 선택
+	GetClientRect(hWnd, &rect);
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
 
-	GetObject(MyBitmap, sizeof(BITMAP), &bmp);
+	HDC hMemDC = CreateCompatibleDC(hDC);
+	HBITMAP hMemBitmap = CreateCompatibleBitmap(hDC, width, height);
+	HBITMAP hOldMemBitmap = (HBITMAP)SelectObject(hMemDC, hMemBitmap);
 
-	DWORD type;
-	if (isInvert)
-		type = DSTINVERT;
-	else
-		type = SRCCOPY;
+	FillRect(hMemDC, &rect, (HBRUSH)(COLOR_WINDOW + 1));
 
-	if (keyboard['a'])
-	{
-		StretchBlt(hDC, 0, 0, ws.width, ws.height, MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, type);
-	}
-	else
-	{
-		int cellW = ws.width / dividedNum;
+	HDC mDC = CreateCompatibleDC(hDC);
+	HBITMAP OldBitmap = (HBITMAP)SelectObject(mDC, img.bitmap);
 
-		int left{};
-		for (int i{1}; i < dividedNum + 1; ++i)
-		{
-			RECT rt;
-			rt.left = paintDiff.x;
-			rt.top = paintDiff.y;
-			rt.right = bmp.bmWidth - paintDiff.x;
-			rt.bottom = bmp.bmHeight - paintDiff.y;
-			if (isInvert)
-			{
-				if (i == selectedNum)
-				{
-					StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, NOTSRCCOPY);
-				}
-				else
-				{
-					StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, SRCCOPY);
-				}
-			}
-			else
-			{
-				StretchBlt(hDC, left + paintDiff.x, paintDiff.y, cellW - paintDiff.x, ws.height - paintDiff.y, MemDC, rt.left, rt.top, rt.right, rt.bottom, type);
-			}
+	img.draw(hMemDC, mDC);
 
-			if (i == selectedNum)
-			{
-				static Shape temp[4];
-				for (int i{}; i < 4; ++i)
-				{
-					temp[i].clearAll();
-					temp[i].setColorPen(RGB(255, 0, 0));
-					temp[i].setType(Shape::Type::LINE);
-					temp[i].penWidth = 4;
-				}
-				temp[0].addPoint(POINT{ left,0 });
-				temp[0].addPoint(POINT{ left + cellW,0 });
-				temp[1].addPoint(POINT{ left + cellW,0 });
-				temp[1].addPoint(POINT{ left + cellW,ws.height });
-				temp[2].addPoint(POINT{ left + cellW,ws.height });
-				temp[2].addPoint(POINT{ left ,ws.height });
-				temp[3].addPoint(POINT{ left ,ws.height });
-				temp[3].addPoint(POINT{ left ,0 });
+	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
-				for (int i{}; i < 4; ++i)
-				{
-					temp[i].draw(hDC, POINT{ 0,0 });
-				}
-			}
-			
-			left += cellW;
-		}
-		
-	}
-	
-	
-	SelectObject(MemDC, OldBitmap);
-	DeleteObject(MyBitmap);
+	SelectObject(mDC, OldBitmap);
+	DeleteDC(mDC);
+
+	SelectObject(hMemDC, hOldMemBitmap);
+	DeleteObject(hMemBitmap);
+	DeleteDC(hMemDC);
+
 	EndPaint(hWnd, &ps);
 }
 
-void Message::LMouseDown()
+void Message::LMouseDown(int mouse_x, int mouse_y)
 {
-	RECT rt;
-	int cellW = ws.width / dividedNum;
-	rt.left = 0;
-	rt.right = cellW;
-	for (int i{}; i < dividedNum; ++i)
-	{
-		rt.top = 0;
-		rt.bottom = ws.height;
-		if (PtInRect(&rt, ws.mousePos))
-		{
-			selectedNum = i + 1;
-		}
+	if (!img.mag.activate)
+		img.mag.setMag(POINT{mouse_x, mouse_y});
+	else
+		img.mag.setArrangeType(mouse_x, mouse_y);
+}
 
-		rt.left += cellW;
-		rt.right += cellW;
-	}
+void Message::LMouseUp(int mouse_x, int mouse_y)
+{
+	img.mag.setArrangeType(Magnifier::ArrangeType::None);
+}
 
+void Message::MouseMove(int mouse_x, int mouse_y)
+{
+	img.mag.arrange(POINT{ mouse_x - ws.mousePos.x, mouse_y - ws.mousePos.y });
+
+	ws.mousePos.x = mouse_x;
+	ws.mousePos.y = mouse_y;
 
 	InvalidateRect(ws.hWnd, NULL, FALSE);
 }
 
-void Message::LMouseUp()
+void Message::RMouseDown(int mouse_x, int mouse_y)
 {
 }
 
-void Message::RMouseDown()
+void Message::RMouseUp(int mouse_x, int mouse_y)
 {
 }
 
-void Message::RMouseUp()
+void Message::LMouseDBClick(int mouse_x, int mouse_y)
 {
 }
 
-void Message::LMouseDBClick()
-{
-}
-
-void Message::RMouseDBClick()
+void Message::RMouseDBClick(int mouse_x, int mouse_y)
 {
 }
 
@@ -192,12 +138,6 @@ void Message::OnSize(HWND hWnd, int width, int height)
 void Message::OnMessage(HWND hWnd, WPARAM wParam)
 {
 	return;
-}
-
-void Message::MouseMove(int mouse_x, int mouse_y)
-{
-	ws.mousePos.x = mouse_x;
-	ws.mousePos.y = mouse_y;
 }
 
 void Message::OnDestroy(HWND hWnd)

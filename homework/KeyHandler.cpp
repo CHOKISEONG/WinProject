@@ -1,22 +1,54 @@
 #include "KeyHandler.h"
 #include "Message.h"
+#include "Image.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
-	selectedNum = 0;
-
-	if (_key >= '1' && _key <= '9')
-	{
-		dividedNum = _key - '0';
-		return;
-	}
-
 	switch (_key)
 	{
-	case'r':
-		isInvert = !isInvert;
+	case '1':
+		img.load(1);
 		break;
+
+	case '2':
+		img.load(2);
+		break;
+
+	case 'e':
+		img.mag.zoomDiff += 3;
+		break;
+
+	case 's':
+		img.mag.zoomDiff -= 3;
+		break;
+
+	case 'b':
+		img.mag.zoomDiff = 0;
+		break;
+
+	case 'c':
+		img.push(ws.mousePos);
+		break;
+
+	case 'p':
+		img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
+		break;
+
+	case 'f':
+		img.magAll = !img.magAll;
+		break;
+
+	case 'h':
+		img.hInvert = !img.hInvert;
+		break;
+
+	case 'v':
+		img.vInvert = !img.vInvert;
+		break;
+
+
+
 	case'q':
 	{
 		exit(0);
@@ -47,7 +79,27 @@ void KeyHandler::Esc()
 
 void KeyHandler::Arrow(HWND hWnd, WPARAM key)
 {
-	
+	switch (key)
+	{
+	case VK_UP:
+		img.mag.move(POINT{ 0, -3 });
+		break;
+
+	case VK_DOWN:
+		img.mag.move(POINT{ 0, 3 });
+		break;
+		
+	case VK_LEFT:
+		img.mag.move(POINT{ -3, 0 });
+		break;
+
+	case VK_RIGHT:
+		img.mag.move(POINT{ 3, 0 });
+		break;
+
+	default:
+		break;
+	}
 }
 
 void KeyHandler::Tab()
@@ -114,14 +166,10 @@ void KeyHandler::F8()
 
 void KeyHandler::Plus(HWND hWnd)
 {
-	paintDiff.x += 2;
-	paintDiff.y += 2;
 }
 
 void KeyHandler::Minus(HWND hWnd)
 {
-	paintDiff.x -= 2;
-	paintDiff.y -= 2;
 }
 
 void KeyHandler::KeyDown(HWND hWnd, WPARAM key)

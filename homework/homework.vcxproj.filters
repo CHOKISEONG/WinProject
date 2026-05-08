@@ -33,6 +33,9 @@
     <ClCompile Include="Board.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -56,6 +59,9 @@
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -63,7 +69,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="orobas.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\darv.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\orobas.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

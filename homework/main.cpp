@@ -38,27 +38,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_LBUTTONDOWN:
-		Message::LMouseDown();
+		Message::LMouseDown((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_LBUTTONUP:
-		Message::LMouseUp();
+		Message::LMouseUp((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_RBUTTONDOWN:
-		Message::RMouseDown();
+		Message::RMouseDown((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_RBUTTONUP:
-		Message::RMouseUp();
+		Message::RMouseUp((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_LBUTTONDBLCLK:
-		Message::LMouseDBClick();
+		Message::LMouseDBClick((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_RBUTTONDBLCLK:
-		Message::RMouseDBClick();
+		Message::RMouseDBClick((int)LOWORD(lParam), (int)HIWORD(lParam));
 		return 0;
 
 	case WM_COMMAND:

@@ -26,12 +26,12 @@ public:
     // 마우스가 움직일 때
     static void MouseMove(int mouse_x, int mouse_y);
 
-    static void LMouseDown();
-    static void LMouseUp();
-    static void RMouseDown();
-    static void RMouseUp();
-    static void LMouseDBClick();
-    static void RMouseDBClick();
+    static void LMouseDown(int mouse_x, int mouse_y);
+    static void LMouseUp(int mouse_x, int mouse_y);
+    static void RMouseDown(int mouse_x, int mouse_y);
+    static void RMouseUp(int mouse_x, int mouse_y);
+    static void LMouseDBClick(int mouse_x, int mouse_y);
+    static void RMouseDBClick(int mouse_x, int mouse_y);
 
     static void TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);
 };

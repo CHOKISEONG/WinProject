@@ -30,11 +30,6 @@ extern int currentROP2;
 
 extern int TimerFuncFPS;
 
-extern bool isInvert;
-extern int dividedNum;
-extern int selectedNum;
-extern POINT paintDiff;
-
 extern std::random_device rd;
 extern unsigned __int64 seed;
 extern std::mt19937 gen;
