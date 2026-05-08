@@ -9,7 +9,6 @@ struct Image
 	HBITMAP bitmap = NULL;
 	BITMAP bmp;
 	int bWidth{}, bHeight{};
-	int rad = 50;
 
 	POINT pos{};
 	POINT dir{ 0,0 }; // 이동할 방향

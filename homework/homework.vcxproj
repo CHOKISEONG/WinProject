@@ -125,8 +125,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Block.cpp" />
-    <ClCompile Include="Board.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
@@ -135,8 +133,6 @@
     <ClCompile Include="Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Block.h" />
-    <ClInclude Include="Board.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />

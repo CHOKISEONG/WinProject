@@ -1,9 +1,7 @@
 ﻿#include "Message.h"
 #include "KeyHandler.h"
-#include "Board.h"
 #include "resource.h"
 #include "Image.h"
-#include "Block.h"
 #include <string>
 #include <algorithm>
 
@@ -12,9 +10,6 @@ void Message::OnCreate(HWND hWnd)
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, 1000 / TimerFuncFPS, (TIMERPROC)TimerFunc);
 
-	board.initialize();
-	board.makeCollide(2);
-
 	ws.makeOOWRect();
 
 	InvalidateRect(hWnd, NULL, FALSE);
@@ -22,66 +17,7 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	static bool winPop = false;
-	if (!winPop && highestPoint >= board.targetPoint)
-	{
-		winPop = true;
-		MessageBox(ws.hWnd, L"게임 성공", L"성공", MB_OK);
-	}
-
-	if (!dirQueue.empty())
-	{
-		for (int i{}; i < (int)blocks.size(); ++i)
-		{
-			blocks[i].move(dirQueue.front(), (int)dirQueue.size());
-		}
-	}
-
-	blocks.erase(
-		std::remove_if(blocks.begin(), blocks.end(),
-			[](const Block& b) { return !b.IsAlive(); }),
-		blocks.end()
-	);
-
-	bool moved = false;
-	for (auto& b : blocks)
-	{
-		if (b.IsMoved())
-		{
-			moved = true;
-			break;
-		}
-	}
-
-	if (!moved && !dirQueue.empty())
-	{
-		auto snapCoord = [](int v, int maxCount)
-		{
-			int idx = (v - ::rad + (::cell / 2)) / ::cell;
-			if (idx < 0) idx = 0;
-			if (idx >= maxCount) idx = maxCount - 1;
-			return idx * ::cell + ::rad;
-		};
-
-		for (auto& b : blocks)
-		{
-			if (!b.IsAlive()) continue;
-			b.pos.x = snapCoord(b.pos.x, ::boardCol);
-			b.pos.y = snapCoord(b.pos.y, ::boardRow);
-		}
-
-		dirQueue.pop();
-		blocks.push_back(Block());
-		blocks.push_back(Block());
-		if (blocks.back().pos.x == -1
-			&& blocks.back().pos.y == -1)
-		{
-			MessageBox(hWnd, L"게임 실패", L"실패", MB_OK);
-			DestroyWindow(hWnd);
-			return;
-		}
-	}
-
+	
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
@@ -104,10 +40,7 @@ void Message::OnPaint(HWND hWnd)
 
 	HDC mDC = CreateCompatibleDC(hDC);
 
-	for (auto& b : blocks)
-		b.draw(hMemDC, mDC);
-
-	board.draw(hMemDC, mDC);
+	
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
@@ -122,36 +55,16 @@ void Message::OnPaint(HWND hWnd)
 
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
-	mouseDownPos = POINT{ mouse_x, mouse_y };
+	ws.mouseDownPos = POINT{ mouse_x, mouse_y };
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
 {
-	int xDiff = mouse_x - mouseDownPos.x;
-	int yDiff = mouse_y - mouseDownPos.y;
+	int xDiff = mouse_x - ws.mouseDownPos.x;
+	int yDiff = mouse_y - ws.mouseDownPos.y;
 
-	if (abs(xDiff) > abs(yDiff))
-	{
-		if (xDiff < 0)
-		{
-			dirQueue.push(Direction::LEFTDIR);
-		}
-		else
-		{
-			dirQueue.push(Direction::RIGHTDIR);
-		}
-	}
-	else
-	{
-		if (yDiff < 0)
-		{
-			dirQueue.push(Direction::UPDIR);
-		}
-		else
-		{
-			dirQueue.push(Direction::DOWNDIR);
-		}
-	}
+	ws.mouseUpPos.x = mouse_x;
+	ws.mouseUpPos.y = mouse_y;
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)
@@ -227,32 +140,7 @@ void Message::OnMessage(HWND hWnd, WPARAM wParam)
 {
 	switch (wParam)
 	{
-	case ID_MENU_GAMESTART:
-		board.isGameStarted = true;
-		break;
-
-	case ID_MENU_GAMEEND:
-		DestroyWindow(hWnd);
-		break;
-
-	case ID_TARGETPOINT_32:
-			board.targetPoint = 4;
-			break;
-
-	case ID_TARGETPOINT_64:
-			board.targetPoint = 5;
-			break;
-
-	case ID_COLLIDENUM_2:
-			board.makeCollide(2);
-			break;
-		case ID_COLLIDENUM_3:
-			board.makeCollide(3);
-			break;
-		case ID_COLLIDENUM_4:
-			board.makeCollide(4);
-			break;
-
+	
 		default:
 			break;
 	}

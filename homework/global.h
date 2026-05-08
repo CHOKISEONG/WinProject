@@ -33,6 +33,8 @@ public:
 	int height = HEIGHT;
 
 	POINT mousePos;
+	POINT mouseDownPos;
+	POINT mouseUpPos;
 	HWND hWnd = NULL;
 	HINSTANCE instance;
 
@@ -46,11 +48,6 @@ extern SZ ws;
 extern int currentROP2;
 
 extern int TimerFuncFPS;
-
-extern POINT mouseDownPos;
-
-extern std::queue<Direction> dirQueue;
-extern int highestPoint;
 
 extern std::random_device rd;
 extern unsigned __int64 seed;
