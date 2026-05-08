@@ -87,10 +87,12 @@ void Message::RMouseUp(int mouse_x, int mouse_y)
 
 void Message::LMouseDBClick(int mouse_x, int mouse_y)
 {
+	img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
 }
 
 void Message::RMouseDBClick(int mouse_x, int mouse_y)
 {
+	img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
 }
 
 

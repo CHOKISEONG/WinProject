@@ -30,11 +30,58 @@ void Image::load(int idx)
 void Image::draw(HDC hDC, HDC mDC)
 {
 	// 디폴트 이미지
-	StretchBlt(hDC, 0, 0, ws.width, ws.height, mDC, 0, 0, width, height, SRCCOPY);
+	if (magAll)
+	{
+		// f 돋보기 그리기면
+		StretchBlt(
+			hDC,
+			0, 0, ws.width, ws.height,
+			mDC,
+			mag.p[0].x + mag.zoomDiff, mag.p[0].y + mag.zoomDiff,
+			mag.width - mag.zoomDiff, mag.height - mag.zoomDiff,
+			SRCCOPY
+		);
+	}
+	else
+	{
+		StretchBlt(hDC, 0, 0, ws.width, ws.height, mDC, 0, 0, width, height, SRCCOPY);
+	}
+	
 
 	// 클릭한 돋보기
 	if (mag.activate)
 	{
+		// 복사된 그림들
+		for (const auto& t : target)
+		{
+			int width = mag.width * t.sizeRatio;
+			int height = mag.height * t.sizeRatio;
+			int px = t.pos.x - width / 2;
+			int py = t.pos.y - height / 2;
+
+			if (hInvert)
+			{
+				px += width;
+				width = -width;
+			}
+
+			if (vInvert)
+			{
+				py += height;
+				height = -height;
+			}
+
+			StretchBlt(
+				hDC,
+				px, py, width, height,
+				mDC,
+				mag.p[0].x + mag.zoomDiff, mag.p[0].y + mag.zoomDiff,
+				mag.width - mag.zoomDiff, mag.height - mag.zoomDiff,
+				targetRaster
+			);
+		}
+
+		// 돋보기 그림들
 		StretchBlt(
 			hDC,
 			mag.p[0].x, mag.p[0].y,
@@ -47,6 +94,18 @@ void Image::draw(HDC hDC, HDC mDC)
 
 		mag.draw(hDC);
 	}
+}
+
+void Image::reset()
+{
+	mag = Magnifier();
+	target.clear();
+	isMoving = false;
+	isResizing = false;
+	magAll = false;
+	hInvert = false;
+	vInvert = false;
+	targetRaster = SRCCOPY;
 }
 
 void Magnifier::setArrangeType(int x, int y)

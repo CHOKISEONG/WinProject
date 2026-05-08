@@ -66,10 +66,17 @@ struct Image
 	bool vInvert = false;
 
 	std::vector<Target> target; // 돋보기 붙여넣는 위치들
+	int targetRaster = SRCCOPY;
+
+	bool isMoving = false;
+	bool isResizing = false;
+
 	void push(POINT p, float t = 1.0f);
 
 	void load(int idx);
 	
 	void draw(HDC hDC, HDC mDC);
+
+	void reset();
 };
 inline Image img;

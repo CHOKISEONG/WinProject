@@ -47,7 +47,16 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 		img.vInvert = !img.vInvert;
 		break;
 
+	case 'i':
+		if (img.targetRaster == SRCCOPY)
+			img.targetRaster = NOTSRCCOPY;
+		else
+			img.targetRaster = SRCCOPY;
+		break;
 
+	case 'r':
+		img.reset();
+		break;
 
 	case'q':
 	{
