@@ -6,10 +6,10 @@ constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
 float getDistance(POINT p1, POINT p2);
 
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 800;
-constexpr int boardRow = 10;
-constexpr int boardCol = 10;
+constexpr int WIDTH = 600;
+constexpr int HEIGHT = 600;
+constexpr int boardRow = 6;
+constexpr int boardCol = 6;
 constexpr int cell = WIDTH / boardRow;
 constexpr int rad = cell / 2;
 
@@ -29,6 +29,8 @@ extern SZ ws;
 extern int currentROP2;
 
 extern int TimerFuncFPS;
+
+extern POINT mouseDownPos;
 
 extern std::random_device rd;
 extern unsigned __int64 seed;

@@ -1,4 +1,5 @@
 #include "Message.h"
+#include "resource.h"
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"My Window Class";
@@ -91,7 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIcon = LoadIcon(NULL, IDI_QUESTION);
 	WndClass.hCursor = LoadCursor(NULL, IDC_CROSS);
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	WndClass.lpszMenuName = NULL;
+	WndClass.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 

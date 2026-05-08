@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Block.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Block.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
@@ -147,8 +149,15 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\darv.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\orobas.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\128.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\16.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\2.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\256.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\32.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\4.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\64.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\8.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\collide.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

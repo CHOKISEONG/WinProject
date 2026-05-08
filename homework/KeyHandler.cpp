@@ -5,74 +5,6 @@
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
-	switch (_key)
-	{
-	case '1':
-		img.load(1);
-		break;
-
-	case '2':
-		img.load(2);
-		break;
-
-	case 'e':
-		img.mag.zoomDiff += 3;
-		break;
-
-	case 's':
-		img.mag.zoomDiff -= 3;
-		break;
-
-	case 'b':
-		img.mag.zoomDiff = 0;
-		break;
-
-	case 'c':
-		img.push(ws.mousePos);
-		break;
-
-	case 'p':
-		img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
-		break;
-
-	case 'f':
-		img.magAll = !img.magAll;
-		break;
-
-	case 'h':
-		img.hInvert = !img.hInvert;
-		break;
-
-	case 'v':
-		img.vInvert = !img.vInvert;
-		break;
-
-	case 'm':
-		img.isMoving = !img.isMoving;
-		break;
-
-	case 'n':
-		img.isResizing = !img.isResizing;
-		img.tResize = 0.0f;
-		break;
-
-	case 'i':
-		if (img.targetRaster == SRCCOPY)
-			img.targetRaster = NOTSRCCOPY;
-		else
-			img.targetRaster = SRCCOPY;
-		break;
-
-	case 'r':
-		img.reset();
-		break;
-
-	case'q':
-	{
-		exit(0);
-		break;
-	}
-	}
 }
 
 void KeyHandler::Enter(HWND hWnd)
@@ -100,19 +32,15 @@ void KeyHandler::Arrow(HWND hWnd, WPARAM key)
 	switch (key)
 	{
 	case VK_UP:
-		img.mag.move(POINT{ 0, -3 });
 		break;
 
 	case VK_DOWN:
-		img.mag.move(POINT{ 0, 3 });
 		break;
 		
 	case VK_LEFT:
-		img.mag.move(POINT{ -3, 0 });
 		break;
 
 	case VK_RIGHT:
-		img.mag.move(POINT{ 3, 0 });
 		break;
 
 	default:

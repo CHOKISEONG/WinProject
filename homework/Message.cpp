@@ -3,6 +3,7 @@
 #include "Board.h"
 #include "resource.h"
 #include "Image.h"
+#include "Block.h"
 #include <string>
 
 void Message::OnCreate(HWND hWnd)
@@ -10,19 +11,13 @@ void Message::OnCreate(HWND hWnd)
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, 1000 / TimerFuncFPS, (TIMERPROC)TimerFunc);
 
-	// board.initialize();
-	img.load(1);
+	board.initialize();
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	if (img.isMoving)
-		img.move();
-	
-	if (img.isResizing)
-		img.resize();
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
@@ -45,13 +40,14 @@ void Message::OnPaint(HWND hWnd)
 	FillRect(hMemDC, &rect, (HBRUSH)(COLOR_WINDOW + 1));
 
 	HDC mDC = CreateCompatibleDC(hDC);
-	HBITMAP OldBitmap = (HBITMAP)SelectObject(mDC, img.bitmap);
 
-	img.draw(hMemDC, mDC);
+	for (auto& b : blocks)
+		b.draw(hMemDC, mDC);
+
+	board.draw(hMemDC, mDC);
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
-	SelectObject(mDC, OldBitmap);
 	DeleteDC(mDC);
 
 	SelectObject(hMemDC, hOldMemBitmap);
@@ -63,21 +59,16 @@ void Message::OnPaint(HWND hWnd)
 
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
-	if (!img.mag.activate)
-		img.mag.setMag(POINT{mouse_x, mouse_y});
-	else
-		img.mag.setArrangeType(mouse_x, mouse_y);
+
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
 {
-	img.mag.setArrangeType(Magnifier::ArrangeType::None);
+
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)
 {
-	img.mag.arrange(POINT{ mouse_x - ws.mousePos.x, mouse_y - ws.mousePos.y });
-
 	ws.mousePos.x = mouse_x;
 	ws.mousePos.y = mouse_y;
 
@@ -94,12 +85,12 @@ void Message::RMouseUp(int mouse_x, int mouse_y)
 
 void Message::LMouseDBClick(int mouse_x, int mouse_y)
 {
-	img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
+
 }
 
 void Message::RMouseDBClick(int mouse_x, int mouse_y)
 {
-	img.push(POINT{ uid(gen) % ws.width, uid(gen) % ws.height }, 0.7f);
+
 }
 
 
@@ -146,7 +137,37 @@ void Message::OnSize(HWND hWnd, int width, int height)
 
 void Message::OnMessage(HWND hWnd, WPARAM wParam)
 {
-	return;
+	switch (wParam)
+	{
+		case ID_MENU_GAMESTART:
+			board.isGameStarted = true;
+			break;
+
+		case ID_MENU_GAMEEND:
+			exit(0);
+			break;
+
+		case ID_TARGETPOINT_32:
+			board.targetPoint = 32;
+			break;
+
+		case ID_TARGETPOINT_64:
+			board.targetPoint = 64;
+			break;
+
+		case ID_COLLIDENUM_2:
+			board.makeCollide(2);
+			break;
+		case ID_COLLIDENUM_3:
+			board.makeCollide(3);
+			break;
+		case ID_COLLIDENUM_4:
+			board.makeCollide(4);
+			break;
+
+		default:
+			break;
+	}
 }
 
 void Message::OnDestroy(HWND hWnd)
