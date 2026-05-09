@@ -48,6 +48,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -226,6 +229,9 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="Monster\skulkling.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Monster\spongebob.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

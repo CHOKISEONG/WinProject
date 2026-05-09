@@ -1,10 +1,20 @@
 #pragma once
 
+#include "Enum.h"
 #include "Character.h"
 
 class Enemy : public Character
 {
 public:
-	virtual void tick() override;
+	Enemy();
+
+	void tick() override;
+
+	void attack();
+
+	void showCurrentPattern(HDC hDC);
+
+private:
+	std::vector<StatePattern> pattern;
 };
-inline Enemy enemy;
+inline std::vector<Enemy*> enemies;

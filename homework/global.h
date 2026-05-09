@@ -10,7 +10,7 @@ constexpr double getRadian(double len) { return len * (PI / 180.0); }
 float getDistance(POINT p1, POINT p2);
 
 constexpr int WIDTH = 900;
-constexpr int HEIGHT = 900;
+constexpr int HEIGHT = 500;
 constexpr int boardRow = 6;
 constexpr int boardCol = 6;
 constexpr int cell = WIDTH / boardRow;

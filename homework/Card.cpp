@@ -1,5 +1,6 @@
 #include "Card.h"
 #include "Player.h"
+#include "Enemy.h"
 
 std::map<NameEnum, CardData> Card::cardDB;
 
@@ -27,6 +28,8 @@ void Card::initialize(NameEnum name)
     isExhaust = data.isExhaust;
 
     image.load(name);
+    image.drawWidth = 118;
+    image.drawHeight = 192;
 }
 
 void Card::draw(HDC hDC, HDC mDC)
@@ -38,12 +41,6 @@ void Card::draw(HDC hDC, HDC mDC, POINT pos)
 {
     image.pos = pos;
     image.draw(hDC, mDC);
-}
-
-void Card::draw(HDC hDC, HDC mDC, int handCount, int handIdx)
-{
-    // 개발 예정
-    return;
 }
 
 bool Card::checkClick(POINT p)
@@ -69,11 +66,23 @@ void Card::move(POINT p)
 
 void Card::play()
 {
-    // 지금은 애니메이션만 넣고 있음
+    ironclad->applyCardMp(cost);
 
     if (damage > 0)
-        ironclad.play(AnimType::Attack);
+    {
+        ironclad->play(AnimType::Attack);
+
+        if (!enemies.empty())
+        {
+            enemies[0]->play(AnimType::Damaged);
+            enemies[0]->damaged(damage);
+        }
+    }
+        
 
     if (defense > 0)
-        ironclad.play(AnimType::Defense);
+    {
+        ironclad->play(AnimType::Defense);
+        ironclad->defense(defense);
+    }
 }

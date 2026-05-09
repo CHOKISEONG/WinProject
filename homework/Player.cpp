@@ -1,8 +1,11 @@
 #include "Player.h"
+#include "CardManager.h"
+#include "Enemy.h"
 
 Player::Player()
 {
 	hp = 80;
+	load(NameEnum::아이언클래드);
 }
 
 void Player::tick()
@@ -29,8 +32,6 @@ void Player::tick()
 		return;
 	}
 
-	//		  t: 0 -> 0.5 -> 1
-	// pingpong: 0 -> 1 -  > 0
 	float pingPong = 1.0f - fabsf(2.0f * t - 1.0f);
 
 	switch (animTypes.front())
@@ -43,6 +44,7 @@ void Player::tick()
 		dPos.y = currentVal;
 	}
 	break;
+
 	case AnimType::Defense:
 	{
 		int maxValue = -50;
@@ -50,11 +52,64 @@ void Player::tick()
 		dPos.x = currentVal;
 	}
 	break;
+
+	case AnimType::Damaged:
+	{
+		float pingPong = sin(t * 4 * PI);
+		int maxValue = 50;
+		int currentVal = static_cast<int>(maxValue * pingPong);
+		dPos.x = currentVal;
+	}
+	break;
+
 	case AnimType::Buff:
 		// 개발 예정
 		break;
 	case AnimType::Debuff:
 		// 개발 예정
 		break;
+	default:
+		break;
 	}
+}
+
+void Player::applyEnemyPattern(StatePattern pattern)
+{
+	if (pattern.damage > 0)
+	{
+		damaged(pattern.damage);
+		play(AnimType::Damaged);
+	}
+}
+
+void Player::showMp(HDC hDC)
+{
+	std::wstring str = L"마나:" + std::to_wstring(mp);
+	TextOut(hDC, 0, ws.height / 2, str.c_str(), str.size());
+}
+
+void Player::startTurn()
+{
+	cardManager.drawCards(5);
+	block = 0;
+	mp = orgMp;
+}
+
+void Player::endTurn()
+{
+	cardManager.endTurn();
+
+	// 임시로 턴 종료하면 잠시 뒤에 다시 startTurn 부르게 함
+	SetTimer(ws.hWnd, 99, 1000, (TIMERPROC)NextTurnTimer);
+
+	enemies[0]->setBlock(0);
+	isEnemyTurn = true;
+}
+
+void NextTurnTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
+	ironclad->isEnemyTurn = false;
+	enemies[0]->attack();
+	ironclad->startTurn();
+	KillTimer(ws.hWnd, idEvent);
 }

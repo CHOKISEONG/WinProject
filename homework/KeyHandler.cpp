@@ -2,6 +2,7 @@
 #include "Message.h"
 #include "Image.h"
 #include "CardManager.h"
+#include "Player.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
@@ -9,9 +10,14 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 
 	switch (_key)
 	{
+	case'1':case'2':case'3':case'4':
+	case'5':case'6':case'7':case'8':case'9':
+		cardManager.selectCard(_key - '1');
+		break;
 	case 'd':
 		cardManager.drawCards(1);
 		break;
+
 	default:
 		break;
 	}

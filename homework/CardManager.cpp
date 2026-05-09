@@ -1,5 +1,6 @@
 #include "CardManager.h"
 #include "global.h"
+#include "Player.h"
 #include <ranges>
 
 void CardManager::add(NameEnum name)
@@ -41,9 +42,25 @@ void CardManager::selectCard(POINT mousePos)
     handIdx = -1;
 }
 
+void CardManager::selectCard(int idx)
+{
+    if (hand.empty())
+    {
+        handIdx = -1;
+        return;
+    }
+
+    if (idx < hand.size())
+    {
+        handIdx = static_cast<int>(idx);
+        hand[handIdx]->setPos(ws.mousePos);
+    }
+}
+
 void CardManager::useCard(POINT mousePos)
 {
     if (handIdx < 0) return;
+    else if (hand[handIdx]->getCost() > ironclad->getMp()) return;
 
     hand[handIdx]->play();
 
@@ -120,13 +137,14 @@ void CardManager::draw(HDC hDC, HDC mDC)
 
     for (int i{}; i < hand.size(); ++i, startPos.x += pos_xDiff)
     {
-        // 마우스로 선택한 카드는 따로 그릴 예정
         if (i == handIdx)
         {
+            // 마우스로 선택한 카드는 마우스 위치값을 계산하고 그림
             hand[i]->draw(hDC, mDC);
         }
         else
         {
+            // 다른 카드들은 pos값 받아서 그리기
             hand[i]->draw(hDC, mDC, startPos);
         }
     }

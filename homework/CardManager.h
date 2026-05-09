@@ -30,6 +30,7 @@ public:
     
     // 카드 선택
     void selectCard(POINT mousePos);
+    void selectCard(int idx);
     
     // 카드 사용
     void useCard(POINT mousePos);
