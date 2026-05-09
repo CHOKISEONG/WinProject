@@ -29,17 +29,16 @@ void CardManager::selectCard(POINT mousePos)
         return;
     }
 
-    for (size_t i{ hand.size() - 1 }; i >= 0; --i)
+    for (size_t i = hand.size(); i-- > 0; )
     {
         if (hand[i]->checkClick(mousePos))
         {
-            handIdx = i;
+            handIdx = static_cast<int>(i);
             return;
         }
     }
 
     handIdx = -1;
-    return;
 }
 
 void CardManager::useCard(POINT mousePos)

@@ -129,6 +129,7 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="CardManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
@@ -141,12 +142,14 @@
     <ClInclude Include="Background.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="CardManager.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape.h" />
@@ -197,6 +200,7 @@
     <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\흘려보내기.bmp" />
     <Image Include="Character\Ironclad.bmp" />
     <Image Include="map\overgrowth.bmp" />
+    <Image Include="Monster\skulkling.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

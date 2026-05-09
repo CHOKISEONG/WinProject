@@ -2,11 +2,9 @@
 
 #include "Character.h"
 
-class Player : public Character
+class Enemy : public Character
 {
 public:
-	Player();
-
 	virtual void tick() override;
 };
-inline Player ironclad;
+inline Enemy enemy;

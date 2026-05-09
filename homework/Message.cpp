@@ -3,7 +3,7 @@
 #include "resource.h"
 #include "Image.h"
 #include "CardManager.h"
-#include "Player.h"
+#include "Character.h"
 #include "Background.h"
 #include <string>
 #include <algorithm>
@@ -75,6 +75,11 @@ void Message::OnPaint(HWND hWnd)
 	ironclad.draw(hMemDC, mDC);
 	cardManager.draw(hMemDC, mDC);
 
+	std::wstring deckCount = L"덱 수:" + std::to_wstring(cardManager.getDeckCount());
+	TextOut(hMemDC, 0, ws.height * 9 / 10, deckCount.c_str(), deckCount.size());
+
+	std::wstring discardCount = L"버린 카드:" + std::to_wstring(cardManager.getDiscardCount());
+	TextOut(hMemDC, ws.width * 9 / 10, ws.height * 9 / 10, discardCount.c_str(), discardCount.size());
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
@@ -103,7 +108,11 @@ void Message::LMouseUp(int mouse_x, int mouse_y)
 	ws.mouseUpPos.y = mouse_y;
 	ws.mousePos = ws.mouseUpPos;
 
-	cardManager.useCard(ws.mouseUpPos);
+	// 임시
+	if (ws.mousePos.y < ws.height * 3 / 5)
+		cardManager.useCard(ws.mouseUpPos);
+	else
+		handIdx = -1;
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)
@@ -113,7 +122,7 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 	ws.mousePos.y = mouse_y;
 	cardManager.move(POINT{ ws.mousePos.x - ws.mousePrevPos.x, ws.mousePos.y - ws.mousePrevPos.y });
 
-	InvalidateRect(ws.hWnd, NULL, FALSE);
+	// InvalidateRect(ws.hWnd, NULL, FALSE);
 }
 
 void Message::RMouseDown(int mouse_x, int mouse_y)

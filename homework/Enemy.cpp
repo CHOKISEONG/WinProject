@@ -1,11 +1,6 @@
-#include "Player.h"
+#include "Enemy.h"
 
-Player::Player()
-{
-	hp = 80;
-}
-
-void Player::tick()
+void Enemy::tick()
 {
 	if (animTypes.empty())
 	{
