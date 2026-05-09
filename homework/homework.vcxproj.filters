@@ -30,13 +30,19 @@
     <ClCompile Include="Shape.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Board.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Block.cpp">
+    <ClCompile Include="Card.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Background.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,16 +62,25 @@
     <ClInclude Include="Shape.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Board.h">
+    <ClInclude Include="Image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
+    <ClInclude Include="Card.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Block.h">
+    <ClInclude Include="Enum.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -75,31 +90,130 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\2.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\강타.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\4.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\기사회생.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\8.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\낙인.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\16.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\난타.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\32.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\녹아내리는 주먹.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\64.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\대화재.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\128.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\돌 갑옷.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\256.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\몸통 박치기.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\collide.bmp">
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무감각.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무자비.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무적.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\바리케이드.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\박치기.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\발화.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\분노.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\불타는 조약.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\사혈.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\쇄도.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\수비.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\싸움 준비.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\악랄함.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\악마의 눈.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\연쇄.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\이중 타격.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\전투 최면.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\전투의 북소리.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\정면 돌파.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\제물.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\조약의 끝.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\지옥불.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\짓밟기.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\타격.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\파열.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\포악함.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\피의 벽.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\핏빛 망토.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\해체.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\협박.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\화염 장벽.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\흘려보내기.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Character\Ironclad.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="map\overgrowth.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

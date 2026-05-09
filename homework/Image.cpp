@@ -1,28 +1,35 @@
+#pragma comment(lib, "msimg32.lib")
+
 #include "Image.h"
-#include "Board.h"
 #include <map>
 
 namespace
 {
-	std::map<int, HBITMAP> g_bitmapCache;
+	std::map<NameEnum, HBITMAP> g_bitmapCache;
 
-	HBITMAP GetOrLoadBitmap(int idx)
+	HBITMAP GetOrLoadBitmap(NameEnum name)
 	{
-		auto it = g_bitmapCache.find(idx);
+		auto it = g_bitmapCache.find(name);
 		if (it != g_bitmapCache.end())
 			return it->second;
 
-		const int resId = (idx < 0) ? IDB_BITMAPCOL : (IDB_BITMAP1 + idx);
-		HBITMAP hbmp = LoadBitmap(ws.instance, MAKEINTRESOURCE(resId));
-		g_bitmapCache.insert(std::make_pair(idx, hbmp));
+		HANDLE hImage = LoadImage(
+			ws.instance,
+			MAKEINTRESOURCE(IDB_BITMAP1 + static_cast<int>(name)),
+			IMAGE_BITMAP,                   
+			0, 0,                           
+			LR_DEFAULTCOLOR | LR_CREATEDIBSECTION
+		);
+
+		HBITMAP hbmp = static_cast<HBITMAP>(hImage);
+		g_bitmapCache[name] = hbmp;
+
 		return hbmp;
 	}
 }
-
-void Image::load(int idx)
+void Image::load(NameEnum name)
 {
-	// 여기서 DeleteObject(bitmap) 하면 안 됩니다 (핸들 공유/복사 때문에 다른 객체까지 깨짐)
-	bitmap = GetOrLoadBitmap(idx);
+	bitmap = GetOrLoadBitmap(name);
 
 	if (bitmap == NULL)
 	{
@@ -32,8 +39,8 @@ void Image::load(int idx)
 	}
 
 	GetObject(bitmap, sizeof(BITMAP), &bmp);
-	bWidth = bmp.bmWidth;
-	bHeight = bmp.bmHeight;
+	drawWidth = bWidth = bmp.bmWidth;
+	drawHeight = bHeight = bmp.bmHeight;
 }
 
 void Image::ReleaseCachedBitmaps()
@@ -52,14 +59,30 @@ void Image::draw(HDC hDC, HDC mDC)
 
 	HBITMAP old = (HBITMAP)SelectObject(mDC, bitmap);
 
-	StretchBlt(
+	/*StretchBlt(
 		hDC,
-		pos.x - rad, pos.y - rad,
-		rad * 2, rad * 2,
+		pos.x - drawWidth/2, pos.y - drawHeight/2,
+		drawWidth, drawHeight,
 		mDC,
 		0, 0, bWidth, bHeight,
 		SRCCOPY
+	);*/
+
+	TransparentBlt(
+		hDC,
+		pos.x + dPos.x - drawWidth / 2, pos.y + dPos.y - drawHeight / 2,
+		drawWidth, drawHeight,
+		mDC,
+		0, 0, bWidth, bHeight,
+		RGB(255,255,255)
 	);
 
 	SelectObject(mDC, old);
+}
+
+void Image::draw(HDC hDC, HDC mDC, POINT sz)
+{
+	drawWidth = sz.x;
+	drawHeight = sz.y;
+	draw(hDC, mDC);
 }

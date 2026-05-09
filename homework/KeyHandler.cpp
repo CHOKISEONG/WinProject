@@ -1,10 +1,20 @@
 #include "KeyHandler.h"
 #include "Message.h"
 #include "Image.h"
+#include "CardManager.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
+
+	switch (_key)
+	{
+	case 'd':
+		cardManager.drawCards(1);
+		break;
+	default:
+		break;
+	}
 }
 
 void KeyHandler::Enter(HWND hWnd)

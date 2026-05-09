@@ -4,13 +4,10 @@ SZ ws;
 
 int currentROP2 = R2_COPYPEN;
 
-int TimerFuncFPS = 60;
+int TimerFuncFPS = 100;
 
-POINT mouseDownPos{};
-
-std::queue<Direction> dirQueue;
-
-int highestPoint = 0;
+// 선택한 카드 인덱스
+int handIdx = -1; 
 
 std::random_device rd;
 unsigned __int64 seed = std::chrono::system_clock::now().time_since_epoch().count();

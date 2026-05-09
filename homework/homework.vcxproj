@@ -103,6 +103,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,19 +126,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Card.cpp" />
+    <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Background.h" />
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="CardManager.h" />
+    <ClInclude Include="Enum.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape.h" />
   </ItemGroup>
@@ -145,15 +155,48 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\128.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\16.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\2.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\256.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\32.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\4.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\64.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\8.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\collide.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\강타.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\기사회생.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\낙인.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\난타.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\녹아내리는 주먹.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\대화재.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\돌 갑옷.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\몸통 박치기.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무감각.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무자비.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\무적.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\바리케이드.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\박치기.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\발화.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\분노.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\불타는 조약.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\사혈.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\쇄도.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\수비.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\싸움 준비.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\악랄함.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\악마의 눈.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\연쇄.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\이중 타격.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\전투 최면.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\전투의 북소리.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\정면 돌파.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\제물.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\조약의 끝.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\지옥불.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\짓밟기.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\타격.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\파열.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\포악함.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\피의 벽.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\핏빛 망토.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\해체.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\협박.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\화염 장벽.bmp" />
+    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\Resource\Card\흘려보내기.bmp" />
+    <Image Include="Character\Ironclad.bmp" />
+    <Image Include="map\overgrowth.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

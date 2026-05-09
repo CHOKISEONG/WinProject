@@ -2,6 +2,9 @@
 #include "KeyHandler.h"
 #include "resource.h"
 #include "Image.h"
+#include "CardManager.h"
+#include "Player.h"
+#include "Background.h"
 #include <string>
 #include <algorithm>
 
@@ -12,12 +15,32 @@ void Message::OnCreate(HWND hWnd)
 
 	ws.makeOOWRect();
 
+	Card::initDatabase();
+
+	// 임시로 덱 세팅
+	for (int i{}; i < 4; ++ i)
+		cardManager.add(NameEnum::수비);
+	for (int i{}; i < 5; ++i)
+		cardManager.add(NameEnum::타격);
+	cardManager.add(NameEnum::강타);
+
+	// 5장 뽑아봄
+	cardManager.shuffleDeck();
+	cardManager.drawCards(5);
+
+	// 아클 애니메이션 테스트
+	ironclad.load(NameEnum::아이언클래드);
+
+	// 임시 배경 그리기
+	background.initBG();
+
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	
+	ironclad.tick();
+
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
@@ -41,6 +64,17 @@ void Message::OnPaint(HWND hWnd)
 	HDC mDC = CreateCompatibleDC(hDC);
 
 	
+	POINT windowSZ{ ws.width,ws.height };
+	for (auto& b : background.images)
+	{
+		b->setPos(POINT{ ws.width / 2, ws.height / 2 });
+		b->draw(hMemDC, mDC, windowSZ);
+	}
+
+	ironclad.setPos(POINT{ ws.width / 4, ws.height / 2 });
+	ironclad.draw(hMemDC, mDC);
+	cardManager.draw(hMemDC, mDC);
+
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
@@ -56,6 +90,8 @@ void Message::OnPaint(HWND hWnd)
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
 	ws.mouseDownPos = POINT{ mouse_x, mouse_y };
+	ws.mousePos = ws.mousePrevPos = ws.mouseDownPos;
+	cardManager.selectCard(ws.mouseDownPos);
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
@@ -65,12 +101,17 @@ void Message::LMouseUp(int mouse_x, int mouse_y)
 
 	ws.mouseUpPos.x = mouse_x;
 	ws.mouseUpPos.y = mouse_y;
+	ws.mousePos = ws.mouseUpPos;
+
+	cardManager.useCard(ws.mouseUpPos);
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)
 {
+	ws.mousePrevPos = ws.mousePos;
 	ws.mousePos.x = mouse_x;
 	ws.mousePos.y = mouse_y;
+	cardManager.move(POINT{ ws.mousePos.x - ws.mousePrevPos.x, ws.mousePos.y - ws.mousePrevPos.y });
 
 	InvalidateRect(ws.hWnd, NULL, FALSE);
 }

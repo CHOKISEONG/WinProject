@@ -9,8 +9,8 @@ constexpr double PI = 3.14159265358979323846;
 constexpr double getRadian(double len) { return len * (PI / 180.0); }
 float getDistance(POINT p1, POINT p2);
 
-constexpr int WIDTH = 600;
-constexpr int HEIGHT = 600;
+constexpr int WIDTH = 900;
+constexpr int HEIGHT = 900;
 constexpr int boardRow = 6;
 constexpr int boardCol = 6;
 constexpr int cell = WIDTH / boardRow;
@@ -32,6 +32,7 @@ public:
 	int width = WIDTH;
 	int height = HEIGHT;
 
+	POINT mousePrevPos;
 	POINT mousePos;
 	POINT mouseDownPos;
 	POINT mouseUpPos;
@@ -48,6 +49,9 @@ extern SZ ws;
 extern int currentROP2;
 
 extern int TimerFuncFPS;
+
+// 선택한 카드 인덱스
+extern int handIdx; 
 
 extern std::random_device rd;
 extern unsigned __int64 seed;
