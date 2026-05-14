@@ -1,10 +1,25 @@
 #include "KeyHandler.h"
 #include "Message.h"
 #include "Image.h"
+#include "Cat.h"
+#include "Food.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
+
+	switch (_key)
+	{
+	case 'q':
+		exit(0);
+		break;
+	case 'r':
+		cat.pos = { ws.width / 2, ws.height / 2 };
+		foods.clear();
+		break;
+	default:
+		break;
+	}
 }
 
 void KeyHandler::Enter(HWND hWnd)
@@ -112,10 +127,14 @@ void KeyHandler::F8()
 
 void KeyHandler::Plus(HWND hWnd)
 {
+	if (cat.speed < 5.0f)
+		cat.changeSpeed(0.3f);
 }
 
 void KeyHandler::Minus(HWND hWnd)
 {
+	if (cat.speed > 0.3f)
+		cat.changeSpeed(-0.3f);
 }
 
 void KeyHandler::KeyDown(HWND hWnd, WPARAM key)

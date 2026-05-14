@@ -1,3 +1,5 @@
+#pragma comment(lib, "msimg32.lib")
+
 #include "Image.h"
 #include <map>
 
@@ -49,23 +51,23 @@ void Image::draw(HDC hDC, HDC mDC)
 
 	HBITMAP old = (HBITMAP)SelectObject(mDC, bitmap);
 
-	StretchBlt(
+	/*StretchBlt(
 		hDC,
 		pos.x - rad, pos.y - rad,
 		rad * 2, rad * 2,
 		mDC,
 		bPos.x, bPos.y, bWidth, bHeight,
 		SRCCOPY
-	);
+	);*/
 
-	/*TransparentBlt(
+	TransparentBlt(
 		hDC,
 		pos.x - rad, pos.y - rad,
 		rad * 2, rad * 2,
 		mDC,
 		bPos.x, bPos.y, bWidth, bHeight,
 		RGB(255, 255, 255)
-	);*/
+	);
 
 	SelectObject(mDC, old);
 }

@@ -13,10 +13,20 @@ private:
 	int spriteWidth = 32;
 	int spriteHeight = 32;
 
+	
+
 public:
+	float speed = 0.3f;
+
 	void initialize();
-	void move(int speedMult = 1);
+	void moves();
+	void move(int speedMult = 1, POINT p = {});
 	void animate();
+
+	void changeSpeed(float mult)
+	{
+		speed += mult;
+	}
 };
 
 inline Cat cat;
