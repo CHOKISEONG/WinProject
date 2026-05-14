@@ -1,5 +1,4 @@
 #include "Board.h"
-#include "Block.h"
 #include <numeric>
 
 void Board::initialize()
@@ -13,92 +12,62 @@ void Board::initialize()
 			pos[i][y] = POINT{ i * cell + rad, y * cell + rad };
 		}
 	}
-
-	line.resize(boardRow + boardCol + 2);
-	for (int i{}; i < boardRow; ++i)
-	{
-		line[i].setShape(Shape::Type::LINE);
-		line[i].addPoint(POINT{ 0, (i + 1) * cell });
-		line[i].addPoint(POINT{ WIDTH, (i + 1) * cell });
-		line[i].setColorBrush(RGB(0,0,0));
-		line[i].setColorPen(RGB(0, 0, 0));
-	}
-	for (int i{ boardRow }; i < boardRow + boardCol; ++i)
-	{
-		line[i].setShape(Shape::Type::LINE);
-		line[i].addPoint(POINT{ (i + 1 - boardRow) * cell, 0 });
-		line[i].addPoint(POINT{ (i + 1 - boardRow) * cell, HEIGHT });
-		line[i].setColorBrush(RGB(0, 0, 0));
-		line[i].setColorPen(RGB(0, 0, 0));
-	}
 }
 
 void Board::draw(HDC hDC, HDC mDC)
 {
-	for (auto& c : collide)
+	for (int i{}; i < (int)items.size(); ++i)
 	{
-		c.draw(hDC, mDC);
+		items[i].draw(hDC, itemPos[i]);
 	}
 
-	for (auto& l : line)
+	for (int i{}; i < (int)collide.size(); ++i)
 	{
-		l.draw(hDC, POINT{ 0,0 });
+		collide[i].draw(hDC, collidePos[i]);
 	}
 }
 
 void Board::makeCollide(int num)
 {
 	collide.clear();
+	collidePos.clear();
 	collideRect.clear();
 	indices.clear();
 	indices.resize(boardRow * boardCol);
+
 	std::iota(indices.begin(), indices.end(), 0);
 	std::shuffle(indices.begin(), indices.end(), gen);
 
 	for (int i{}; i < num; ++i)
 	{
-		collide.push_back(Image());
-		collide[i].load(-1);
+		collide.push_back(Shape());
+		collide.back().setShape(Shape::Type::RECTANGLE, rad);
+		collide.back().setColorBrush(RGB(0, 0, 255));
 
 		const int col = indices[i] % boardCol;
 		const int row = indices[i] / boardCol;
 
-		collide[i].pos.x = col * cell + rad;
-		collide[i].pos.y = row * cell + rad;
-		collide[i].rad = rad;
+		collidePos.push_back(POINT{ col * cell + rad, row * cell + rad });
 
-		collideRect.push_back(RECT{ collide[i].pos.x - rad,collide[i].pos.y - rad,collide[i].pos.x + rad,collide[i].pos.y + rad });
+		collideRect.push_back(RECT{ collidePos.back().x - rad, collidePos.back().y - rad, collidePos.back().x + rad, collidePos.back().y + rad});
 	}
 
 	indices.erase(indices.begin(), indices.begin() + num);
-
-	blocks.clear();
-	for (int i{}; i < num; ++i)
-		blocks.push_back(Block());
 }
 
-POINT Board::getRandPos()
+void Board::makeItem(int num)
 {
-	std::vector<POINT> makablePoint;
-	for (const auto& ps : indices)
+	for (int i{}; i < num; ++i)
 	{
-		POINT p = POINT{ ps % boardCol, ps / boardCol };
+		items.push_back(Shape());
+		items.back().setShape(Shape::Type::CIRCLE, rad/5);
+		items.back().setColorBrush(RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
 
-		bool canMake = true;
-		for (int i{}; i < blocks.size(); ++i)
-		{
-			RECT targetRect{ blocks[i].pos.x - rad, blocks[i].pos.y - rad, blocks[i].pos.x + rad, blocks[i].pos.y + rad };
-			
-			if (PtInRect(&targetRect, pos[p.x][p.y]))
-				canMake = false;
-		}
+		const int col = indices[i] % boardCol;
+		const int row = indices[i] / boardCol;
 
-		if (canMake)
-			makablePoint.push_back(pos[p.x][p.y]);
+		itemPos.push_back(POINT{ col * cell + rad, row * cell + rad });
 	}
 
-	if (makablePoint.size() < 2)
-		return POINT{ -1,-1 };
-	else
-		return makablePoint[uid(gen) % makablePoint.size()];
+	std::rotate(indices.begin(), indices.begin() + num, indices.end());
 }

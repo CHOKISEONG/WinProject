@@ -12,6 +12,7 @@ public:
 	void draw(HDC hDC, HDC mDC);
 
 	void makeCollide(int num);
+	void makeItem(int num);
 	POINT getRandPos();
 
 	int targetPoint{4};
@@ -23,10 +24,12 @@ public:
 private:
 	std::vector<std::vector<POINT>> pos;
 
-	std::vector<Image> collide;
+	std::vector<Shape> collide;
+	std::vector<POINT> collidePos;
 	std::vector<RECT> collideRect;
 
-	std::vector<Shape> line;
+	std::vector<Shape> items;
+	std::vector<POINT> itemPos;
 
 	std::vector<int> indices;
 };
