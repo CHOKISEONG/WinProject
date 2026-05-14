@@ -1,5 +1,4 @@
 #include "Image.h"
-#include "Board.h"
 #include <map>
 
 namespace
@@ -12,8 +11,7 @@ namespace
 		if (it != g_bitmapCache.end())
 			return it->second;
 
-		const int resId = (idx < 0) ? IDB_BITMAPCOL : (IDB_BITMAP1 + idx);
-		HBITMAP hbmp = LoadBitmap(ws.instance, MAKEINTRESOURCE(resId));
+		HBITMAP hbmp = LoadBitmap(ws.instance, MAKEINTRESOURCE(IDB_BITMAP1 + idx));
 		g_bitmapCache.insert(std::make_pair(idx, hbmp));
 		return hbmp;
 	}
@@ -21,7 +19,6 @@ namespace
 
 void Image::load(int idx)
 {
-	// 여기서 DeleteObject(bitmap) 하면 안 됩니다 (핸들 공유/복사 때문에 다른 객체까지 깨짐)
 	bitmap = GetOrLoadBitmap(idx);
 
 	if (bitmap == NULL)
@@ -57,9 +54,18 @@ void Image::draw(HDC hDC, HDC mDC)
 		pos.x - rad, pos.y - rad,
 		rad * 2, rad * 2,
 		mDC,
-		0, 0, bWidth, bHeight,
+		bPos.x, bPos.y, bWidth, bHeight,
 		SRCCOPY
 	);
+
+	/*TransparentBlt(
+		hDC,
+		pos.x - rad, pos.y - rad,
+		rad * 2, rad * 2,
+		mDC,
+		bPos.x, bPos.y, bWidth, bHeight,
+		RGB(255, 255, 255)
+	);*/
 
 	SelectObject(mDC, old);
 }

@@ -9,13 +9,17 @@ struct Image
 	HBITMAP bitmap = NULL;
 	BITMAP bmp;
 	int bWidth{}, bHeight{};
+	POINT bPos{};
 	int rad = 50;
 
 	POINT pos{};
-	POINT dir{ 0,0 }; // 이동할 방향
 
 	void load(int idx);
 	void draw(HDC hDC, HDC mDC);
 
 	static void ReleaseCachedBitmaps();
 };
+inline Image background;
+
+inline Image rat;
+inline bool ratDraw = false;

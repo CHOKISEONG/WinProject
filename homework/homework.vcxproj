@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Cat.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="Cat.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />
@@ -149,15 +151,9 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\128.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\16.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\2.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\256.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\32.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\4.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\64.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\8.bmp" />
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\collide.bmp" />
+    <Image Include="cat.bmp" />
+    <Image Include="field.bmp" />
+    <Image Include="rat.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

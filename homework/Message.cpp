@@ -4,6 +4,7 @@
 #include "resource.h"
 #include "Image.h"
 #include "Block.h"
+#include "Cat.h"
 #include <string>
 #include <algorithm>
 
@@ -12,9 +13,12 @@ void Message::OnCreate(HWND hWnd)
 	// event id를 관리해야할 필요가 느껴질 때 두번째 인자 수정하기
 	SetTimer(hWnd, 0, 1000 / TimerFuncFPS, (TIMERPROC)TimerFunc);
 
-	board.initialize();
-	board.makeCollide(2);
-
+	cat.load(0);
+	cat.initialize();
+	cat.pos = { ws.width / 2, ws.height / 2 };
+	rat.load(1);
+	rat.rad = rat.rad / 2;
+	background.load(2);
 	ws.makeOOWRect();
 
 	InvalidateRect(hWnd, NULL, FALSE);
@@ -22,66 +26,16 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	static bool winPop = false;
-	if (!winPop && highestPoint >= board.targetPoint)
+	static float t = 0.0f;
+	t += 0.1f;
+
+	if (t >= 0.3f)
 	{
-		winPop = true;
-		MessageBox(ws.hWnd, L"게임 성공", L"성공", MB_OK);
+		cat.animate();
+		t = 0.0f;
 	}
 
-	if (!dirQueue.empty())
-	{
-		for (int i{}; i < (int)blocks.size(); ++i)
-		{
-			blocks[i].move(dirQueue.front(), (int)dirQueue.size());
-		}
-	}
-
-	blocks.erase(
-		std::remove_if(blocks.begin(), blocks.end(),
-			[](const Block& b) { return !b.IsAlive(); }),
-		blocks.end()
-	);
-
-	bool moved = false;
-	for (auto& b : blocks)
-	{
-		if (b.IsMoved())
-		{
-			moved = true;
-			break;
-		}
-	}
-
-	if (!moved && !dirQueue.empty())
-	{
-		auto snapCoord = [](int v, int maxCount)
-		{
-			int idx = (v - ::rad + (::cell / 2)) / ::cell;
-			if (idx < 0) idx = 0;
-			if (idx >= maxCount) idx = maxCount - 1;
-			return idx * ::cell + ::rad;
-		};
-
-		for (auto& b : blocks)
-		{
-			if (!b.IsAlive()) continue;
-			b.pos.x = snapCoord(b.pos.x, ::boardCol);
-			b.pos.y = snapCoord(b.pos.y, ::boardRow);
-		}
-
-		dirQueue.pop();
-		blocks.push_back(Block());
-		blocks.push_back(Block());
-		if (blocks.back().pos.x == -1
-			&& blocks.back().pos.y == -1)
-		{
-			MessageBox(hWnd, L"게임 실패", L"실패", MB_OK);
-			DestroyWindow(hWnd);
-			return;
-		}
-	}
-
+	cat.move();
 	InvalidateRect(hWnd, NULL, FALSE);
 }
 
@@ -104,10 +58,14 @@ void Message::OnPaint(HWND hWnd)
 
 	HDC mDC = CreateCompatibleDC(hDC);
 
-	for (auto& b : blocks)
-		b.draw(hMemDC, mDC);
+	background.draw(hMemDC, mDC);
+	background.pos = { ws.width / 2, ws.height / 2 };
+	background.rad = max(ws.width, ws.height);
 
-	board.draw(hMemDC, mDC);
+	if (ratDraw)
+		rat.draw(hMemDC, mDC);
+
+	cat.draw(hMemDC, mDC);
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
@@ -122,42 +80,28 @@ void Message::OnPaint(HWND hWnd)
 
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
-	mouseDownPos = POINT{ mouse_x, mouse_y };
+	ws.mousePos.x = mouse_x;
+	ws.mousePos.y = mouse_y;
+
+	ratDraw = true;
+	rat.pos = ws.mousePos;
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
 {
-	int xDiff = mouse_x - mouseDownPos.x;
-	int yDiff = mouse_y - mouseDownPos.y;
+	ws.mousePos.x = mouse_x;
+	ws.mousePos.y = mouse_y;
 
-	if (abs(xDiff) > abs(yDiff))
-	{
-		if (xDiff < 0)
-		{
-			dirQueue.push(Direction::LEFTDIR);
-		}
-		else
-		{
-			dirQueue.push(Direction::RIGHTDIR);
-		}
-	}
-	else
-	{
-		if (yDiff < 0)
-		{
-			dirQueue.push(Direction::UPDIR);
-		}
-		else
-		{
-			dirQueue.push(Direction::DOWNDIR);
-		}
-	}
+	ratDraw = false;
+	rat.pos = ws.mousePos;
 }
 
 void Message::MouseMove(int mouse_x, int mouse_y)
 {
 	ws.mousePos.x = mouse_x;
 	ws.mousePos.y = mouse_y;
+
+	rat.pos = ws.mousePos;
 
 	InvalidateRect(ws.hWnd, NULL, FALSE);
 }
@@ -225,37 +169,6 @@ void Message::OnSize(HWND hWnd, int width, int height)
 
 void Message::OnMessage(HWND hWnd, WPARAM wParam)
 {
-	switch (wParam)
-	{
-	case ID_MENU_GAMESTART:
-		board.isGameStarted = true;
-		break;
-
-	case ID_MENU_GAMEEND:
-		DestroyWindow(hWnd);
-		break;
-
-	case ID_TARGETPOINT_32:
-			board.targetPoint = 4;
-			break;
-
-	case ID_TARGETPOINT_64:
-			board.targetPoint = 5;
-			break;
-
-	case ID_COLLIDENUM_2:
-			board.makeCollide(2);
-			break;
-		case ID_COLLIDENUM_3:
-			board.makeCollide(3);
-			break;
-		case ID_COLLIDENUM_4:
-			board.makeCollide(4);
-			break;
-
-		default:
-			break;
-	}
 }
 
 void Message::OnDestroy(HWND hWnd)
