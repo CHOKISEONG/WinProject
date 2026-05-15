@@ -62,8 +62,8 @@ void Image::draw(HDC hDC, HDC mDC)
 
 	TransparentBlt(
 		hDC,
-		pos.x - rad, pos.y - rad,
-		rad * 2, rad * 2,
+		dPos.x + pos.x - width, dPos.y + pos.y - height,
+		width * 2, height * 2,
 		mDC,
 		bPos.x, bPos.y, bWidth, bHeight,
 		RGB(255, 255, 255)

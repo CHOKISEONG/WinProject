@@ -9,6 +9,11 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 
 	switch (_key)
 	{
+	case 'j':
+		KillTimer(hWnd, 3);
+		SetTimer(hWnd, 3, 1000 / 60, (TIMERPROC)JumpTimer);
+		cat.isJumping = true;
+		break;
 	case 'q':
 		exit(0);
 		break;

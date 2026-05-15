@@ -139,11 +139,13 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Cat.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="KeyHandler.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape.h" />
   </ItemGroup>
