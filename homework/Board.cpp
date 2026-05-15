@@ -57,6 +57,8 @@ void Board::makeCollide(int num)
 
 void Board::makeItem(int num)
 {
+	if (dontMakeItem) return;
+
 	for (int i{}; i < num; ++i)
 	{
 		items.push_back(Shape());
@@ -74,8 +76,47 @@ void Board::makeItem(int num)
 
 void Board::makeItem(POINT p)
 {
+	if (dontMakeItem) return;
+
 	items.push_back(Shape());
 	items.back().setShape(Shape::Type::CIRCLE, rad / 5);
 	items.back().setColorBrush(RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
 	itemPos.push_back(p);
+}
+
+void Board::deleteAllItems()
+{
+	dontMakeItem = true;
+	KillTimer(ws.hWnd, 10);
+	SetTimer(ws.hWnd, 10, 100, (TIMERPROC)ExplodeTimer);
+}
+
+void ExplodeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
+{
+	static int t = 0;
+	t += 1;
+
+	if (t > 10)
+	{
+		board.itemPos.clear();
+		board.items.clear();
+		board.dontMakeItem = false;
+		KillTimer(ws.hWnd, 10);
+		t = 0;
+	}
+	else
+	{
+		int rnd{ uid(gen) % 2 };
+
+		for (auto& b : board.items)
+		{
+			if (rnd)
+				b.setShape(Shape::Type::TRIANGLE, b.getLength());
+			else
+				b.setShape(Shape::Type::CIRCLE, b.getLength());
+
+			b.setColorBrush(RGB(uidColor(gen) + t*30, uidColor(gen) + t * 30, uidColor(gen) + t * 30));
+			b.setColorPen(RGB(uidColor(gen) + t * 30, uidColor(gen) + t * 30, uidColor(gen) + t * 30));
+		}
+	}
 }

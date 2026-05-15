@@ -14,10 +14,13 @@ public:
 	void makeCollide(int num);
 	void makeItem(int num);
 	void makeItem(POINT p);
+	void deleteAllItems();
 	POINT getRandPos();
 
 	int targetPoint{4};
 	bool isGameStarted = false;
+
+	bool dontMakeItem = false;
 
 	std::vector<RECT>& getCollideRect() { return collideRect; }
 	std::vector<std::vector<POINT>>& getPos() { return pos; }
@@ -34,3 +37,5 @@ public:
 	std::vector<int> indices;
 };
 inline Board board;
+
+void ExplodeTimer(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime);

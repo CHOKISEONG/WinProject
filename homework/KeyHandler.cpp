@@ -3,10 +3,30 @@
 #include "Image.h"
 #include "Pacman.h"
 #include "Bullet.h"
+#include "board.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
 	const char _key = (char)tolower(key);
+
+	switch (_key)
+	{
+	case 'j':
+		KillTimer(hWnd, 3);
+		SetTimer(hWnd, 3, 1, (TIMERPROC)JumpTimer);
+		break;
+
+	case 't':
+		player.makeChild();
+		break;
+
+	case 'a':
+		board.deleteAllItems();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void KeyHandler::Enter(HWND hWnd)

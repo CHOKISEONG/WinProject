@@ -54,7 +54,6 @@ void Message::OnPaint(HWND hWnd)
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(hWnd, &ps);
 
-	// ai도움 많이 받음
 	RECT rect;
 	GetClientRect(hWnd, &rect);
 	int width = rect.right - rect.left;
@@ -69,8 +68,13 @@ void Message::OnPaint(HWND hWnd)
 	HDC mDC = CreateCompatibleDC(hDC);
 
 	player.draw(hMemDC, mDC);
+	for (auto& c : pacmanChildren)
+	{
+		c.draw(hMemDC, mDC);
+	}
+
 	board.draw(hMemDC, mDC);
-	
+
 	for (auto& b : bullets)
 	{
 		b.draw(hMemDC);
@@ -115,6 +119,22 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 
 void Message::RMouseDown(int mouse_x, int mouse_y)
 {
+	for (int i{}; i < board.collideRect.size(); ++i)
+	{
+		auto& b = board.collideRect[i];
+		if (PtInRect(&b, POINT{ mouse_x, mouse_y }))
+		{
+			int x{ uid(gen) % 30 - 15 }, y{ uid(gen) % 30 - 15 };
+			board.collidePos[i].x += x;
+			board.collidePos[i].y += y;
+
+			b.left += x;
+			b.right += x;
+			b.top += y;
+			b.bottom += y;
+			return;
+		}
+	}
 }
 
 void Message::RMouseUp(int mouse_x, int mouse_y)
