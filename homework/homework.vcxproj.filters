@@ -36,7 +36,10 @@
     <ClCompile Include="Image.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Block.cpp">
+    <ClCompile Include="Pacman.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +68,10 @@
     <ClInclude Include="Image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Block.h">
+    <ClInclude Include="Pacman.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -75,31 +81,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\2.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\4.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\8.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\16.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\32.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\64.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\128.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\256.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\..\..\..\OneDrive\바탕 화면\대학\윈프\2048\collide.bmp">
+    <Image Include="pac.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

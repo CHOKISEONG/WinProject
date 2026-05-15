@@ -71,3 +71,11 @@ void Board::makeItem(int num)
 
 	std::rotate(indices.begin(), indices.begin() + num, indices.end());
 }
+
+void Board::makeItem(POINT p)
+{
+	items.push_back(Shape());
+	items.back().setShape(Shape::Type::CIRCLE, rad / 5);
+	items.back().setColorBrush(RGB(uidColor(gen), uidColor(gen), uidColor(gen)));
+	itemPos.push_back(p);
+}

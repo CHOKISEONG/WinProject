@@ -1,6 +1,8 @@
 #include "KeyHandler.h"
 #include "Message.h"
 #include "Image.h"
+#include "Pacman.h"
+#include "Bullet.h"
 
 void KeyHandler::Default(HWND hWnd, WPARAM key)
 {
@@ -9,7 +11,7 @@ void KeyHandler::Default(HWND hWnd, WPARAM key)
 
 void KeyHandler::Enter(HWND hWnd)
 {
-	
+	bullets.push_back(Bullet(player.pos, player.dir));
 }
 
 void KeyHandler::Space()
@@ -32,15 +34,19 @@ void KeyHandler::Arrow(HWND hWnd, WPARAM key)
 	switch (key)
 	{
 	case VK_UP:
+		player.setDir(POINT{ 0,-1 });
 		break;
 
 	case VK_DOWN:
+		player.setDir(POINT{ 0,1 });
 		break;
 		
 	case VK_LEFT:
+		player.setDir(POINT{ -1,0 });
 		break;
 
 	case VK_RIGHT:
+		player.setDir(POINT{ 1,0 });
 		break;
 
 	default:

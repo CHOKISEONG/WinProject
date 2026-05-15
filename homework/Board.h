@@ -13,6 +13,7 @@ public:
 
 	void makeCollide(int num);
 	void makeItem(int num);
+	void makeItem(POINT p);
 	POINT getRandPos();
 
 	int targetPoint{4};
@@ -21,7 +22,6 @@ public:
 	std::vector<RECT>& getCollideRect() { return collideRect; }
 	std::vector<std::vector<POINT>>& getPos() { return pos; }
 
-private:
 	std::vector<std::vector<POINT>> pos;
 
 	std::vector<Shape> collide;

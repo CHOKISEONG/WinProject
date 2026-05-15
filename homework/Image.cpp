@@ -1,6 +1,7 @@
 #include "Image.h"
 #include "Board.h"
 #include <map>
+#pragma comment(lib, "msimg32.lib")
 
 namespace
 {
@@ -12,8 +13,7 @@ namespace
 		if (it != g_bitmapCache.end())
 			return it->second;
 
-		const int resId = (idx < 0) ? IDB_BITMAPCOL : (IDB_BITMAP1 + idx);
-		HBITMAP hbmp = LoadBitmap(ws.instance, MAKEINTRESOURCE(resId));
+		HBITMAP hbmp = LoadBitmap(ws.instance, MAKEINTRESOURCE(IDB_BITMAP1 + idx));
 		g_bitmapCache.insert(std::make_pair(idx, hbmp));
 		return hbmp;
 	}
@@ -49,16 +49,19 @@ void Image::ReleaseCachedBitmaps()
 void Image::draw(HDC hDC, HDC mDC)
 {
 	if (bitmap == NULL) return;
-
 	HBITMAP old = (HBITMAP)SelectObject(mDC, bitmap);
 
-	StretchBlt(
+	HBRUSH hBrush = CreateSolidBrush(tintColor);
+	RECT rect = { pos.x - rad, pos.y - rad, pos.x + rad, pos.y + rad };
+	FillRect(hDC, &rect, hBrush);
+	DeleteObject(hBrush);
+
+	TransparentBlt(
 		hDC,
-		pos.x - rad, pos.y - rad,
-		rad * 2, rad * 2,
+		pos.x - rad, pos.y - rad, rad * 2, rad * 2,
 		mDC,
-		0, 0, bWidth, bHeight,
-		SRCCOPY
+		bPos.x, bPos.y, bWidth, bHeight,
+		targetColor
 	);
 
 	SelectObject(mDC, old);

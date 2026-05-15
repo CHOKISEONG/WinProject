@@ -3,6 +3,8 @@
 #include "Board.h"
 #include "resource.h"
 #include "Image.h"
+#include "Pacman.h"
+#include "Bullet.h"
 #include <string>
 #include <algorithm>
 
@@ -15,6 +17,8 @@ void Message::OnCreate(HWND hWnd)
 	board.makeCollide(2);
 	board.makeItem(8);
 
+	player.initialize();
+
 	ws.makeOOWRect();
 
 	InvalidateRect(hWnd, NULL, FALSE);
@@ -22,7 +26,25 @@ void Message::OnCreate(HWND hWnd)
 
 void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 {
-	
+	player.move();
+	player.animation();
+
+	static float t = 0.0f;
+	t += 0.1f;
+	if (t > 10.0f)
+	{
+		t = 0.0f;
+		board.makeItem(1);
+	}
+
+	for (auto& b : bullets)
+	{
+		b.move();
+	}
+
+	checkBullet();
+	eraseBullet();
+		
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
@@ -46,7 +68,13 @@ void Message::OnPaint(HWND hWnd)
 
 	HDC mDC = CreateCompatibleDC(hDC);
 
+	player.draw(hMemDC, mDC);
 	board.draw(hMemDC, mDC);
+	
+	for (auto& b : bullets)
+	{
+		b.draw(hMemDC);
+	}
 
 	BitBlt(hDC, 0, 0, width, height, hMemDC, 0, 0, SRCCOPY);
 
@@ -62,6 +90,12 @@ void Message::OnPaint(HWND hWnd)
 void Message::LMouseDown(int mouse_x, int mouse_y)
 {
 	mouseDownPos = POINT{ mouse_x, mouse_y };
+
+	RECT rt = player.getRect();
+	if (PtInRect(&rt, mouseDownPos))
+	{
+		SetTimer(ws.hWnd, 1, 1000 / TimerFuncFPS, (TIMERPROC)OtherAnimTimer);
+	}
 }
 
 void Message::LMouseUp(int mouse_x, int mouse_y)
