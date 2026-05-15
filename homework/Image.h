@@ -19,7 +19,7 @@ struct Image
 
 	static void ReleaseCachedBitmaps();
 };
-inline Image background;
+inline Image background[2];
 
 inline Image rat;
 inline bool ratDraw = false;

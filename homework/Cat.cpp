@@ -8,33 +8,17 @@ void Cat::initialize()
 	bHeight = spriteHeight;
 }
 
-void Cat::moves()
+void Cat::move(Direction d)
 {
-	if (ratDraw)
+	if (d == Direction::LEFTDIR)
 	{
-		pos.x += (ws.mousePos.x - pos.x) * 0.05f * speed;
-		pos.y += (ws.mousePos.y - pos.y) * 0.05f * speed;
+		pos.x -= speed;
 	}
-	else
+	else if (d == Direction::RIGHTDIR)
 	{
-		dir.x = uid(gen) % 5 - 1;
-		dir.y = uid(gen) % 5 - 1;
-
-		pos.x += dir.x * speed;
-		pos.y += dir.y * speed;
+		pos.x += speed;
 	}
-
-	if (pos.x > ws.width) pos.x = 0;
-	else if (pos.x < 0) pos.x = ws.width;
-
-	if (pos.y > ws.height) pos.y = 0;
-	else if (pos.y < 0) pos.y = ws.height;
-}
-
-void Cat::move(int speedMult, POINT p)
-{
-	pos.x += (p.x - pos.x) * 0.05f * speedMult * speed;
-	pos.y += (p.y - pos.y) * 0.05f * speedMult * speed;
+		
 }
 
 void Cat::animate()

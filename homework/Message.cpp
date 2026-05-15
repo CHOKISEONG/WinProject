@@ -5,7 +5,6 @@
 #include "Image.h"
 #include "Block.h"
 #include "Cat.h"
-#include "Food.h"
 #include <string>
 #include <algorithm>
 
@@ -19,9 +18,12 @@ void Message::OnCreate(HWND hWnd)
 	cat.pos = { ws.width / 2, ws.height / 2 };
 	rat.load(1);
 	rat.rad = rat.rad / 2;
-	background.pos = { ws.width / 2, ws.height / 2 };
-	background.rad = max(ws.width, ws.height);
-	background.load(2);
+	background[0].pos = {ws.width / 2, ws.height / 2};
+	background[0].rad = max(ws.width, ws.height);
+	background[0].load(4);
+	background[1].pos = { ws.width / 2, ws.height / 2 };
+	background[1].rad = max(ws.width, ws.height);
+	background[1].load(4);
 	ws.makeOOWRect();
 
 	InvalidateRect(hWnd, NULL, FALSE);
@@ -38,18 +40,10 @@ void Message::TimerFunc(HWND hWnd, UINT iMsg, UINT idEvent, DWORD dwTime)
 		t = 0.0f;
 	}
 
-	if (!foods.empty())
-	{
-		cat.move(2, foods.back().pos);
-		if (foods.back().pos.x - foods.back().rad < cat.pos.x && cat.pos.x < foods.back().pos.x + foods.back().rad &&
-			foods.back().pos.y - foods.back().rad < cat.pos.y && cat.pos.y < foods.back().pos.y + foods.back().rad)
-			{
-				foods.pop_back();
-				cat.changeSpeed(0.3f);
-			}
-	}
-	else
-		cat.moves();
+	if (keyboard[tolower(VK_LEFT)] && !keyboard[tolower(VK_RIGHT)])
+		cat.move(Direction::LEFTDIR);
+	else if (keyboard[tolower(VK_RIGHT)] && !keyboard[tolower(VK_LEFT)])
+		cat.move(Direction::RIGHTDIR);
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }
@@ -73,13 +67,11 @@ void Message::OnPaint(HWND hWnd)
 
 	HDC mDC = CreateCompatibleDC(hDC);
 
-	background.draw(hMemDC, mDC);
+	background[0].draw(hMemDC, mDC);
+	background[1].draw(hMemDC, mDC);
 
 	if (ratDraw)
 		rat.draw(hMemDC, mDC);
-
-	for (auto& food : foods)
-		food.draw(hMemDC, mDC);
 
 	cat.draw(hMemDC, mDC);
 
@@ -123,7 +115,6 @@ void Message::MouseMove(int mouse_x, int mouse_y)
 
 void Message::RMouseDown(int mouse_x, int mouse_y)
 {
-	foods.push_back(Food({ mouse_x, mouse_y }));
 }
 
 void Message::RMouseUp(int mouse_x, int mouse_y)
@@ -143,6 +134,8 @@ void Message::RMouseDBClick(int mouse_x, int mouse_y)
 
 void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 {
+	keyboard[tolower(wParam)] = true;
+
 	switch (wParam)
 	{
 	case VK_UP:case VK_DOWN:case VK_LEFT:case VK_RIGHT:
@@ -159,7 +152,7 @@ void Message::OnKeyDown(HWND hWnd, WPARAM wParam)
 		KeyHandler::Default(hWnd, wParam);
 		break;
 	}
-	keyboard[tolower(wParam)] = true;
+	
 
 	InvalidateRect(hWnd, NULL, FALSE);
 }

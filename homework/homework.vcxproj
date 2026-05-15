@@ -128,7 +128,6 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Cat.cpp" />
-    <ClCompile Include="Food.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="KeyHandler.cpp" />
@@ -140,7 +139,6 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Cat.h" />
-    <ClInclude Include="Food.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Image.h" />
@@ -156,7 +154,9 @@
     <Image Include="cat.bmp" />
     <Image Include="field.bmp" />
     <Image Include="food.bmp" />
+    <Image Include="ground.bmp" />
     <Image Include="rat.bmp" />
+    <Image Include="sky.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
